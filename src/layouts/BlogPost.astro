@@ -5,11 +5,17 @@ import FormattedDate from '@/components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 
+// 新しくTweetButtonをインポート
+import TweetButton from '../components/TweetButton.astro';
+
 type Props = CollectionEntry<'blog'>['data'] & {
   slug?: string;
 };
 
 const { title, description, pubDate, updatedDate, heroImage, slug } = Astro.props;
+
+// 記事のURLを取得
+const articleUrl = Astro.url.href;
 
 // Get all posts sorted by date
 const allPosts = (await getCollection('blog')).sort(
@@ -78,6 +84,11 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
         <!-- Article Content -->
         <div class="prose prose-lg dark:prose-dark max-w-none">
           <slot />
+        </div>
+
+        <!-- ここにTweetButtonを配置 -->
+        <div class="tweet-button-container" style="text-align: center; margin-top: 3em;">
+          <TweetButton title={title} url={articleUrl} />
         </div>
 
         <!-- Article Navigation -->

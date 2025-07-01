@@ -1,0 +1,46 @@
+---
+// src/components/TweetButton.astro
+// 記事のタイトルとURLをプロパティとして受け取ります
+const { title, url } = Astro.props;
+
+// ツイートのテキストをエンコードします
+const tweetText = encodeURIComponent(`${title} |`); // 記事タイトルと区切り文字
+const tweetUrl = encodeURIComponent(url); // 記事のURL
+
+// X (Twitter) の投稿インテントURLを構築します
+const twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${tweetUrl}`;
+---
+
+<a
+  href={twitterShareUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="tweet-button"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="r-4qtqp9 r-yyyy05 r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-o7ynqc r-64hb5y r-1mf7evn r-1wzrnnt r-lwhw9o r-1inky4w r-rjixqe r-b88u0q r-1s2bzr4" style="color: currentColor; width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 0.5em;"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.714 6.23L18.244 2.25zm-2.91 17.485L3.71 4.608H7.59L18.69 19.392h-3.356z"></path></g></svg>
+  この記事をX (Twitter) でシェア
+</a>
+
+<style>
+  .tweet-button {
+    display: inline-flex;
+    align-items: center;
+    background-color: #1DA1F2; /* X (Twitter) のブランドカラー */
+    color: white;
+    padding: 0.8em 1.2em;
+    border-radius: 9999px; /* 角丸 */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease-in-out;
+    margin-top: 2em; /* 上部に余白 */
+  }
+
+  .tweet-button:hover {
+    background-color: #1A91DA; /* ホバー時の色 */
+  }
+
+  .tweet-button svg {
+    fill: currentColor; /* SVGの色をテキストの色に合わせる */
+  }
+</style>
