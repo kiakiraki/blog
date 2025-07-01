@@ -14,14 +14,29 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const { title, description = SITE_DESCRIPTION, image = FallbackImage, ogSlug } = Astro.props;
 const pageTitle = title === SITE_TITLE ? title : `${title} | ${SITE_TITLE}`;
 
-// OGP画像のURLを生成
+// OGP画像のURLとタイプを生成
 let ogImageUrl: string;
-if (ogSlug) {
-	ogImageUrl = new URL(`/og/${ogSlug}.svg`, Astro.site).toString();
-} else if (typeof image === 'string') {
+let ogImageType: string = 'image/jpeg'; // デフォルト
+
+if (image && typeof image === 'string') {
+	// 文字列の画像URLが指定されている場合
 	ogImageUrl = new URL(image, Astro.site).toString();
-} else {
+	ogImageType = image.endsWith('.png') ? 'image/png' : 
+	              image.endsWith('.svg') ? 'image/svg+xml' : 'image/jpeg';
+} else if (image && typeof image === 'object' && 'src' in image) {
+	// ImageMetadataオブジェクト（heroImage等）が指定されている場合
 	ogImageUrl = new URL(image.src, Astro.url).toString();
+	ogImageType = image.src.endsWith('.png') ? 'image/png' : 
+	              image.src.endsWith('.svg') ? 'image/svg+xml' : 
+	              image.src.endsWith('.webp') ? 'image/webp' : 'image/jpeg';
+} else if (ogSlug) {
+	// 動的生成画像を使用
+	ogImageUrl = new URL(`/og/${ogSlug}.svg`, Astro.site).toString();
+	ogImageType = 'image/svg+xml';
+} else {
+	// フォールバック画像
+	ogImageUrl = new URL(FallbackImage.src, Astro.url).toString();
+	ogImageType = FallbackImage.src.endsWith('.png') ? 'image/png' : 'image/jpeg';
 }
 ---
 
@@ -57,7 +72,7 @@ if (ogSlug) {
 <meta content={ogImageUrl} property="og:image" />
 <meta content="1200" property="og:image:width" />
 <meta content="630" property="og:image:height" />
-<meta content="image/svg+xml" property="og:image:type" />
+<meta content={ogImageType} property="og:image:type" />
 <meta content="ja_JP" property="og:locale" />
 
 <!-- Twitter -->

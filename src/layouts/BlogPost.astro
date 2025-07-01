@@ -28,7 +28,7 @@ const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1]
 const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 ---
 
-<Layout description={description} ogSlug={slug} title={title}>
+<Layout description={description} image={heroImage} ogSlug={slug} title={title}>
   <article class="py-8">
     {
       heroImage && (
