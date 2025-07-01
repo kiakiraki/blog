@@ -11,7 +11,7 @@ const posts = (await getCollection('blog'))
 	.slice(0, POSTS_PER_PAGE);
 ---
 
-<Layout description={SITE_DESCRIPTION} title={SITE_TITLE}>
+<Layout description={SITE_DESCRIPTION} ogSlug="home" title={SITE_TITLE}>
 	<!-- Hero Section -->
 	<section class="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 py-16 md:py-24">
 		<div class="container mx-auto px-4">
