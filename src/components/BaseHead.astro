@@ -17,7 +17,7 @@ const pageTitle = title === SITE_TITLE ? title : `${title} | ${SITE_TITLE}`;
 // OGP画像のURLを生成
 let ogImageUrl: string;
 if (ogSlug) {
-	ogImageUrl = new URL(`/og/${ogSlug}.png`, Astro.site).toString();
+	ogImageUrl = new URL(`/og/${ogSlug}.svg`, Astro.site).toString();
 } else if (typeof image === 'string') {
 	ogImageUrl = new URL(image, Astro.site).toString();
 } else {
@@ -58,7 +58,7 @@ if (ogSlug) {
 <meta content={ogImageUrl} property="og:image" />
 <meta content="1200" property="og:image:width" />
 <meta content="630" property="og:image:height" />
-<meta content="image/png" property="og:image:type" />
+<meta content="image/svg+xml" property="og:image:type" />
 <meta content="ja_JP" property="og:locale" />
 
 <!-- Twitter -->
