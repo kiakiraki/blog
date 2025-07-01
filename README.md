@@ -2,6 +2,8 @@
 
 このプロジェクトは、Astroを使用して構築されたブログです。
 
+https://blog.kiakiraki.dev/
+
 ## プロジェクト構造
 
 ```
