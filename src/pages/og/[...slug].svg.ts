@@ -2,30 +2,34 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 export const prerender = true;
 
+type Props = {
+  post?: CollectionEntry<'blog'>;
+};
+
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   const paths = posts.map(post => ({
     params: { slug: post.id },
-    props: { post }
+    props: { post } as Props
   }));
 
-  // 特別なページのパスも追加
+  // 特別なページのパスも追加  
   paths.push(
-    { params: { slug: 'home' }, props: null },
-    { params: { slug: 'about' }, props: null }
+    { params: { slug: 'home' }, props: {} as Props },
+    { params: { slug: 'about' }, props: {} as Props }
   );
 
   return paths;
 }
 
-export async function GET({ params, props }: { params: { slug: string }, props: { post: CollectionEntry<'blog'> } | null }) {
+export async function GET({ params, props }: { params: { slug: string }, props: Props }) {
   const { slug } = params;
   
   let title = '趣味の記録';
   let description = 'あきらきの趣味について記録しているブログです';
   let type = 'ブログ';
 
-  if (props?.post) {
+  if (props.post) {
     // ブログ記事の場合
     title = props.post.data.title;
     description = props.post.data.description || '';
