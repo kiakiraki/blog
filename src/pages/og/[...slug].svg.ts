@@ -1,4 +1,4 @@
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 
 export const prerender = true;
 
@@ -18,7 +18,7 @@ export async function getStaticPaths() {
   return paths;
 }
 
-export async function GET({ params, props }: any) {
+export async function GET({ params, props }: { params: { slug: string }, props: { post: CollectionEntry<'blog'> } | null }) {
   const { slug } = params;
   
   let title = '趣味の記録';
