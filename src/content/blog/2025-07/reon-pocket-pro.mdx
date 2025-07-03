@@ -4,22 +4,28 @@ description: 'REON POCKET PRO を買ってみた'
 pubDate: '2025-07-04'
 ---
 
+import { Image } from 'astro:assets';
+import reonPocketProImage from './images/PXL_20250522_035255262.jpg';
+import reonPocketComparisonImage from './images/PXL_20250522_035436663.jpg';
+
 # REON POCKET PRO
 
-<img
-  src="/src/content/blog/2025-07/images/PXL_20250522_035255262.jpg"
+<Image
+  src={reonPocketProImage}
   alt="REON POCKET PRO"
-  width="400"
+  width={400}
+  height={300}
 />
 
 これからの酷暑に備えて、[REON POCKET PRO](https://pur.store.sony.jp/lifestyle/products/reonpocket/RNPK-P1_product/)を買ってみた。
 
 ここ数年流行っている、ペルチェ素子を利用した冷感デバイスの最新版である。
 
-<img
-  src="/src/content/blog/2025-07/images/PXL_20250522_035436663.jpg"
+<Image
+  src={reonPocketComparisonImage}
   alt="REON POCKET 4との比較"
-  width="600"
+  width={600}
+  height={400}
 />
 
 2世代前のモデルであるREON POCKET 4と比較すると、ペルチェ素子の数が1個 -> 2個に増え、それに伴い本体が大きく・厚くなっている。
