@@ -1,0 +1,72 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+  class?: string;
+}
+
+const { src, alt, caption, width, height, class: className } = Astro.props;
+---
+
+<figure class={`captioned-image ${className || ''}`}>
+  <Image
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    class="image"
+  />
+  {caption && (
+    <figcaption class="caption">
+      {caption}
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .captioned-image {
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .captioned-image .image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .captioned-image .image:hover {
+    transform: scale(1.02);
+  }
+
+  .caption {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  :global(.dark) .caption {
+    color: #9ca3af;
+  }
+
+  @media (max-width: 768px) {
+    .captioned-image {
+      margin: 1.5rem 0;
+    }
+    
+    .caption {
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+  }
+</style>
