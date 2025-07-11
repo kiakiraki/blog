@@ -17,15 +17,11 @@ interface Props {
 const { images, columns = 2, class: className } = Astro.props;
 ---
 
-<div class={`image-grid columns-${columns} ${className || ''}`}>
+<div class:list={[`image-grid columns-${columns}`,`${className || ''}`]}>
   {images.map((image) => (
     <figure class="image-item">
       <Image
-        src={image.src}
-        alt={image.alt}
-        class="grid-image"
-        width={600}
-        height={400}
+        alt={image.alt}         class="grid-image"         height={400}         src={image.src}         width={600}
       />
       {image.caption && (
         <figcaption class="image-caption">
