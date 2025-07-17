@@ -5,28 +5,33 @@ import { SITE_TITLE } from '../consts';
 ---
 
 <header
-  class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700"
+  class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm"
 >
-  <div class="container mx-auto px-4">
-    <nav class="flex items-center justify-between h-16">
-      <div class="flex items-center space-x-8">
-        <h1 class="text-xl font-bold text-gray-900 dark:text-white">
-          <a class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors" href="/">
-            {SITE_TITLE}
-          </a>
-        </h1>
-        <div class="hidden md:flex items-center space-x-1">
+  <div class="container mx-auto px-4 lg:px-6">
+    <nav class="flex items-center justify-between h-16 lg:h-18">
+      <div class="flex items-center space-x-6 lg:space-x-8">
+        <div class="flex items-center">
+          <h1 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+            <a 
+              class="hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 flex items-center" 
+              href="/"
+            >
+              {SITE_TITLE}
+            </a>
+          </h1>
+        </div>
+        <div class="hidden lg:flex items-center space-x-1">
           <HeaderLink href="/">ホーム</HeaderLink>
           <HeaderLink href="/blog">ブログ</HeaderLink>
           <HeaderLink href="/about">プロフィール</HeaderLink>
         </div>
       </div>
 
-      <div class="flex items-center space-x-4">
-        <div class="hidden sm:flex items-center space-x-3">
+      <div class="flex items-center space-x-3 lg:space-x-4">
+        <div class="hidden sm:flex items-center space-x-2 lg:space-x-3">
           <a
             aria-label="GitHub"
-            class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
             href="https://github.com/kiakiraki/blog"
             rel="noopener noreferrer"
             target="_blank"
@@ -39,7 +44,7 @@ import { SITE_TITLE } from '../consts';
           </a>
           <a
             aria-label="RSS Feed"
-            class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
             href="/rss.xml"
           >
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -53,7 +58,7 @@ import { SITE_TITLE } from '../consts';
 
         <button
           aria-label="メニューを開く"
-          class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 ml-2"
           id="mobile-menu-button"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,18 +73,18 @@ import { SITE_TITLE } from '../consts';
     </nav>
 
     <div
-      class="md:hidden hidden border-t border-gray-200 dark:border-gray-700 py-4"
+      class="lg:hidden hidden border-t border-gray-200/50 dark:border-gray-700/50 py-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm"
       id="mobile-menu"
     >
-      <div class="flex flex-col space-y-2">
+      <div class="flex flex-col space-y-3">
         <HeaderLink href="/">ホーム</HeaderLink>
         <HeaderLink href="/blog">ブログ</HeaderLink>
         <HeaderLink href="/about">プロフィール</HeaderLink>
-        <div class="flex items-center space-x-4 pt-4">
+        <div class="flex items-center justify-center space-x-4 pt-4 border-t border-gray-200/50 dark:border-gray-700/50 mt-4">
           <a
             aria-label="GitHub"
-            class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-            href="https://github.com"
+            class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+            href="https://github.com/kiakiraki/blog"
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -91,7 +96,7 @@ import { SITE_TITLE } from '../consts';
           </a>
           <a
             aria-label="RSS Feed"
-            class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
             href="/rss.xml"
           >
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
