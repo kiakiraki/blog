@@ -34,7 +34,11 @@ const posts = (await getCollection('blog')).sort(
                 {post.data.heroImage && (
                   <div class="mb-4 overflow-hidden rounded-lg">
                     <Image
-                      alt={post.data.title}                       class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"                       height={225}                       src={post.data.heroImage}                       width={400}
+                      alt={post.data.title}
+                      class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      height={225}
+                      src={post.data.heroImage}
+                      width={400}
                     />
                   </div>
                 )}

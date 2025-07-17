@@ -13,10 +13,18 @@ const tweetUrl = encodeURIComponent(url); // 記事のURL
 const twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${tweetUrl}`;
 ---
 
-<a
-  class="tweet-button"   href={twitterShareUrl}   rel="noopener noreferrer"   target="_blank"
->
-  <svg aria-hidden="true" class="r-4qtqp9 r-yyyy05 r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-o7ynqc r-64hb5y r-1mf7evn r-1wzrnnt r-lwhw9o r-1inky4w r-rjixqe r-b88u0q r-1s2bzr4" style="color: currentColor; width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 0.5em;" viewBox="0 0 24 24"><g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.714 6.23L18.244 2.25zm-2.91 17.485L3.71 4.608H7.59L18.69 19.392h-3.356z"></path></g></svg>
+<a class="tweet-button" href={twitterShareUrl} rel="noopener noreferrer" target="_blank">
+  <svg
+    aria-hidden="true"
+    class="r-4qtqp9 r-yyyy05 r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-o7ynqc r-64hb5y r-1mf7evn r-1wzrnnt r-lwhw9o r-1inky4w r-rjixqe r-b88u0q r-1s2bzr4"
+    style="color: currentColor; width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 0.5em;"
+    viewBox="0 0 24 24"
+    ><g
+      ><path
+        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.714 6.23L18.244 2.25zm-2.91 17.485L3.71 4.608H7.59L18.69 19.392h-3.356z"
+      ></path></g
+    ></svg
+  >
   この記事をX (Twitter) でシェア
 </a>
 
@@ -24,7 +32,7 @@ const twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=
   .tweet-button {
     display: inline-flex;
     align-items: center;
-    background-color: #1DA1F2; /* X (Twitter) のブランドカラー */
+    background-color: #1da1f2; /* X (Twitter) のブランドカラー */
     color: white;
     padding: 0.8em 1.2em;
     border-radius: 9999px; /* 角丸 */
@@ -36,7 +44,7 @@ const twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=
   }
 
   .tweet-button:hover {
-    background-color: #1A91DA; /* ホバー時の色 */
+    background-color: #1a91da; /* ホバー時の色 */
   }
 
   .tweet-button svg {

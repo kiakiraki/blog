@@ -7,15 +7,15 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://blog.kiakiraki.dev',
-	output: 'server',
-	adapter: cloudflare({
-    imageService: 'compile'
+  site: 'https://blog.kiakiraki.dev',
+  output: 'server',
+  adapter: cloudflare({
+    imageService: 'compile',
   }),
-	integrations: [mdx(), sitemap(), tailwind()],
-	vite: {
-		define: {
-			__DATE__: `'${new Date().toISOString()}'`
-		}
-	}
+  integrations: [mdx(), sitemap(), tailwind()],
+  vite: {
+    define: {
+      __DATE__: `'${new Date().toISOString()}'`,
+    },
+  },
 });
