@@ -55,30 +55,63 @@
 
   function updateTheme() {
     const theme = getThemePreference();
-    document.documentElement.classList[isDark() ? 'add' : 'remove']('dark');
-
+    const isDarkTheme = theme === 'dark';
+    
+    // Update document class
+    document.documentElement.classList.toggle('dark', isDarkTheme);
+    
+    // Update localStorage
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('theme', theme);
     }
+    
+    // Update button icons
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    if (sunIcon && moonIcon) {
+      if (isDarkTheme) {
+        sunIcon.classList.remove('hidden');
+        sunIcon.classList.add('block');
+        moonIcon.classList.remove('block');
+        moonIcon.classList.add('hidden');
+      } else {
+        sunIcon.classList.remove('block');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+        moonIcon.classList.add('block');
+      }
+    }
   }
 
+  function toggleTheme() {
+    const currentTheme = getThemePreference();
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('theme', newTheme);
+    }
+    
+    updateTheme();
+  }
+
+  // Initialize theme on page load
   updateTheme();
 
+  // Add event listener when DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
     const button = document.getElementById('theme-toggle');
     if (button) {
-      button.addEventListener('click', () => {
-        const currentTheme = getThemePreference();
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('theme', newTheme);
-        }
-
-        updateTheme();
-      });
+      button.addEventListener('click', toggleTheme);
     }
   });
 
-  document.addEventListener('astro:after-swap', updateTheme);
+  // Handle Astro page transitions
+  document.addEventListener('astro:after-swap', () => {
+    updateTheme();
+    // Re-add event listener after page swap
+    const button = document.getElementById('theme-toggle');
+    if (button) {
+      button.addEventListener('click', toggleTheme);
+    }
+  });
 </script>
