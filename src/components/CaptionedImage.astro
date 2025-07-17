@@ -14,15 +14,16 @@ interface Props {
 const { src, alt, caption, width, height, class: className } = Astro.props;
 ---
 
-<figure class:list={[`captioned-image`,`${className || ''}`]}>
+<figure class:list={[`captioned-image`, `${className || ''}`]}>
   <Image
-    alt={alt}     height={height}     src={src}     width={width}
+    alt={alt}
+    src={src as any}
+    {...width && { width }}
+    {...height && { height }}
+    class="image"
+    inferSize={false}
   />
-  {caption && (
-    <figcaption class="caption">
-      {caption}
-    </figcaption>
-  )}
+  {caption && <figcaption class="caption">{caption}</figcaption>}
 </figure>
 
 <style>
@@ -35,7 +36,9 @@ const { src, alt, caption, width, height, class: className } = Astro.props;
     max-width: 100%;
     height: auto;
     border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: transform 0.2s ease-in-out;
   }
 
@@ -59,7 +62,7 @@ const { src, alt, caption, width, height, class: className } = Astro.props;
     .captioned-image {
       margin: 1.5rem 0;
     }
-    
+
     .caption {
       font-size: 0.8rem;
       margin-top: 0.5rem;

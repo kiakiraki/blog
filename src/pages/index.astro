@@ -7,73 +7,69 @@ import { getCollection } from 'astro:content';
 export const prerender = true;
 
 const posts = (await getCollection('blog'))
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, POSTS_PER_PAGE);
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, POSTS_PER_PAGE);
 ---
 
 <Layout description={SITE_DESCRIPTION} ogSlug="home" title={SITE_TITLE}>
-	<!-- Hero Section -->
-	<section class="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 py-16 md:py-24">
-		<div class="container mx-auto px-4">
-			<div class="max-w-4xl mx-auto text-center">
-				<h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 text-balance">
-					{SITE_TITLE}
-				</h1>
-				<p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto text-balance">
-					{SITE_DESCRIPTION}
-				</p>
-				<div class="flex flex-col sm:flex-row gap-4 justify-center">
-					<a 
-						class="btn-primary"        href="/blog"
-					>
-						ブログを読む
-					</a>
-					<a 
-						class="btn-secondary"        href="/about"
-					>
-						プロフィール
-					</a>
-				</div>
-			</div>
-		</div>
-	</section>
+  <!-- Hero Section -->
+  <section
+    class="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 py-16 md:py-24"
+  >
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 text-balance">
+          {SITE_TITLE}
+        </h1>
+        <p
+          class="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto text-balance"
+        >
+          {SITE_DESCRIPTION}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a class="btn-primary" href="/blog"> ブログを読む </a>
+          <a class="btn-secondary" href="/about"> プロフィール </a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-	<!-- Featured Posts -->
-	<section class="py-16 md:py-20">
-		<div class="container mx-auto px-4">
-			<div class="max-w-6xl mx-auto">
-				<div class="flex items-center justify-between mb-8">
-					<h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-						最新記事
-					</h2>
-					<a 
-						class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"        href="/blog"
-					>
-						すべての記事を見る →
-					</a>
-				</div>
-				
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{posts.map((post) => (
-						<article class="card group hover:shadow-lg transition-all duration-200">
-							<div class="mb-4">
-								<h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-									<a class="hover:underline" href={`/blog/${post.id}/`}>
-										{post.data.title}
-									</a>
-								</h3>
-								<p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
-									{post.data.description}
-								</p>
-								<div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-									<FormattedDate date={post.data.pubDate} />
-								</div>
-							</div>
-						</article>
-					))}
-				</div>
-			</div>
-		</div>
-	</section>
+  <!-- Featured Posts -->
+  <section class="py-16 md:py-20">
+    <div class="container mx-auto px-4">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">最新記事</h2>
+          <a
+            class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+            href="/blog"
+          >
+            すべての記事を見る →
+          </a>
+        </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {
+            posts.map(post => (
+              <article class="card group hover:shadow-lg transition-all duration-200">
+                <div class="mb-4">
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                    <a class="hover:underline" href={`/blog/${post.id}/`}>
+                      {post.data.title}
+                    </a>
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+                    {post.data.description}
+                  </p>
+                  <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <FormattedDate date={post.data.pubDate} />
+                  </div>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
 </Layout>

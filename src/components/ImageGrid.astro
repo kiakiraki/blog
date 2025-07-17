@@ -17,19 +17,22 @@ interface Props {
 const { images, columns = 2, class: className } = Astro.props;
 ---
 
-<div class:list={[`image-grid columns-${columns}`,`${className || ''}`]}>
-  {images.map((image) => (
-    <figure class="image-item">
-      <Image
-        alt={image.alt}         class="grid-image"         height={400}         src={image.src}         width={600}
-      />
-      {image.caption && (
-        <figcaption class="image-caption">
-          {image.caption}
-        </figcaption>
-      )}
-    </figure>
-  ))}
+<div class:list={[`image-grid columns-${columns}`, `${className || ''}`]}>
+  {
+    images.map(image => (
+      <figure class="image-item">
+        <Image
+          alt={image.alt}
+          class="grid-image"
+          height={400}
+          inferSize={false}
+          src={image.src as any}
+          width={600}
+        />
+        {image.caption && <figcaption class="image-caption">{image.caption}</figcaption>}
+      </figure>
+    ))
+  }
 </div>
 
 <style>
@@ -60,7 +63,9 @@ const { images, columns = 2, class: className } = Astro.props;
     width: 100%;
     height: auto;
     border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: transform 0.2s ease-in-out;
     object-fit: cover;
   }
@@ -88,12 +93,12 @@ const { images, columns = 2, class: className } = Astro.props;
     .image-grid.columns-4 {
       grid-template-columns: 1fr;
     }
-    
+
     .image-grid {
       gap: 1.5rem;
       margin: 1.5rem 0;
     }
-    
+
     .image-caption {
       font-size: 0.8rem;
       margin-top: 0.375rem;

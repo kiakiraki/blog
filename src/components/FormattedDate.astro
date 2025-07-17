@@ -1,6 +1,6 @@
 ---
 interface Props {
-	date: Date | string;
+  date: Date | string;
 }
 
 const { date } = Astro.props;
@@ -8,29 +8,29 @@ const { date } = Astro.props;
 // Safe date parsing
 let validDate: Date;
 try {
-	if (date instanceof Date) {
-		validDate = date;
-	} else if (typeof date === 'string') {
-		validDate = new Date(date);
-		// Check if date is valid
-		if (isNaN(validDate.getTime())) {
-			throw new Error('Invalid date');
-		}
-	} else {
-		throw new Error('Invalid date format');
-	}
+  if (date instanceof Date) {
+    validDate = date;
+  } else if (typeof date === 'string') {
+    validDate = new Date(date);
+    // Check if date is valid
+    if (isNaN(validDate.getTime())) {
+      throw new Error('Invalid date');
+    }
+  } else {
+    throw new Error('Invalid date format');
+  }
 } catch {
-	// Fallback to current date if parsing fails
-	validDate = new Date();
+  // Fallback to current date if parsing fails
+  validDate = new Date();
 }
 ---
 
 <time datetime={validDate.toISOString()}>
-	{
-		validDate.toLocaleDateString('ja-JP', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric',
-		})
-	}
+  {
+    validDate.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
 </time>
