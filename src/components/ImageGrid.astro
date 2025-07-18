@@ -17,7 +17,7 @@ interface Props {
 const { images, columns = 2, class: className } = Astro.props;
 ---
 
-<div class:list={[`image-grid columns-${columns}`, `${className || ''}`]}>
+<div class:list={[`@container`, `image-grid`, `${className || ''}`]}>
   {
     images.map(image => (
       <figure class="image-item">
@@ -40,18 +40,27 @@ const { images, columns = 2, class: className } = Astro.props;
     display: grid;
     gap: 1rem;
     margin: 2rem 0;
+    grid-template-columns: 1fr;
   }
 
-  .image-grid.columns-2 {
-    grid-template-columns: repeat(2, 1fr);
+  /* Container Query based responsive grid */
+  @container (min-width: 400px) {
+    .image-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
-  .image-grid.columns-3 {
-    grid-template-columns: repeat(3, 1fr);
+  @container (min-width: 600px) {
+    .image-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
-  .image-grid.columns-4 {
-    grid-template-columns: repeat(4, 1fr);
+  @container (min-width: 800px) {
+    .image-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
   }
 
   .image-item {
@@ -86,14 +95,8 @@ const { images, columns = 2, class: className } = Astro.props;
     color: #9ca3af;
   }
 
-  /* モバイル対応 */
-  @media (max-width: 768px) {
-    .image-grid.columns-2,
-    .image-grid.columns-3,
-    .image-grid.columns-4 {
-      grid-template-columns: 1fr;
-    }
-
+  /* Fallback for older browsers */
+  @media (max-width: 480px) {
     .image-grid {
       gap: 1.5rem;
       margin: 1.5rem 0;
@@ -102,14 +105,6 @@ const { images, columns = 2, class: className } = Astro.props;
     .image-caption {
       font-size: 0.8rem;
       margin-top: 0.375rem;
-    }
-  }
-
-  /* タブレット対応 */
-  @media (min-width: 769px) and (max-width: 1024px) {
-    .image-grid.columns-3,
-    .image-grid.columns-4 {
-      grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>
