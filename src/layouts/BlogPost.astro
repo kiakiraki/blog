@@ -55,7 +55,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
           </h1>
 
           <div
-            class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-600 dark:text-gray-400"
+            class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-600 dark:text-gray-300"
           >
             <div class="flex items-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +91,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
         </header>
 
         <!-- Article Content -->
-        <div class="prose prose-lg dark:prose-dark max-w-none">
+        <div class="prose prose-lg dark:prose-invert max-w-none">
           <slot />
         </div>
 
@@ -107,7 +107,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {prevPost && (
                   <div class="text-left">
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">前の記事</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">前の記事</p>
                     <a
                       aria-label={prevPost.data.title}
                       class="group block card hover:shadow-lg transition-all duration-200"
@@ -131,7 +131,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
                           <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
                             {prevPost.data.title}
                           </h3>
-                          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
                             <FormattedDate date={prevPost.data.pubDate} />
                           </p>
                         </div>
@@ -142,7 +142,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 
                 {nextPost && (
                   <div class="text-right md:col-start-2">
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">次の記事</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">次の記事</p>
                     <a
                       aria-label={nextPost.data.title}
                       class="group block card hover:shadow-lg transition-all duration-200"
@@ -153,7 +153,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
                           <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
                             {nextPost.data.title}
                           </h3>
-                          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
                             <FormattedDate date={nextPost.data.pubDate} />
                           </p>
                         </div>

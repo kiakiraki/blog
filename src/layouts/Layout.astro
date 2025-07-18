@@ -21,7 +21,7 @@ const { title, description, image, ogSlug } = Astro.props;
   <head>
     <BaseHead description={description} image={image} ogSlug={ogSlug} title={title} />
   </head>
-  <body class="min-h-full flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <body class="min-h-full flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-50">
     <Header />
     <main class="flex-1">
       <slot />
