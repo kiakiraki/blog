@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
 @variant dark (.dark &);
@@ -38,15 +38,18 @@
   .dark {
     .prose {
       color: #e5e7eb;
-      
-      p, li, td, th {
+
+      p,
+      li,
+      td,
+      th {
         color: #e5e7eb;
       }
-      
+
       strong {
         color: #f3f4f6;
       }
-      
+
       blockquote {
         color: #d1d5db;
       }
