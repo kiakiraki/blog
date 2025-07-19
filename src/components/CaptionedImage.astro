@@ -17,7 +17,7 @@ const { src, alt, caption, width, height, class: className } = Astro.props;
 <figure class:list={[`captioned-image`, `${className || ''}`]}>
   <Image
     alt={alt}
-    src={src as ImageMetadata}
+    src={src as any}
     {...width && { width }}
     {...height && { height }}
     class="image"
