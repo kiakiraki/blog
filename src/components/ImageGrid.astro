@@ -15,31 +15,76 @@ interface Props {
 }
 
 const { images, class: className } = Astro.props;
+const gridId = `image-grid-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<div class:list={[`@container`, `image-grid`, `${className || ''}`]}>
+<div class:list={[`image-grid-container`, `${className || ''}`]} data-grid-id={gridId}>
+  <div class="image-grid">
   {
-    images.map(image => (
+    images.map((image, index) => (
       <figure class="image-item">
         <Image
           alt={image.alt}
-          class="grid-image"
+          class="grid-image cursor-pointer"
           height={400}
           inferSize={false}
           src={image.src as any}
           width={600}
+          data-lightbox={gridId}
+          data-index={index}
+          data-caption={image.caption || ''}
+        />
+        {/* Hidden full-size image for lightbox */}
+        <Image
+          alt={image.alt}
+          class="hidden"
+          height={1200}
+          inferSize={false}
+          src={image.src as any}
+          width={1800}
+          data-lightbox-full={gridId}
+          data-index={index}
         />
         {image.caption && <figcaption class="image-caption">{image.caption}</figcaption>}
       </figure>
     ))
   }
+  </div>
+</div>
+
+<!-- Lightbox Modal -->
+<div id={`lightbox-modal-${gridId}`} class="lightbox-modal hidden">
+  <div class="lightbox-overlay" id={`lightbox-overlay-${gridId}`}></div>
+  <div class="lightbox-content">
+    <button class="lightbox-close" id={`lightbox-close-${gridId}`} aria-label="閉じる">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+    <button class="lightbox-nav lightbox-prev" id={`lightbox-prev-${gridId}`} aria-label="前の画像">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+    <button class="lightbox-nav lightbox-next" id={`lightbox-next-${gridId}`} aria-label="次の画像">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+    <img id={`lightbox-image-${gridId}`} class="lightbox-image" alt="" />
+    <div class="lightbox-caption" id={`lightbox-caption-${gridId}`}></div>
+  </div>
 </div>
 
 <style>
+  .image-grid-container {
+    container-type: inline-size;
+    margin: 2rem 0;
+  }
+
   .image-grid {
     display: grid;
     gap: 1rem;
-    margin: 2rem 0;
     grid-template-columns: 1fr;
   }
 
@@ -95,11 +140,40 @@ const { images, class: className } = Astro.props;
     color: #9ca3af;
   }
 
-  /* Fallback for older browsers */
+  /* Fallback for browsers without container query support */
+  @supports not (container-type: inline-size) {
+    .image-grid {
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 400px) {
+      .image-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 600px) {
+      .image-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (min-width: 800px) {
+      .image-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+      }
+    }
+  }
+
+  /* Mobile specific adjustments */
   @media (max-width: 480px) {
+    .image-grid-container {
+      margin: 1.5rem 0;
+    }
+
     .image-grid {
       gap: 1.5rem;
-      margin: 1.5rem 0;
     }
 
     .image-caption {
@@ -107,4 +181,313 @@ const { images, class: className } = Astro.props;
       margin-top: 0.375rem;
     }
   }
+
+  /* Lightbox Styles */
+  .lightbox-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .lightbox-modal.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .lightbox-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+  }
+
+  .lightbox-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-image {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    z-index: 10001;
+  }
+
+  .lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    z-index: 10001;
+  }
+
+  .lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .lightbox-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .lightbox-prev {
+    left: -70px;
+  }
+
+  .lightbox-next {
+    right: -70px;
+  }
+
+  .lightbox-caption {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    text-align: center;
+    font-size: 0.875rem;
+    max-width: 80%;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .lightbox-close {
+      top: 20px;
+      right: 20px;
+    }
+
+    .lightbox-prev {
+      left: 20px;
+    }
+
+    .lightbox-next {
+      right: 20px;
+    }
+
+    .lightbox-caption {
+      bottom: 20px;
+      font-size: 0.8rem;
+      max-width: 90%;
+    }
+
+    .lightbox-content {
+      max-width: 95vw;
+      max-height: 85vh;
+    }
+  }
 </style>
+
+<script define:vars={{gridId}}>
+  function initImageLightbox(gridId) {
+    const modal = document.getElementById(`lightbox-modal-${gridId}`);
+    const lightboxImage = document.getElementById(`lightbox-image-${gridId}`);
+    const lightboxCaption = document.getElementById(`lightbox-caption-${gridId}`);
+    const prevButton = document.getElementById(`lightbox-prev-${gridId}`);
+    const nextButton = document.getElementById(`lightbox-next-${gridId}`);
+    const closeButton = document.getElementById(`lightbox-close-${gridId}`);
+    const overlay = document.getElementById(`lightbox-overlay-${gridId}`);
+    
+    let images = [];
+    let currentIndex = 0;
+
+    function collectImages() {
+      const imageElements = document.querySelectorAll(`[data-lightbox="${gridId}"]`);
+      const fullSizeElements = document.querySelectorAll(`[data-lightbox-full="${gridId}"]`);
+      
+      images = Array.from(imageElements).map((img, index) => {
+        // Try to get the full-size image URL, fallback to regular image
+        const fullSizeImg = fullSizeElements[index];
+        const src = fullSizeImg ? fullSizeImg.src : img.src;
+        
+        return {
+          src: src,
+          alt: img.alt,
+          caption: img.getAttribute('data-caption') || ''
+        };
+      });
+    }
+
+    function setupEventListeners() {
+      // Image click handlers - use event delegation on document
+      document.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target && target.matches && target.matches(`[data-lightbox="${gridId}"]`)) {
+          e.preventDefault();
+          const index = parseInt(target.getAttribute('data-index') || '0');
+          openLightbox(index);
+        }
+      });
+
+      // Navigation buttons
+      if (prevButton) {
+        prevButton.addEventListener('click', () => previousImage());
+      }
+      if (nextButton) {
+        nextButton.addEventListener('click', () => nextImage());
+      }
+      if (closeButton) {
+        closeButton.addEventListener('click', () => closeLightbox());
+      }
+      if (overlay) {
+        overlay.addEventListener('click', () => closeLightbox());
+      }
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (!modal || !modal.classList.contains('show')) return;
+
+        switch (e.key) {
+          case 'Escape':
+            closeLightbox();
+            break;
+          case 'ArrowLeft':
+            previousImage();
+            break;
+          case 'ArrowRight':
+            nextImage();
+            break;
+        }
+      });
+
+      // Prevent body scroll when lightbox is open
+      if (modal) {
+        modal.addEventListener('transitionend', () => {
+          if (modal.classList.contains('show')) {
+            document.body.style.overflow = 'hidden';
+          } else {
+            document.body.style.overflow = '';
+          }
+        });
+      }
+    }
+
+    function openLightbox(index) {
+      currentIndex = index;
+      updateImage();
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('show');
+      }
+      updateNavigationButtons();
+    }
+
+    function closeLightbox() {
+      if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 300);
+      }
+    }
+
+    function previousImage() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateImage();
+        updateNavigationButtons();
+      }
+    }
+
+    function nextImage() {
+      if (currentIndex < images.length - 1) {
+        currentIndex++;
+        updateImage();
+        updateNavigationButtons();
+      }
+    }
+
+    function updateImage() {
+      const currentImage = images[currentIndex];
+      if (lightboxImage && currentImage) {
+        lightboxImage.src = currentImage.src;
+        lightboxImage.alt = currentImage.alt;
+        
+        if (lightboxCaption) {
+          lightboxCaption.textContent = currentImage.caption || '';
+          lightboxCaption.style.display = currentImage.caption ? 'block' : 'none';
+        }
+      }
+    }
+
+    function updateNavigationButtons() {
+      if (prevButton) {
+        prevButton.disabled = currentIndex === 0;
+      }
+      if (nextButton) {
+        nextButton.disabled = currentIndex === images.length - 1;
+      }
+    }
+
+    // Initialize
+    collectImages();
+    setupEventListeners();
+  }
+
+  // Initialize lightbox when DOM is loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initImageLightbox(gridId);
+    });
+  } else {
+    // DOM already loaded
+    initImageLightbox(gridId);
+  }
+
+  // Reinitialize for SPA navigation (Astro view transitions)
+  document.addEventListener('astro:page-load', () => {
+    initImageLightbox(gridId);
+  });
+</script>
