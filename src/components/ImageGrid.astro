@@ -20,58 +20,64 @@ const gridId = `image-grid-${Math.random().toString(36).substr(2, 9)}`;
 
 <div class:list={[`image-grid-container`, `${className || ''}`]} data-grid-id={gridId}>
   <div class="image-grid">
-  {
-    images.map((image, index) => (
-      <figure class="image-item">
-        <Image
-          alt={image.alt}
-          class="grid-image cursor-pointer"
-          height={400}
-          inferSize={false}
-          src={image.src as any}
-          width={600}
-          data-lightbox={gridId}
-          data-index={index}
-          data-caption={image.caption || ''}
-        />
-        {/* Hidden full-size image for lightbox */}
-        <Image
-          alt={image.alt}
-          class="hidden"
-          height={1200}
-          inferSize={false}
-          src={image.src as any}
-          width={1800}
-          data-lightbox-full={gridId}
-          data-index={index}
-        />
-        {image.caption && <figcaption class="image-caption">{image.caption}</figcaption>}
-      </figure>
-    ))
-  }
+    {
+      images.map((image, index) => (
+        <figure class="image-item">
+          <Image
+            alt={image.alt}
+            class="grid-image cursor-pointer"
+            data-caption={image.caption || ''}
+            data-index={index}
+            data-lightbox={gridId}
+            height={400}
+            inferSize={false}
+            src={image.src as ImageMetadata}
+            width={600}
+          />
+          {/* Hidden full-size image for lightbox */}
+          <Image
+            alt={image.alt}
+            class="hidden"
+            data-index={index}
+            data-lightbox-full={gridId}
+            height={1200}
+            inferSize={false}
+            src={image.src as ImageMetadata}
+            width={1800}
+          />
+          {image.caption && <figcaption class="image-caption">{image.caption}</figcaption>}
+        </figure>
+      ))
+    }
   </div>
 </div>
 
 <!-- Lightbox Modal -->
-<div id={`lightbox-modal-${gridId}`} class="lightbox-modal hidden">
+<div class="lightbox-modal hidden" id={`lightbox-modal-${gridId}`}>
   <div class="lightbox-overlay" id={`lightbox-overlay-${gridId}`}></div>
   <div class="lightbox-content">
-    <button class="lightbox-close" id={`lightbox-close-${gridId}`} aria-label="閉じる">
+    <button aria-label="閉じる" class="lightbox-close" id={`lightbox-close-${gridId}`}>
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        <path
+          d="M6 18L18 6M6 6l12 12"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"></path>
       </svg>
     </button>
-    <button class="lightbox-nav lightbox-prev" id={`lightbox-prev-${gridId}`} aria-label="前の画像">
+    <button aria-label="前の画像" class="lightbox-nav lightbox-prev" id={`lightbox-prev-${gridId}`}>
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        ></path>
       </svg>
     </button>
-    <button class="lightbox-nav lightbox-next" id={`lightbox-next-${gridId}`} aria-label="次の画像">
+    <button aria-label="次の画像" class="lightbox-nav lightbox-next" id={`lightbox-next-${gridId}`}>
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        ></path>
       </svg>
     </button>
-    <img id={`lightbox-image-${gridId}`} class="lightbox-image" alt="" />
+    <img alt="" class="lightbox-image" id={`lightbox-image-${gridId}`} />
     <div class="lightbox-caption" id={`lightbox-caption-${gridId}`}></div>
   </div>
 </div>
@@ -195,7 +201,9 @@ const gridId = `image-grid-${Math.random().toString(36).substr(2, 9)}`;
     justify-content: center;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s ease;
   }
 
   .lightbox-modal.show {
@@ -266,7 +274,9 @@ const gridId = `image-grid-${Math.random().toString(36).substr(2, 9)}`;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease, opacity 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      opacity 0.2s ease;
     z-index: 10001;
   }
 
@@ -330,7 +340,7 @@ const gridId = `image-grid-${Math.random().toString(36).substr(2, 9)}`;
   }
 </style>
 
-<script define:vars={{gridId}}>
+<script define:vars={{ gridId }}>
   function initImageLightbox(gridId) {
     const modal = document.getElementById(`lightbox-modal-${gridId}`);
     const lightboxImage = document.getElementById(`lightbox-image-${gridId}`);
@@ -339,30 +349,30 @@ const gridId = `image-grid-${Math.random().toString(36).substr(2, 9)}`;
     const nextButton = document.getElementById(`lightbox-next-${gridId}`);
     const closeButton = document.getElementById(`lightbox-close-${gridId}`);
     const overlay = document.getElementById(`lightbox-overlay-${gridId}`);
-    
+
     let images = [];
     let currentIndex = 0;
 
     function collectImages() {
       const imageElements = document.querySelectorAll(`[data-lightbox="${gridId}"]`);
       const fullSizeElements = document.querySelectorAll(`[data-lightbox-full="${gridId}"]`);
-      
+
       images = Array.from(imageElements).map((img, index) => {
         // Try to get the full-size image URL, fallback to regular image
         const fullSizeImg = fullSizeElements[index];
         const src = fullSizeImg ? fullSizeImg.src : img.src;
-        
+
         return {
           src: src,
           alt: img.alt,
-          caption: img.getAttribute('data-caption') || ''
+          caption: img.getAttribute('data-caption') || '',
         };
       });
     }
 
     function setupEventListeners() {
       // Image click handlers - use event delegation on document
-      document.addEventListener('click', (e) => {
+      document.addEventListener('click', e => {
         const target = e.target;
         if (target && target.matches && target.matches(`[data-lightbox="${gridId}"]`)) {
           e.preventDefault();
@@ -386,7 +396,7 @@ const gridId = `image-grid-${Math.random().toString(36).substr(2, 9)}`;
       }
 
       // Keyboard navigation
-      document.addEventListener('keydown', (e) => {
+      document.addEventListener('keydown', e => {
         if (!modal || !modal.classList.contains('show')) return;
 
         switch (e.key) {
@@ -454,7 +464,7 @@ const gridId = `image-grid-${Math.random().toString(36).substr(2, 9)}`;
       if (lightboxImage && currentImage) {
         lightboxImage.src = currentImage.src;
         lightboxImage.alt = currentImage.alt;
-        
+
         if (lightboxCaption) {
           lightboxCaption.textContent = currentImage.caption || '';
           lightboxCaption.style.display = currentImage.caption ? 'block' : 'none';
