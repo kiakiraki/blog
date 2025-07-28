@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Allow crawling of OG images
+Allow: /og/
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.png
+Allow: *.webp
+Allow: *.svg
+
+# Sitemap location
+Sitemap: https://blog.kiakiraki.dev/sitemap-index.xml
