@@ -1,0 +1,71 @@
+# General crawling rules
+User-agent: *
+Allow: /
+
+# Block Astro build artifacts and internal files
+Disallow: /_astro/
+Disallow: /_worker.js/
+Disallow: /_routes.json
+
+# Block development and build files
+Disallow: /node_modules/
+Disallow: /dist/
+Disallow: /src/
+Disallow: /*.json$
+Disallow: /*.lock$
+Disallow: /*.config.*
+Disallow: /*.map$
+
+# Block potential admin and API paths (future-proofing)
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login/
+Disallow: /auth/
+
+# Block sensitive files
+Disallow: /.env*
+Disallow: /package.json
+Disallow: /package-lock.json
+Disallow: /tsconfig.json
+Disallow: /_headers
+Disallow: /_redirects
+
+# Allow important content
+Allow: /blog/
+Allow: /about/
+Allow: /og/
+Allow: /rss.xml
+Allow: /sitemap*.xml
+
+# Allow media files for proper indexing
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.png
+Allow: *.webp
+Allow: *.svg
+Allow: *.gif
+Allow: *.pdf
+
+# Crawl delay for aggressive bots
+User-agent: Bingbot
+Crawl-delay: 1
+
+User-agent: Slurp
+Crawl-delay: 1
+
+User-agent: DuckDuckBot
+Crawl-delay: 1
+
+# Block AI training bots (optional)
+User-agent: CCBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+# Sitemap location
+Sitemap: https://blog.kiakiraki.dev/sitemap-index.xml
