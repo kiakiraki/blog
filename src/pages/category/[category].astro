@@ -23,10 +23,13 @@ const posts = (await getCollection('blog'))
 
 // カテゴリ別の記事数を計算
 const allPosts = await getCollection('blog');
-const categoryCounts = CATEGORIES.reduce((acc, cat) => {
-  acc[cat] = allPosts.filter(post => post.data.category === cat).length;
-  return acc;
-}, {} as Record<Category, number>);
+const categoryCounts = CATEGORIES.reduce(
+  (acc, cat) => {
+    acc[cat] = allPosts.filter(post => post.data.category === cat).length;
+    return acc;
+  },
+  {} as Record<Category, number>
+);
 ---
 
 <Layout description={`${category}に関する記事一覧`} title={`${category}の記事`}>
@@ -52,16 +55,23 @@ const categoryCounts = CATEGORIES.reduce((acc, cat) => {
           >
             すべて ({allPosts.length})
           </a>
-          {CATEGORIES.map(cat => (
-            <a
-              class:list={[`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200`,
-                {"bg-primary-600 text-white": category === cat, "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700": category !== cat}
-              ]}
-              href={`/category/${encodeURIComponent(cat)}`}
-            >
-              {cat} ({categoryCounts[cat]})
-            </a>
-          ))}
+          {
+            CATEGORIES.map(cat => (
+              <a
+                class:list={[
+                  `px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200`,
+                  {
+                    'bg-primary-600 text-white': category === cat,
+                    'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700':
+                      category !== cat,
+                  },
+                ]}
+                href={`/category/${encodeURIComponent(cat)}`}
+              >
+                {cat} ({categoryCounts[cat]})
+              </a>
+            ))
+          }
         </div>
       </div>
 
@@ -69,21 +79,33 @@ const categoryCounts = CATEGORIES.reduce((acc, cat) => {
       <nav aria-label="パンくずナビ" class="mb-8">
         <ol class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
           <li>
-            <a class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors" href="/">
+            <a
+              class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+              href="/"
+            >
               ホーム
             </a>
           </li>
           <li class="flex items-center">
             <svg class="w-4 h-4 mx-2" fill="currentColor" viewBox="0 0 20 20">
-              <path clip-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" fill-rule="evenodd"></path>
+              <path
+                clip-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                fill-rule="evenodd"></path>
             </svg>
-            <a class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors" href="/blog">
+            <a
+              class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+              href="/blog"
+            >
               ブログ
             </a>
           </li>
           <li class="flex items-center">
             <svg class="w-4 h-4 mx-2" fill="currentColor" viewBox="0 0 20 20">
-              <path clip-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" fill-rule="evenodd"></path>
+              <path
+                clip-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                fill-rule="evenodd"></path>
             </svg>
             <span class="text-gray-900 dark:text-white font-medium">{category}</span>
           </li>
@@ -147,7 +169,7 @@ const categoryCounts = CATEGORIES.reduce((acc, cat) => {
             <p class="text-gray-600 dark:text-gray-300 text-lg">
               {category}の記事が見つかりません。
             </p>
-            <a 
+            <a
               class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium mt-4 inline-block"
               href="/blog"
             >

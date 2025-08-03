@@ -13,10 +13,13 @@ const posts = (await getCollection('blog')).sort(
 );
 
 // カテゴリ別の記事数を計算
-const categoryCounts = CATEGORIES.reduce((acc, category) => {
-  acc[category] = posts.filter(post => post.data.category === category).length;
-  return acc;
-}, {} as Record<Category, number>);
+const categoryCounts = CATEGORIES.reduce(
+  (acc, category) => {
+    acc[category] = posts.filter(post => post.data.category === category).length;
+    return acc;
+  },
+  {} as Record<Category, number>
+);
 ---
 
 <Layout description="趣味についての雑多な記録" title="ブログ記事一覧">
@@ -24,7 +27,10 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
     <div class="max-w-6xl mx-auto">
       <!-- Header -->
       <div class="text-center mb-16">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6" id="page-title">
+        <h1
+          class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6"
+          id="page-title"
+        >
           ブログ記事一覧
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -42,14 +48,16 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
           >
             すべて ({posts.length})
           </button>
-          {CATEGORIES.map(category => (
-            <button
-              class="category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-              data-category={category}
-            >
-              {category} ({categoryCounts[category]})
-            </button>
-          ))}
+          {
+            CATEGORIES.map(category => (
+              <button
+                class="category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                data-category={category}
+              >
+                {category} ({categoryCounts[category]})
+              </button>
+            ))
+          }
         </div>
       </div>
 
@@ -57,7 +65,10 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="posts-grid">
         {
           posts.map(post => (
-            <article class:list={`post-card card group hover:shadow-xl transition-all duration-300`} data-category={post.data.category}>
+            <article
+              class:list={`post-card card group hover:shadow-xl transition-all duration-300`}
+              data-category={post.data.category}
+            >
               <a class="block" href={`/blog/${post.id}/`}>
                 {post.data.heroImage && (
                   <div class="mb-4 overflow-hidden rounded-lg">
@@ -106,9 +117,7 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
 
       <!-- No Posts Message -->
       <div class="text-center py-16 hidden" id="no-posts-message">
-        <p class="text-gray-600 dark:text-gray-300 text-lg">
-          この条件に合う記事が見つかりません。
-        </p>
+        <p class="text-gray-600 dark:text-gray-300 text-lg">この条件に合う記事が見つかりません。</p>
       </div>
     </div>
   </div>
@@ -124,7 +133,7 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
     // URLパラメータから初期カテゴリを取得
     const urlParams = new URLSearchParams(window.location.search);
     const initialCategory = urlParams.get('category');
-    
+
     if (initialCategory) {
       filterPosts(initialCategory);
       updateActiveButton(initialCategory);
@@ -143,11 +152,11 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
 
     function filterPosts(category) {
       let visibleCount = 0;
-      
-      postCards.forEach((card) => {
+
+      postCards.forEach(card => {
         const htmlCard = card;
         const postCategory = card.getAttribute('data-category');
-        
+
         if (!category || category === '' || postCategory === category) {
           htmlCard.style.display = 'block';
           visibleCount++;
@@ -165,14 +174,16 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
     }
 
     function updateActiveButton(activeCategory) {
-      filterButtons.forEach((button) => {
+      filterButtons.forEach(button => {
         const htmlButton = button;
         const buttonCategory = button.getAttribute('data-category') || '';
-        
+
         if (buttonCategory === activeCategory) {
-          htmlButton.className = 'category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-primary-600 text-white';
+          htmlButton.className =
+            'category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-primary-600 text-white';
         } else {
-          htmlButton.className = 'category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700';
+          htmlButton.className =
+            'category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700';
         }
       });
     }
@@ -194,7 +205,7 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
       } else {
         url.searchParams.delete('category');
       }
-      
+
       window.history.pushState({}, '', url.toString());
     }
   });
