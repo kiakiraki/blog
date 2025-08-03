@@ -114,7 +114,7 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
   </div>
 </Layout>
 
-<script>
+<script is:inline>
   document.addEventListener('DOMContentLoaded', () => {
     const filterButtons = document.querySelectorAll('.category-filter-btn');
     const postCards = document.querySelectorAll('.post-card');
@@ -144,14 +144,15 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
     function filterPosts(category) {
       let visibleCount = 0;
       
-      postCards.forEach(card => {
+      postCards.forEach((card) => {
+        const htmlCard = card;
         const postCategory = card.getAttribute('data-category');
         
         if (!category || category === '' || postCategory === category) {
-          card.style.display = 'block';
+          htmlCard.style.display = 'block';
           visibleCount++;
         } else {
-          card.style.display = 'none';
+          htmlCard.style.display = 'none';
         }
       });
 
@@ -164,13 +165,14 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
     }
 
     function updateActiveButton(activeCategory) {
-      filterButtons.forEach(button => {
+      filterButtons.forEach((button) => {
+        const htmlButton = button;
         const buttonCategory = button.getAttribute('data-category') || '';
         
         if (buttonCategory === activeCategory) {
-          button.className = 'category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-primary-600 text-white';
+          htmlButton.className = 'category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-primary-600 text-white';
         } else {
-          button.className = 'category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700';
+          htmlButton.className = 'category-filter-btn px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700';
         }
       });
     }
@@ -178,7 +180,7 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
     function updatePageTitle(category) {
       if (pageTitle) {
         if (category && category !== '') {
-          pageTitle.textContent = `${category}の記事`;
+          pageTitle.textContent = category + 'の記事';
         } else {
           pageTitle.textContent = 'ブログ記事一覧';
         }
