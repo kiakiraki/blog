@@ -1,7 +1,7 @@
 ---
 import HeaderLink from './HeaderLink.astro';
 import ThemeToggle from './ThemeToggle.astro';
-import { SITE_TITLE } from '../consts';
+import { SITE_TITLE, CATEGORIES } from '../consts';
 ---
 
 <header
@@ -18,6 +18,29 @@ import { SITE_TITLE } from '../consts';
         <div class="hidden md:flex items-center space-x-1">
           <HeaderLink href="/">ホーム</HeaderLink>
           <HeaderLink href="/blog">ブログ</HeaderLink>
+          
+          <!-- Categories Dropdown -->
+          <div class="relative group">
+            <button class="nav-link flex items-center gap-1" type="button">
+              カテゴリ
+              <svg class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </button>
+            <div class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+              <div class="py-2">
+                {CATEGORIES.map(category => (
+                  <a
+                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    href={`/blog?category=${encodeURIComponent(category)}`}
+                  >
+                    {category}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+          
           <HeaderLink href="/about">プロフィール</HeaderLink>
         </div>
       </div>
@@ -74,6 +97,22 @@ import { SITE_TITLE } from '../consts';
       <div class="flex flex-col space-y-2">
         <HeaderLink href="/">ホーム</HeaderLink>
         <HeaderLink href="/blog">ブログ</HeaderLink>
+        
+        <!-- Mobile Categories -->
+        <div class="px-3 py-2">
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">カテゴリ</span>
+          <div class="mt-2 space-y-1">
+            {CATEGORIES.map(category => (
+              <a
+                class="block px-2 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                href={`/blog?category=${encodeURIComponent(category)}`}
+              >
+                {category}
+              </a>
+            ))}
+          </div>
+        </div>
+        
         <HeaderLink href="/about">プロフィール</HeaderLink>
         <div class="flex items-center space-x-4 pt-4">
           <a
