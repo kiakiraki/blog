@@ -9,6 +9,6 @@ export const AUTHOR_NAME = 'あきらき';
 export const AUTHOR_TWITTER = '@__kiakiraki__';
 export const GITHUB_URL = 'https://github.com';
 
-export const CATEGORIES = ['写真', '旅行', '競馬', '技術', 'その他'] as const;
+export const CATEGORIES = ['写真', '旅行', '競馬', '技術', 'ガジェット', 'その他'] as const;
 
 export type Category = (typeof CATEGORIES)[number];
