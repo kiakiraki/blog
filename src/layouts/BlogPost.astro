@@ -4,15 +4,21 @@ import Layout from './Layout.astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import TableOfContents from '@/components/TableOfContents.astro';
 
 // 新しくTweetButtonをインポート
 import TweetButton from '../components/TweetButton.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
   slug?: string;
+  headings?: Array<{
+    depth: number;
+    slug: string;
+    text: string;
+  }>;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, slug, category } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, slug, category, headings } = Astro.props;
 
 // 記事のURLを取得
 const articleUrl = Astro.url.href;
@@ -45,168 +51,189 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
     }
 
     <div class="container mx-auto px-4">
-      <div class="max-w-4xl mx-auto">
-        <!-- Article Header -->
-        <header class="mb-8 text-center">
-          <h1 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 text-pretty">
-            {title}
-          </h1>
+      <div class="max-w-6xl mx-auto">
+        <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+          <!-- Main Content -->
+          <div class="lg:col-span-8">
+                <!-- Article Header -->
+            <header class="mb-8 text-center">
+              <h1 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 text-pretty">
+                {title}
+              </h1>
 
-          <div
-            class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-600 dark:text-gray-300"
-          >
-            <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"></path>
-              </svg>
-              <span>公開日: <FormattedDate date={pubDate} /></span>
-            </div>
-
-            {
-              updatedDate && (
+              <div
+                class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-600 dark:text-gray-300"
+              >
                 <div class="flex items-center gap-2">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                       stroke-linecap="round"
                       stroke-linejoin="round"
-                      stroke-width="2"
-                    />
+                      stroke-width="2"></path>
                   </svg>
-                  <span>
-                    更新日: <FormattedDate date={updatedDate} />
-                  </span>
+                  <span>公開日: <FormattedDate date={pubDate} /></span>
                 </div>
+
+                {
+                  updatedDate && (
+                    <div class="flex items-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                        />
+                      </svg>
+                      <span>
+                        更新日: <FormattedDate date={updatedDate} />
+                      </span>
+                    </div>
+                  )
+                }
+              </div>
+
+              <!-- Category Badge -->
+              <div class="mt-4">
+                <a
+                  class="inline-flex items-center gap-2 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 px-3 py-1 rounded-full text-sm font-medium hover:bg-primary-200 dark:hover:bg-primary-800 transition-colors"
+                  href={`/blog?category=${encodeURIComponent(category || '')}`}
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"></path>
+                  </svg>
+                  {category}
+                </a>
+              </div>
+
+              <div class="w-24 h-1 bg-primary-600 mx-auto mt-6"></div>
+            </header>
+
+            <!-- Mobile TOC -->
+            <div class="lg:hidden">
+              {headings && headings.length > 0 && (
+                <TableOfContents headings={headings} />
+              )}
+            </div>
+
+            <!-- Article Content -->
+            <div class="prose prose-lg dark:prose-invert max-w-none">
+              <slot />
+            </div>
+
+            <!-- ここにTweetButtonを配置 -->
+            <div class="tweet-button-container" style="text-align: center; margin-top: 3em;">
+              <TweetButton title={title} url={articleUrl} />
+            </div>
+
+            <!-- Article Navigation -->
+            {
+              (prevPost || nextPost) && (
+                <nav class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {prevPost && (
+                      <div class="text-left">
+                        <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">前の記事</p>
+                        <a
+                          aria-label={prevPost.data.title}
+                          class="group block card hover:shadow-lg transition-all duration-200"
+                          href={`/blog/${prevPost.id}/`}
+                        >
+                          <div class="flex items-center gap-3">
+                            <svg
+                              class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                d="M15 19l-7-7 7-7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                              />
+                            </svg>
+                            <div class="flex-1 min-w-0">
+                              <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+                                {prevPost.data.title}
+                              </h3>
+                              <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                <FormattedDate date={prevPost.data.pubDate} />
+                              </p>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    )}
+
+                    {nextPost && (
+                      <div class="text-right md:col-start-2">
+                        <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">次の記事</p>
+                        <a
+                          aria-label={nextPost.data.title}
+                          class="group block card hover:shadow-lg transition-all duration-200"
+                          href={`/blog/${nextPost.id}/`}
+                        >
+                          <div class="flex items-center gap-3">
+                            <div class="flex-1 min-w-0">
+                              <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+                                {nextPost.data.title}
+                              </h3>
+                              <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                <FormattedDate date={nextPost.data.pubDate} />
+                              </p>
+                            </div>
+                            <svg
+                              class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                d="M9 5l7 7-7 7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                              />
+                            </svg>
+                          </div>
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </nav>
               )
             }
-          </div>
 
-          <!-- Category Badge -->
-          <div class="mt-4">
-            <a
-              class="inline-flex items-center gap-2 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 px-3 py-1 rounded-full text-sm font-medium hover:bg-primary-200 dark:hover:bg-primary-800 transition-colors"
-              href={`/blog?category=${encodeURIComponent(category || '')}`}
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"></path>
-              </svg>
-              {category}
-            </a>
-          </div>
-
-          <div class="w-24 h-1 bg-primary-600 mx-auto mt-6"></div>
-        </header>
-
-        <!-- Article Content -->
-        <div class="prose prose-lg dark:prose-invert max-w-none">
-          <slot />
-        </div>
-
-        <!-- ここにTweetButtonを配置 -->
-        <div class="tweet-button-container" style="text-align: center; margin-top: 3em;">
-          <TweetButton title={title} url={articleUrl} />
-        </div>
-
-        <!-- Article Navigation -->
-        {
-          (prevPost || nextPost) && (
-            <nav class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {prevPost && (
-                  <div class="text-left">
-                    <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">前の記事</p>
-                    <a
-                      aria-label={prevPost.data.title}
-                      class="group block card hover:shadow-lg transition-all duration-200"
-                      href={`/blog/${prevPost.id}/`}
-                    >
-                      <div class="flex items-center gap-3">
-                        <svg
-                          class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M15 19l-7-7 7-7"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                          />
-                        </svg>
-                        <div class="flex-1 min-w-0">
-                          <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
-                            {prevPost.data.title}
-                          </h3>
-                          <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                            <FormattedDate date={prevPost.data.pubDate} />
-                          </p>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                )}
-
-                {nextPost && (
-                  <div class="text-right md:col-start-2">
-                    <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">次の記事</p>
-                    <a
-                      aria-label={nextPost.data.title}
-                      class="group block card hover:shadow-lg transition-all duration-200"
-                      href={`/blog/${nextPost.id}/`}
-                    >
-                      <div class="flex items-center gap-3">
-                        <div class="flex-1 min-w-0">
-                          <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
-                            {nextPost.data.title}
-                          </h3>
-                          <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                            <FormattedDate date={nextPost.data.pubDate} />
-                          </p>
-                        </div>
-                        <svg
-                          class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M9 5l7 7-7 7"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                          />
-                        </svg>
-                      </div>
-                    </a>
-                  </div>
-                )}
+            <!-- Article Footer -->
+            <footer class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                  <a
+                    class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+                    href="/blog"
+                  >
+                    ← ブログ一覧に戻る
+                  </a>
+                </div>
               </div>
-            </nav>
-          )
-        }
-
-        <!-- Article Footer -->
-        <footer class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-              <a
-                class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
-                href="/blog"
-              >
-                ← ブログ一覧に戻る
-              </a>
-            </div>
+            </footer>
           </div>
-        </footer>
+
+          <!-- Table of Contents Sidebar -->
+          <aside class="hidden lg:block lg:col-span-4">
+            <div class="lg:sticky lg:top-8">
+              {headings && headings.length > 0 && (
+                <TableOfContents headings={headings} />
+              )}
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   </article>

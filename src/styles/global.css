@@ -23,6 +23,8 @@
   --font-family-mono: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
 }
 
+@import 'tailwindcss/theme' layer(theme);
+
 @layer base {
   html {
     font-family: 'Noto Sans JP', system-ui, sans-serif;
