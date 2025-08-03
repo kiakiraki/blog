@@ -24,7 +24,7 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
     <div class="max-w-6xl mx-auto">
       <!-- Header -->
       <div class="text-center mb-16">
-        <h1 id="page-title" class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6" id="page-title">
           ブログ記事一覧
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -54,10 +54,10 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
       </div>
 
       <!-- Posts Grid -->
-      <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="posts-grid">
         {
           posts.map(post => (
-            <article class={`post-card card group hover:shadow-xl transition-all duration-300`} data-category={post.data.category}>
+            <article class:list={`post-card card group hover:shadow-xl transition-all duration-300`} data-category={post.data.category}>
               <a class="block" href={`/blog/${post.id}/`}>
                 {post.data.heroImage && (
                   <div class="mb-4 overflow-hidden rounded-lg">
@@ -105,7 +105,7 @@ const categoryCounts = CATEGORIES.reduce((acc, category) => {
       </div>
 
       <!-- No Posts Message -->
-      <div id="no-posts-message" class="text-center py-16 hidden">
+      <div class="text-center py-16 hidden" id="no-posts-message">
         <p class="text-gray-600 dark:text-gray-300 text-lg">
           この条件に合う記事が見つかりません。
         </p>
