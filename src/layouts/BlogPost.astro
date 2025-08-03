@@ -18,7 +18,8 @@ type Props = CollectionEntry<'blog'>['data'] & {
   }>;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, slug, category, headings } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, slug, category, headings } =
+  Astro.props;
 
 // 記事のURLを取得
 const articleUrl = Astro.url.href;
@@ -55,9 +56,11 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
         <div class="lg:grid lg:grid-cols-12 lg:gap-8">
           <!-- Main Content -->
           <div class="lg:col-span-8">
-                <!-- Article Header -->
+            <!-- Article Header -->
             <header class="mb-8 text-center">
-              <h1 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 text-pretty">
+              <h1
+                class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 text-pretty"
+              >
                 {title}
               </h1>
 
@@ -116,9 +119,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 
             <!-- Mobile TOC -->
             <div class="lg:hidden">
-              {headings && headings.length > 0 && (
-                <TableOfContents headings={headings} />
-              )}
+              {headings && headings.length > 0 && <TableOfContents headings={headings} />}
             </div>
 
             <!-- Article Content -->
@@ -228,9 +229,7 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
           <!-- Table of Contents Sidebar -->
           <aside class="hidden lg:block lg:col-span-4">
             <div class="lg:sticky lg:top-8">
-              {headings && headings.length > 0 && (
-                <TableOfContents headings={headings} />
-              )}
+              {headings && headings.length > 0 && <TableOfContents headings={headings} />}
             </div>
           </aside>
         </div>

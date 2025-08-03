@@ -59,24 +59,28 @@
 ## 主要機能
 
 ### 🎯 ブログシステム
+
 - **MDX記事**: Markdown + JSXコンポーネント対応
 - **画像最適化**: 自動WebP変換、レスポンシブ画像
 - **日付別整理**: `/blog/YYYY-MM/YYYY-MM-DD/slug` 構造
 - **RSS配信**: `/rss.xml`
 
 ### 🏷️ カテゴリシステム
+
 - **定義済みカテゴリ**: 写真、旅行、競馬、技術、ガジェット、その他
 - **クライアントサイドフィルタ**: ブログ一覧でのリアルタイム絞り込み
 - **カテゴリページ**: `/category/[カテゴリ名]` で個別表示
 - **ナビゲーション**: ヘッダーにドロップダウンメニュー
 
 ### 🎨 UI/UX
+
 - **レスポンシブデザイン**: モバイル・デスクトップ対応
 - **ダークモード**: システム設定対応 + 手動切替
 - **日本語フォント**: Noto Sans JP使用
 - **アクセシビリティ**: ARIAラベル、キーボードナビゲーション
 
 ### 📤 SNS連携
+
 - **Twitterシェア**: 記事にシェアボタン
 - **OGP画像**: 動的生成（Satori使用）
 
@@ -105,17 +109,20 @@ npm run typecheck     # TypeScript型チェック
 ### 🛠️ 技術スタック詳細
 
 #### フレームワーク・ライブラリ
+
 - **Astro 5.12.5**: 静的サイトジェネレーター
 - **TypeScript 5.8.3**: 型安全性
 - **Tailwind CSS 4.1.11**: ユーティリティファーストCSS
 - **MDX 4.3.0**: Markdown + JSX
 
 #### デプロイ・インフラ
+
 - **Cloudflare Pages**: ホスティング・CDN
 - **Cloudflare KV**: セッション管理
 - **Sharp**: 画像最適化
 
 #### 開発ツール
+
 - **ESLint 9.31.0**: コード品質
 - **Prettier 3.6.2**: コードフォーマット
 - **Astro Check**: 型チェック
@@ -134,14 +141,15 @@ src/content/blog/YYYY-MM/YYYY-MM-DD/
 ```
 
 #### フロントマター例
+
 ```yaml
 ---
 title: '記事タイトル'
 description: '記事の説明'
 pubDate: '2025-01-15'
-updatedDate: '2025-01-16'  # オプション
-heroImage: './hero-image.jpg'  # オプション
-category: '競馬'  # 必須: 写真|旅行|競馬|技術|ガジェット|その他
+updatedDate: '2025-01-16' # オプション
+heroImage: './hero-image.jpg' # オプション
+category: '競馬' # 必須: 写真|旅行|競馬|技術|ガジェット|その他
 ---
 ```
 
@@ -160,7 +168,7 @@ import heroImage from './hero-image.jpg';
 // カスタムコンポーネント使用
 <CaptionedImage src="./image.jpg" alt="説明" caption="キャプション" />
 
-<ImageGrid 
+<ImageGrid
   images={[image1, image2, image3]}
   captions={['説明1', '説明2', '説明3']}
 />
@@ -177,7 +185,14 @@ export const SITE_TITLE = '趣味の記録';
 export const SITE_DESCRIPTION = '趣味について雑多に書き綴るところ';
 export const AUTHOR_NAME = 'あきらき';
 export const AUTHOR_TWITTER = '@__kiakiraki__';
-export const CATEGORIES = ['写真', '旅行', '競馬', '技術', 'ガジェット', 'その他'] as const;
+export const CATEGORIES = [
+  '写真',
+  '旅行',
+  '競馬',
+  '技術',
+  'ガジェット',
+  'その他',
+] as const;
 ```
 
 ### 🎨 スタイルカスタマイズ
@@ -189,17 +204,20 @@ export const CATEGORIES = ['写真', '旅行', '競馬', '技術', 'ガジェッ
 ## 注意事項・制約
 
 ### ⚠️ 重要な制約
+
 - **カテゴリ**: 必ず `CATEGORIES` で定義された値を使用
 - **画像**: 記事と同じディレクトリに配置
 - **日付形式**: `YYYY-MM-DD` 形式必須
 - **ファイル名**: 記事URLに影響するため適切な命名を
 
 ### 🔒 セキュリティ
+
 - **環境変数**: 機密情報は `.env` で管理
 - **画像**: Sharp による最適化・検証
 - **XSS対策**: Astroによる自動エスケープ
 
 ### 📱 パフォーマンス
+
 - **画像最適化**: 自動WebP変換
 - **静的生成**: ビルド時プリレンダリング
 - **CSS**: 使用分のみ出力（Tailwind CSS）
