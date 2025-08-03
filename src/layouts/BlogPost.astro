@@ -5,6 +5,8 @@ import FormattedDate from '@/components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import TableOfContents from '@/components/TableOfContents.astro';
+import RelatedPosts from '@/components/RelatedPosts.astro';
+import { getRelatedPosts } from '@/utils/relatedPosts';
 
 // 新しくTweetButtonをインポート
 import TweetButton from '../components/TweetButton.astro';
@@ -33,6 +35,10 @@ const allPosts = (await getCollection('blog')).sort(
 const currentIndex = allPosts.findIndex(post => post.id === slug);
 const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
 const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+
+// Get related posts
+const currentPost = { id: slug, data: Astro.props } as CollectionEntry<'blog'>;
+const relatedPosts = getRelatedPosts(currentPost, allPosts, 3);
 ---
 
 <Layout description={description} image={heroImage} ogSlug={slug} title={title}>
@@ -131,6 +137,9 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
             <div class="tweet-button-container" style="text-align: center; margin-top: 3em;">
               <TweetButton title={title} url={articleUrl} />
             </div>
+
+            <!-- Related Posts -->
+            <RelatedPosts relatedPosts={relatedPosts} />
 
             <!-- Article Navigation -->
             {
