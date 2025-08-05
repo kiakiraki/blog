@@ -94,7 +94,6 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
   return new Response(buffer, {
     headers: {
       'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=31536000, immutable',
     },
   });
 }
