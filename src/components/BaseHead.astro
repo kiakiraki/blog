@@ -38,8 +38,8 @@ if (image && typeof image === 'string') {
         : 'image/jpeg';
 } else if (ogSlug) {
   // 動的生成画像を使用
-  ogImageUrl = new URL(`/og/${ogSlug}.svg`, Astro.site).toString();
-  ogImageType = 'image/svg+xml';
+  ogImageUrl = new URL(`/og/${ogSlug}.png`, Astro.site).toString();
+  ogImageType = 'image/png';
 } else {
   // フォールバック画像
   ogImageUrl = new URL(FallbackImage.src, Astro.url).toString();

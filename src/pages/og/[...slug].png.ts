@@ -28,11 +28,13 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
   let title = '趣味の記録';
   let description = 'あきらきの趣味について記録しているブログです';
   let type = 'ブログ';
+  let category = '';
 
   if (props.post) {
     // ブログ記事の場合
     title = props.post.data.title;
     description = props.post.data.description || '';
+    category = props.post.data.category || '';
     type = 'ブログ記事';
   } else if (slug === 'home') {
     // ホームページ
@@ -46,41 +48,7 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
     type = 'プロフィール';
   }
 
-  // タイトルテキストの処理（長いタイトルは複数行に分割）
-  const maxTitleLength = 30;
-  let titleLines: string[] = [];
-
-  if (title.length <= maxTitleLength) {
-    titleLines = [title];
-  } else {
-    // 長いタイトルは適切な位置で改行
-    const words = title.split('');
-    let currentLine = '';
-
-    for (const char of words) {
-      if (currentLine.length + 1 <= maxTitleLength) {
-        currentLine += char;
-      } else {
-        titleLines.push(currentLine);
-        currentLine = char;
-      }
-    }
-    if (currentLine) {
-      titleLines.push(currentLine);
-    }
-
-    // 最大2行まで
-    if (titleLines.length > 2) {
-      titleLines = titleLines.slice(0, 2);
-      titleLines[1] = titleLines[1].substring(0, maxTitleLength - 3) + '...';
-    }
-  }
-
-  // タイトルのY位置を調整（行数に応じて）
-  const titleStartY = titleLines.length === 1 ? 290 : 260;
-  const lineHeight = 60;
-
-  // シンプルなSVG画像を生成
+  // PNG画像を生成（シンプルなSVG + sharp変換）
   const svg = `
     <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -100,26 +68,30 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
       <rect x="150" y="150" width="${Math.max(type.length * 16 + 32, 80)}" height="40" rx="20" fill="#0ea5e9"/>
       <text x="${150 + Math.max(type.length * 16 + 32, 80) / 2}" y="175" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="18" font-weight="600" fill="white" text-anchor="middle">${type}</text>
       
-      <!-- Title (複数行対応) -->
-      ${titleLines
-        .map(
-          (line, index) =>
-            `<text x="600" y="${titleStartY + index * lineHeight}" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="${titleLines.length === 1 ? '56' : '48'}" font-weight="800" fill="#1f2937" text-anchor="middle">${line}</text>`
-        )
-        .join('')}
+      <!-- Category badge (if exists) -->
+      ${category ? `<rect x="${1050 - Math.max(category.length * 16 + 32, 80)}" y="150" width="${Math.max(category.length * 16 + 32, 80)}" height="40" rx="20" fill="#f3f4f6" stroke="#e5e7eb"/>
+      <text x="${1050 - Math.max(category.length * 16 + 32, 80) / 2}" y="175" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="16" font-weight="500" fill="#374151" text-anchor="middle">${category}</text>` : ''}
+      
+      <!-- Title -->
+      <text x="600" y="${title.length > 30 ? '280' : '300'}" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="${title.length > 30 ? '42' : '56'}" font-weight="800" fill="#1f2937" text-anchor="middle">${title.length > 50 ? title.substring(0, 50) + '...' : title}</text>
       
       <!-- Description -->
-      ${description ? `<text x="600" y="${titleStartY + titleLines.length * lineHeight + 30}" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="24" fill="#6b7280" text-anchor="middle">${description.length > 50 ? description.substring(0, 50) + '...' : description}</text>` : ''}
+      ${description ? `<text x="600" y="${title.length > 30 ? '340' : '370'}" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="24" fill="#6b7280" text-anchor="middle">${description.length > 80 ? description.substring(0, 80) + '...' : description}</text>` : ''}
       
       <!-- Site name -->
-      <text x="1120" y="570" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="20" font-weight="600" fill="rgba(255,255,255,0.9)" text-anchor="end">趣味の記録</text>
+      <text x="1050" y="510" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="20" font-weight="600" fill="#0ea5e9" text-anchor="end">趣味の記録</text>
     </svg>
   `;
 
-  // SVGをPNGに変換するのではなく、SVGとして返す
-  return new Response(svg, {
+  // SVGをPNGに変換
+  const sharp = (await import('sharp')).default;
+  const buffer = await sharp(Buffer.from(svg))
+    .png()
+    .toBuffer();
+
+  return new Response(buffer, {
     headers: {
-      'Content-Type': 'image/svg+xml',
+      'Content-Type': 'image/png',
       'Cache-Control': 'public, max-age=31536000, immutable',
     },
   });
