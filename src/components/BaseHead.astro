@@ -38,8 +38,8 @@ if (image && typeof image === 'string') {
         : 'image/jpeg';
 } else if (ogSlug) {
   // 動的生成画像を使用
-  ogImageUrl = new URL(`/og/${ogSlug}.svg`, Astro.site).toString();
-  ogImageType = 'image/svg+xml';
+  ogImageUrl = new URL(`/og/${ogSlug}.png`, Astro.site).toString();
+  ogImageType = 'image/png';
 } else {
   // フォールバック画像
   ogImageUrl = new URL(FallbackImage.src, Astro.url).toString();
@@ -76,21 +76,25 @@ if (image && typeof image === 'string') {
 
 <!-- Open Graph / Facebook -->
 <meta content="website" property="og:type" />
-<meta content={Astro.url} property="og:url" />
+<meta content={canonicalURL} property="og:url" />
 <meta content={pageTitle} property="og:title" />
 <meta content={description} property="og:description" />
 <meta content={ogImageUrl} property="og:image" />
+<meta content={ogImageUrl} property="og:image:secure_url" />
 <meta content="1200" property="og:image:width" />
 <meta content="630" property="og:image:height" />
 <meta content={ogImageType} property="og:image:type" />
+<meta content={pageTitle} property="og:image:alt" />
 <meta content="ja_JP" property="og:locale" />
+<meta content={SITE_TITLE} property="og:site_name" />
 
 <!-- Twitter -->
 <meta content="summary_large_image" property="twitter:card" />
-<meta content={Astro.url} property="twitter:url" />
+<meta content={canonicalURL} property="twitter:url" />
 <meta content={pageTitle} property="twitter:title" />
 <meta content={description} property="twitter:description" />
 <meta content={ogImageUrl} property="twitter:image" />
+<meta content={pageTitle} property="twitter:image:alt" />
 
 <!-- Theme -->
 <meta content="#0ea5e9" media="(prefers-color-scheme: light)" name="theme-color" />
