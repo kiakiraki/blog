@@ -69,8 +69,12 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
       <text x="${150 + Math.max(type.length * 16 + 32, 80) / 2}" y="175" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="18" font-weight="600" fill="white" text-anchor="middle">${type}</text>
       
       <!-- Category badge (if exists) -->
-      ${category ? `<rect x="${1050 - Math.max(category.length * 16 + 32, 80)}" y="150" width="${Math.max(category.length * 16 + 32, 80)}" height="40" rx="20" fill="#f3f4f6" stroke="#e5e7eb"/>
-      <text x="${1050 - Math.max(category.length * 16 + 32, 80) / 2}" y="175" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="16" font-weight="500" fill="#374151" text-anchor="middle">${category}</text>` : ''}
+      ${
+        category
+          ? `<rect x="${1050 - Math.max(category.length * 16 + 32, 80)}" y="150" width="${Math.max(category.length * 16 + 32, 80)}" height="40" rx="20" fill="#f3f4f6" stroke="#e5e7eb"/>
+      <text x="${1050 - Math.max(category.length * 16 + 32, 80) / 2}" y="175" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="16" font-weight="500" fill="#374151" text-anchor="middle">${category}</text>`
+          : ''
+      }
       
       <!-- Title -->
       <text x="600" y="${title.length > 30 ? '280' : '300'}" font-family="'Hiragino Sans', 'Yu Gothic', Arial, sans-serif" font-size="${title.length > 30 ? '42' : '56'}" font-weight="800" fill="#1f2937" text-anchor="middle">${title.length > 50 ? title.substring(0, 50) + '...' : title}</text>
@@ -85,9 +89,7 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
 
   // SVGをPNGに変換
   const sharp = (await import('sharp')).default;
-  const buffer = await sharp(Buffer.from(svg))
-    .png()
-    .toBuffer();
+  const buffer = await sharp(Buffer.from(svg)).png().toBuffer();
 
   return new Response(buffer, {
     headers: {
