@@ -7,17 +7,19 @@
 @variant dark (.dark &);
 
 @theme {
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c4a6e;
-  --color-primary-950: #082f49;
+  --color-primary: #0ea5e9;
+
+  --color-primary-50: color-mix(in srgb, var(--color-primary) 5%, white);
+  --color-primary-100: color-mix(in srgb, var(--color-primary) 10%, white);
+  --color-primary-200: color-mix(in srgb, var(--color-primary) 20%, white);
+  --color-primary-300: color-mix(in srgb, var(--color-primary) 40%, white);
+  --color-primary-400: color-mix(in srgb, var(--color-primary) 60%, white);
+  --color-primary-500: var(--color-primary);
+  --color-primary-600: color-mix(in srgb, var(--color-primary) 90%, black);
+  --color-primary-700: color-mix(in srgb, var(--color-primary) 80%, black);
+  --color-primary-800: color-mix(in srgb, var(--color-primary) 70%, black);
+  --color-primary-900: color-mix(in srgb, var(--color-primary) 60%, black);
+  --color-primary-950: color-mix(in srgb, var(--color-primary) 50%, black);
 
   --font-family-ja: 'Noto Sans JP', sans-serif;
   --font-family-mono: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
@@ -66,15 +68,15 @@
   }
 
   h1 {
-    @apply text-3xl md:text-4xl;
+    @apply text-[clamp(1.875rem,5vw,2.25rem)] md:text-[clamp(2.25rem,5vw,3rem)];
   }
 
   h2 {
-    @apply text-2xl md:text-3xl;
+    @apply text-[clamp(1.5rem,4vw,1.875rem)] md:text-[clamp(1.875rem,4vw,2.25rem)];
   }
 
   h3 {
-    @apply text-xl md:text-2xl;
+    @apply text-[clamp(1.25rem,3vw,1.5rem)] md:text-[clamp(1.5rem,3vw,1.875rem)];
   }
 
   code {
@@ -96,7 +98,24 @@
   }
 
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900/10 p-6 border border-gray-200 dark:border-gray-700 transition-all duration-200;
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900/10 p-6 border border-gray-200 dark:border-gray-700 transition-all duration-300;
+    background-image: linear-gradient(
+      175deg,
+      color-mix(in srgb, transparent 5%, white),
+      color-mix(in srgb, transparent 20%, white)
+    );
+  }
+
+  .dark .card {
+    background-image: linear-gradient(
+      175deg,
+      color-mix(in srgb, transparent 5%, #1f2937),
+      color-mix(in srgb, transparent 20%, #1f2937)
+    );
+  }
+
+  .card:hover {
+    @apply shadow-xl -translate-y-1;
   }
 
   .btn-primary {
