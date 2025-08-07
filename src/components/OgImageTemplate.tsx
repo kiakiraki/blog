@@ -68,7 +68,14 @@ export const OgImageTemplate = ({
           )}
         </div>
 
-        <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div
+          style={{
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
           <h1
             style={{
               fontSize: title.length > 35 ? '52px' : '64px',
@@ -95,7 +102,16 @@ export const OgImageTemplate = ({
           )}
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', fontSize: '28px', fontWeight: 600, color: '#0ea5e9' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            fontSize: '28px',
+            fontWeight: 600,
+            color: '#0ea5e9',
+          }}
+        >
           趣味の記録
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { getEntryBySlug } from 'astro:content';
+import { getEntry } from 'astro:content';
 import { ImageResponse } from '@vercel/og';
 import { OgImageTemplate } from '@/components/OgImageTemplate';
 import * as fs from 'node:fs/promises';
@@ -11,7 +11,7 @@ const readFont = (path: string) => {
     ? new URL(path, import.meta.url)
     : `./public/fonts/${path.split('/').pop()}`;
   return fs.readFile(fontPath);
-}
+};
 
 // フォントデータを非同期で読み込む
 const fontRegularData = readFont('../../public/fonts/NotoSansJP-Regular.woff');
@@ -40,7 +40,7 @@ export const GET: APIRoute = async ({ params }) => {
     description = 'あきらき（kiakiraki）のプロフィール';
     type = 'プロフィール';
   } else {
-    const post = await getEntryBySlug('blog', requestSlug);
+    const post = await getEntry('blog', requestSlug);
     if (post) {
       title = post.data.title;
       description = post.data.description || '';
@@ -55,25 +55,22 @@ export const GET: APIRoute = async ({ params }) => {
   const [fontRegular, fontBold] = await Promise.all([fontRegularData, fontBoldData]);
 
   // ImageResponseを使って画像を生成
-  return new ImageResponse(
-    OgImageTemplate({ title, description, category, type }),
-    {
-      width: 1200,
-      height: 630,
-      fonts: [
-        {
-          name: 'Noto Sans JP',
-          data: fontRegular,
-          style: 'normal',
-          weight: 400,
-        },
-        {
-          name: 'Noto Sans JP',
-          data: fontBold,
-          style: 'normal',
-          weight: 700,
-        },
-      ],
-    }
-  );
+  return new ImageResponse(OgImageTemplate({ title, description, category, type }), {
+    width: 1200,
+    height: 630,
+    fonts: [
+      {
+        name: 'Noto Sans JP',
+        data: fontRegular,
+        style: 'normal',
+        weight: 400,
+      },
+      {
+        name: 'Noto Sans JP',
+        data: fontBold,
+        style: 'normal',
+        weight: 700,
+      },
+    ],
+  });
 };
