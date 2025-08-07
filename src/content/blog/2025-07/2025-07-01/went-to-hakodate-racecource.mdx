@@ -5,26 +5,33 @@ pubDate: '2025-07-01'
 heroImage: './PXL_20250629_003410017.MP.jpg'
 category: '競馬'
 ---
+import CaptionedImage from '@/components/CaptionedImage.astro';
+import hakodateRacecourse from './PXL_20250629_002748643.jpg';
+import turfy from './PXL_20250629_002835819.jpg';
+import veloceEra from './DSC02485~2.JPG';
+import fukunosuke from './DSC01958.JPG';
+import yunokawa from './PXL_20250628_103556874.jpg';
+import luckyPierrot from './PXL_20250630_015103038.jpg';
 
 # 函館競馬場
 
-![函館競馬場](./PXL_20250629_002748643.jpg)
+<CaptionedImage src={hakodateRacecourse} alt="函館競馬場" />
 
 2025/06/29 (日)、マイル修行も兼ねて函館競馬場へ行ってきた。
 
 いわゆる第3場ということもあり、全体的にコンパクトにまとまった競馬場だった。
 特徴的なのは、パドックを観覧するための指定席が存在することだろうか。
 
-![新撰組仕様のターフィーくん](./PXL_20250629_002835819.jpg)
+<CaptionedImage src={turfy} alt="新撰組仕様のターフィーくん" />
 函館らしく、ターフィーくんも新撰組仕様である。
 
-![ヴェローチェエラ&佐々木大輔騎手](./DSC02485~2.JPG)
+<CaptionedImage src={veloceEra} alt="ヴェローチェエラ&佐々木大輔騎手" />
 メインレースの函館記念は、ヴェローチェエラ & 佐々木大輔騎手がコースレコードで勝利。
 
 函館2000mのレコードと言えばピンとくる競馬好きも多いであろう、あの[サッカーボーイ](https://db.netkeiba.com/horse/1985103538/)の不滅のレコードが実に37年ぶりに更新されたのである。
 現地でアナウンスされた瞬間、思わず「嘘ぉ」と声を上げてしまった。
 
-![ハヤテノフクノスケ](./DSC01958.JPG)
+<CaptionedImage src={fukunosuke} alt="ハヤテノフクノスケ" />
 なお、私の本命はというと、青森県産馬・ウインバリアシオン産駒である[ハヤテノフクノスケ](https://db.netkeiba.com/horse/2021109070/)。
 惜しくも2着で重賞初制覇とはならなかったが、賞金の加算に成功。
 
@@ -32,7 +39,7 @@ category: '競馬'
 
 # 湯の川温泉
 
-![湯の川温泉](./PXL_20250628_103556874.jpg)
+<CaptionedImage src={yunokawa} alt="湯の川温泉" />
 
 函館市内には既に行ったことがあったので、今回の宿泊地は湯の川温泉にしてみた。
 
@@ -46,6 +53,6 @@ category: '競馬'
 
 酷暑の関東と比べ気候的にも過ごしやすく、来年もまた行ってみてもいいかもしれない。
 
-![ラッキーピエロ](./PXL_20250630_015103038.jpg)
+<CaptionedImage src={luckyPierrot} alt="ラッキーピエロ" />
 
 余談だが、函館名物のラッキーピエロへ久しぶりに行きたかったものの、混雑で断念したのが心残り。
