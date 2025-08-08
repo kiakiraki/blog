@@ -55,7 +55,8 @@ function calculateRelatedScore(currentPost: BlogPost, targetPost: BlogPost): num
     Math.abs(currentPost.data.pubDate.getTime() - targetPost.data.pubDate.getTime()) /
     (1000 * 60 * 60 * 24); // 日数差
 
-  const timeScore = Math.max(0, 30 - daysDiff / 30); // 30日で0点
+  // 0日差で30点、30日差で0点になるようにスケール
+  const timeScore = Math.max(0, 30 - daysDiff); // 30日で0点
   score += timeScore;
 
   // タイトル類似度（最大20点） - 簡易版：共通文字数
