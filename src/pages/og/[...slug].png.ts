@@ -1,4 +1,5 @@
 import { ImageResponse } from '@vercel/og';
+import type { APIContext } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 export const runtime = 'edge';
@@ -26,7 +27,7 @@ function h(type: string, props: Record<string, any> = {}, ...children: any[]): a
   return { type, props: { ...props, children: children.length > 1 ? children : children[0] } };
 }
 
-export async function GET({ params, props }: { params: { slug: string }; props: Props }) {
+export async function GET({ params, props, url }: APIContext<Props>) {
   const { slug } = params;
 
   let title = '趣味の記録';
@@ -49,12 +50,12 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
     type = 'プロフィール';
   }
 
-  const fontRegular = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-400-normal.woff'
-  ).then(res => res.arrayBuffer());
-  const fontBold = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-700-normal.woff'
-  ).then(res => res.arrayBuffer());
+  const fontRegular = await fetch(new URL('/fonts/NotoSansJP-Regular.ttf', url.origin)).then(res =>
+    res.arrayBuffer()
+  );
+  const fontBold = await fetch(new URL('/fonts/NotoSansJP-Bold.ttf', url.origin)).then(res =>
+    res.arrayBuffer()
+  );
 
   const element = h(
     'div',
