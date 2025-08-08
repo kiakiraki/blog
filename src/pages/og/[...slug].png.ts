@@ -50,10 +50,10 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
   }
 
   const fontRegular = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-400-normal.woff'
+    new URL('../../../assets/fonts/NotoSansJP-Regular.woff', import.meta.url)
   ).then(res => res.arrayBuffer());
   const fontBold = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-700-normal.woff'
+    new URL('../../../assets/fonts/NotoSansJP-Bold.woff', import.meta.url)
   ).then(res => res.arrayBuffer());
 
   const element = h(
