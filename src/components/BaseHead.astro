@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, AUTHOR_NAME } from '../consts';
 import FallbackImage from '../assets/blog-placeholder-1.jpg';
 import type { ImageMetadata } from 'astro';
 
@@ -71,7 +71,7 @@ if (image && typeof image === 'string') {
 <title>{pageTitle}</title>
 <meta content={pageTitle} name="title" />
 <meta content={description} name="description" />
-<meta content={SITE_TITLE} name="author" />
+<meta content={AUTHOR_NAME} name="author" />
 <meta content="index, follow" name="robots" />
 
 <!-- Open Graph / Facebook -->
