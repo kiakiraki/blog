@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { getRelatedPosts } from './relatedPosts';
+import { describe, it, expect, run } from 'vitest';
+import { getRelatedPosts } from './relatedPosts.js';
 
 type TestPost = any;
 
@@ -45,3 +45,5 @@ describe('getRelatedPosts', () => {
     expect(result[0].id).toBe('similar');
   });
 });
+
+await run();
