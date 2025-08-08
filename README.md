@@ -9,15 +9,23 @@ https://blog.kiakiraki.dev/
 ```
 ├── public/
 ├── src/
-│   ├── components/     # Astroコンポーネント
-│   ├── content/        # ブログ記事などのコンテンツ
-│   ├── layouts/        # ページのレイアウト
-│   └── pages/          # 各ページのファイル
-├── astro.config.mjs    # Astroの設定ファイル
+│   ├── assets/          # 画像などのアセット
+│   ├── components/      # Astroコンポーネント
+│   ├── content/         # ブログ記事などのコンテンツ
+│   ├── layouts/         # ページのレイアウト
+│   ├── pages/           # 各ページのファイル
+│   ├── styles/          # グローバルスタイル
+│   ├── utils/           # ユーティリティ関数
+│   └── consts.ts        # 定数定義
+├── astro.config.mjs   # Astroの設定ファイル
 ├── package.json
 └── tsconfig.json
 ```
 
+- `src/assets/`: サイトで使用する画像などのアセットを管理します。
+- `src/styles/`: グローバルスタイルをまとめたCSSファイルを配置します。
+- `src/utils/`: 共通で使うユーティリティ関数を置きます。
+- `src/consts.ts`: サイト共通の定数を定義します。
 - `src/pages/`: 各ページのファイルが配置されます。ファイル名に基づいてルーティングが生成されます。
 - `src/components/`: 再利用可能なAstroコンポーネントを配置します。
 - `src/content/`: ブログ記事などのコンテンツをMarkdownやMDX形式で管理します。
