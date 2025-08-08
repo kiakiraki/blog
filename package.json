@@ -11,7 +11,8 @@
     "lint:check": "eslint . --ext .js,.ts,.astro",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "astro check"
+    "typecheck": "astro check",
+    "test": "vitest"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.2",
@@ -37,6 +38,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.38.0"
+    "typescript-eslint": "^8.38.0",
+    "vitest": "^1.6.1"
   }
 }
