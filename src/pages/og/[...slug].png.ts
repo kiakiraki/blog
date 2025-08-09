@@ -7,6 +7,16 @@ type Props = {
   post?: CollectionEntry<'blog'>;
 };
 
+const fontRegular = fetch(
+  'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-400-normal.woff'
+).then(res => res.arrayBuffer());
+const fontMedium = fetch(
+  'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-500-normal.woff'
+).then(res => res.arrayBuffer());
+const fontBold = fetch(
+  'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-700-normal.woff'
+).then(res => res.arrayBuffer());
+
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   const paths = posts.map(post => ({
@@ -49,12 +59,11 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
     type = 'プロフィール';
   }
 
-  const fontRegular = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-400-normal.woff'
-  ).then(res => res.arrayBuffer());
-  const fontBold = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-700-normal.woff'
-  ).then(res => res.arrayBuffer());
+  const [fontRegularData, fontMediumData, fontBoldData] = await Promise.all([
+    fontRegular,
+    fontMedium,
+    fontBold,
+  ]);
 
   const element = h(
     'div',
@@ -98,7 +107,7 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
             padding: '8px 16px',
             color: '#ffffff',
             fontSize: '18px',
-            fontWeight: 600,
+            fontWeight: 700,
           },
         },
         type
@@ -128,7 +137,7 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
           style: {
             marginTop: title.length > 30 ? '40px' : '20px',
             fontSize: title.length > 30 ? '42px' : '56px',
-            fontWeight: 800,
+            fontWeight: 700,
             color: '#1f2937',
             textAlign: 'center',
             whiteSpace: 'pre-wrap',
@@ -158,7 +167,7 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
             bottom: '30px',
             right: '50px',
             fontSize: '20px',
-            fontWeight: 600,
+            fontWeight: 700,
             color: '#0ea5e9',
           },
         },
@@ -171,8 +180,9 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
     width: 1200,
     height: 630,
     fonts: [
-      { name: 'Noto Sans JP', data: fontRegular, weight: 400, style: 'normal' },
-      { name: 'Noto Sans JP', data: fontBold, weight: 700, style: 'normal' },
+      { name: 'Noto Sans JP', data: fontRegularData, weight: 400, style: 'normal' },
+      { name: 'Noto Sans JP', data: fontMediumData, weight: 500, style: 'normal' },
+      { name: 'Noto Sans JP', data: fontBoldData, weight: 700, style: 'normal' },
     ],
   });
 }
