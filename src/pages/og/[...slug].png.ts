@@ -38,7 +38,7 @@ async function fetchWithFallback(url: string, fallbackUrl: string): Promise<Arra
   try {
     const res = await fetch(url);
     if (res.ok) return res.arrayBuffer();
-  } catch (_) {
+  } catch {
     // ignore and try fallback
   }
   const resFallback = await fetch(fallbackUrl);
@@ -50,14 +50,8 @@ function absoluteUrl(path: string, request: Request): string {
 }
 
 async function getFonts(request: Request) {
-  font400Promise ||= fetchWithFallback(
-    absoluteUrl(FONT_LOCAL_400, request),
-    FONT_CDN_400
-  );
-  font700Promise ||= fetchWithFallback(
-    absoluteUrl(FONT_LOCAL_700, request),
-    FONT_CDN_700
-  );
+  font400Promise ||= fetchWithFallback(absoluteUrl(FONT_LOCAL_400, request), FONT_CDN_400);
+  font700Promise ||= fetchWithFallback(absoluteUrl(FONT_LOCAL_700, request), FONT_CDN_700);
   const [font400, font700] = await Promise.all([font400Promise, font700Promise]);
   return { font400, font700 };
 }
