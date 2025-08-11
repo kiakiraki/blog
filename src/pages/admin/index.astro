@@ -16,7 +16,35 @@ const posts = (await getCollection('blog')).sort(
 ---
 <Layout title="MDX Editor - Select a Post">
   <main class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">Select a Post to Edit</h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">Select a Post to Edit</h1>
+      <button id="new-post-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition-colors">
+        Create New Post
+      </button>
+    </div>
+
+    <div id="new-post-form-container" class="hidden mb-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+      <h2 class="text-2xl font-bold mb-4">New Post Details</h2>
+      <form id="new-post-form">
+        <div class="mb-4">
+          <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+          <input type="text" id="title" name="title" required class="w-full p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
+        </div>
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+          <input type="text" id="description" name="description" required class="w-full p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
+        </div>
+        <div class="mb-4">
+          <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</a-label>
+          <input type="text" id="category" name="category" required class="w-full p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
+        </div>
+        <div>
+          <button type="submit" id="create-post-submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Create Post</button>
+          <button type="button" id="cancel-new-post" class="ml-2 text-gray-600 dark:text-gray-400">Cancel</button>
+        </div>
+      </form>
+    </div>
+
     <ul class="space-y-4">
       {posts.map(post => (
         <li>
@@ -30,4 +58,51 @@ const posts = (await getCollection('blog')).sort(
       ))}
     </ul>
   </main>
+
+  <script is:inline>
+    const newPostBtn = document.getElementById('new-post-btn');
+    const formContainer = document.getElementById('new-post-form-container');
+    const newPostForm = document.getElementById('new-post-form');
+    const cancelBtn = document.getElementById('cancel-new-post');
+    const submitBtn = document.getElementById('create-post-submit');
+
+    newPostBtn.addEventListener('click', () => {
+      formContainer.classList.remove('hidden');
+      newPostBtn.classList.add('hidden');
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      formContainer.classList.add('hidden');
+      newPostBtn.classList.remove('hidden');
+    });
+
+    newPostForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating...';
+
+      const formData = new FormData(newPostForm);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('/api/create-post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to create post: ${await response.text()}`);
+        }
+
+        const result = await response.json();
+        window.location.href = result.editUrl;
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Post';
+      }
+    });
+  </script>
 </Layout>
