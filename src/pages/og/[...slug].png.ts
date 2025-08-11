@@ -22,11 +22,59 @@ export async function getStaticPaths() {
   return paths;
 }
 
+// --- Font loading (prefer self-hosted; fallback to CDN) ---
+const FONT_NAME = 'Noto Sans JP';
+const FONT_LOCAL_400 = '/fonts/NotoSansJP-400.woff2';
+const FONT_LOCAL_700 = '/fonts/NotoSansJP-700.woff2';
+const FONT_CDN_400 =
+  'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-400-normal.woff2';
+const FONT_CDN_700 =
+  'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-700-normal.woff2';
+
+let font400Promise: Promise<ArrayBuffer> | null = null;
+let font700Promise: Promise<ArrayBuffer> | null = null;
+
+async function fetchWithFallback(url: string, fallbackUrl: string): Promise<ArrayBuffer> {
+  try {
+    const res = await fetch(url);
+    if (res.ok) return res.arrayBuffer();
+  } catch (_) {
+    // ignore and try fallback
+  }
+  const resFallback = await fetch(fallbackUrl);
+  return resFallback.arrayBuffer();
+}
+
+function absoluteUrl(path: string, request: Request): string {
+  return new URL(path, request.url).toString();
+}
+
+async function getFonts(request: Request) {
+  font400Promise ||= fetchWithFallback(
+    absoluteUrl(FONT_LOCAL_400, request),
+    FONT_CDN_400
+  );
+  font700Promise ||= fetchWithFallback(
+    absoluteUrl(FONT_LOCAL_700, request),
+    FONT_CDN_700
+  );
+  const [font400, font700] = await Promise.all([font400Promise, font700Promise]);
+  return { font400, font700 };
+}
+
 function h(type: string, props: Record<string, any> = {}, ...children: any[]): any {
   return { type, props: { ...props, children: children.length > 1 ? children : children[0] } };
 }
 
-export async function GET({ params, props }: { params: { slug: string }; props: Props }) {
+export async function GET({
+  params,
+  props,
+  request,
+}: {
+  params: { slug: string };
+  props: Props;
+  request: Request;
+}) {
   const { slug } = params;
 
   let title = '趣味の記録';
@@ -49,12 +97,7 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
     type = 'プロフィール';
   }
 
-  const fontRegular = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-400-normal.woff'
-  ).then(res => res.arrayBuffer());
-  const fontBold = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-700-normal.woff'
-  ).then(res => res.arrayBuffer());
+  const { font400: fontRegular, font700: fontBold } = await getFonts(request);
 
   const element = h(
     'div',
@@ -128,7 +171,7 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
           style: {
             marginTop: title.length > 30 ? '40px' : '20px',
             fontSize: title.length > 30 ? '42px' : '56px',
-            fontWeight: 800,
+            fontWeight: 700,
             color: '#1f2937',
             textAlign: 'center',
             whiteSpace: 'pre-wrap',
@@ -171,8 +214,8 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
     width: 1200,
     height: 630,
     fonts: [
-      { name: 'Noto Sans JP', data: fontRegular, weight: 400, style: 'normal' },
-      { name: 'Noto Sans JP', data: fontBold, weight: 700, style: 'normal' },
+      { name: FONT_NAME, data: fontRegular, weight: 400, style: 'normal' },
+      { name: FONT_NAME, data: fontBold, weight: 700, style: 'normal' },
     ],
   });
 }
