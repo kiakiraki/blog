@@ -1,6 +1,6 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import { getEntryBySlug } from 'astro:content';
+import { getEntry } from 'astro:content';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -8,16 +8,16 @@ import path from 'path';
 if (import.meta.env.PROD) {
   return new Response(null, {
     status: 404,
-    statusText: 'Not found'
+    statusText: 'Not found',
   });
 }
 
 const { slug } = Astro.params;
 if (!slug) {
-  return new Response("Slug not provided", { status: 400 });
+  return new Response('Slug not provided', { status: 400 });
 }
 
-const post = await getEntryBySlug('blog', slug);
+const post = await getEntry('blog', slug);
 
 if (!post) {
   return new Response(`Post with slug ${slug} not found`, { status: 404 });
@@ -27,31 +27,41 @@ if (!post) {
 const filePath = path.join(process.cwd(), 'src', 'content', 'blog', `${slug}.mdx`);
 const rawContent = await fs.readFile(filePath, 'utf-8');
 ---
+
 <Layout title={`Editing: ${post.data.title}`}>
   <main class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-2">Editing: {post.data.title}</h1>
     <p class="mb-6 text-gray-500 dark:text-gray-400">Slug: {slug}</p>
 
     <div class="mb-4">
-      <button id="save-btn" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+      <button
+        class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition-colors"         id="save-btn"
+      >
         Save Changes
       </button>
     </div>
 
-    <textarea id="editor" class="w-full h-[60vh] p-4 font-mono bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md resize-y">
-{rawContent}
+    <textarea
+      class="w-full h-[60vh] p-4 font-mono bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md resize-y"       id="editor"
+    >
+      {rawContent}
     </textarea>
 
-    <div id="dropzone" class="mt-6 border-2 border-dashed border-gray-400 dark:border-gray-500 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+    <div
+      class="mt-6 border-2 border-dashed border-gray-400 dark:border-gray-500 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"       id="dropzone"
+    >
       <p class="text-gray-500 dark:text-gray-400">Drag & drop images here to upload</p>
     </div>
 
-    <div id="image-options" class="mt-4 hidden">
-        <p class="mb-2">Insert as:</p>
-        <button id="insert-captioned" class="bg-gray-200 dark:bg-gray-700 py-1 px-3 rounded mr-2">CaptionedImage</button>
-        <button id="insert-grid" class="bg-gray-200 dark:bg-gray-700 py-1 px-3 rounded">ImageGrid (coming soon)</button>
+    <div class="mt-4 hidden" id="image-options">
+      <p class="mb-2">Insert as:</p>
+      <button class="bg-gray-200 dark:bg-gray-700 py-1 px-3 rounded mr-2" id="insert-captioned"
+        >CaptionedImage</button
+      >
+      <button class="bg-gray-200 dark:bg-gray-700 py-1 px-3 rounded" id="insert-grid"
+        >ImageGrid (coming soon)</button
+      >
     </div>
-
   </main>
   <script define:vars={{ slug }}>
     const saveBtn = document.getElementById('save-btn');
@@ -82,17 +92,17 @@ const rawContent = await fs.readFile(filePath, 'utf-8');
     });
 
     // 2. Image Drag and Drop
-    dropzone.addEventListener('dragover', (e) => {
+    dropzone.addEventListener('dragover', e => {
       e.preventDefault();
       dropzone.classList.add('border-blue-500', 'bg-blue-100', 'dark:bg-blue-900');
     });
 
-    dropzone.addEventListener('dragleave', (e) => {
+    dropzone.addEventListener('dragleave', e => {
       e.preventDefault();
       dropzone.classList.remove('border-blue-500', 'bg-blue-100', 'dark:bg-blue-900');
     });
 
-    dropzone.addEventListener('drop', async (e) => {
+    dropzone.addEventListener('drop', async e => {
       e.preventDefault();
       dropzone.classList.remove('border-blue-500', 'bg-blue-100', 'dark:bg-blue-900');
 
@@ -141,19 +151,23 @@ const rawContent = await fs.readFile(filePath, 'utf-8');
 
         // Insert the import statement at the top of the frontmatter
         const frontmatterEnd = editor.value.indexOf('---', 3) + 3;
-        const newContent = editor.value.slice(0, frontmatterEnd) + '\\n' + importStatement + editor.value.slice(frontmatterEnd);
+        const newContent =
+          editor.value.slice(0, frontmatterEnd) +
+          '\\n' +
+          importStatement +
+          editor.value.slice(frontmatterEnd);
         editor.value = newContent;
 
         // Insert component tag at cursor or end
         editor.value += '\\n' + componentTag;
 
         alert('Image uploaded and inserted!');
-
       } catch (error) {
         console.error(error);
         alert(`Error uploading image: ${error.message}`);
       } finally {
-        dropzone.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Drag & drop images here to upload</p>';
+        dropzone.innerHTML =
+          '<p class="text-gray-500 dark:text-gray-400">Drag & drop images here to upload</p>';
       }
     }
   </script>

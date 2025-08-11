@@ -29,9 +29,12 @@ export const POST: APIRoute = async ({ request }) => {
     });
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ message: 'Error saving file', error: (error as Error).message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ message: 'Error saving file', error: (error as Error).message }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 };

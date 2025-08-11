@@ -35,7 +35,14 @@ export const POST: APIRoute = async ({ request }) => {
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
 
-    const dirPath = path.join(process.cwd(), 'src', 'content', 'blog', `${year}-${month}`, `${year}-${month}-${day}`);
+    const dirPath = path.join(
+      process.cwd(),
+      'src',
+      'content',
+      'blog',
+      `${year}-${month}`,
+      `${year}-${month}-${day}`
+    );
     await fs.mkdir(dirPath, { recursive: true });
 
     const filePath = path.join(dirPath, `${slug}.mdx`);
@@ -64,9 +71,12 @@ Write your content here.
     });
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ message: 'Error creating post', error: (error as Error).message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ message: 'Error creating post', error: (error as Error).message }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 };

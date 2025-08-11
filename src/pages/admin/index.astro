@@ -6,7 +6,7 @@ import { getCollection } from 'astro:content';
 if (import.meta.env.PROD) {
   return new Response(null, {
     status: 404,
-    statusText: 'Not found'
+    statusText: 'Not found',
   });
 }
 
@@ -14,48 +14,89 @@ const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 ---
+
 <Layout title="MDX Editor - Select a Post">
   <main class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold">Select a Post to Edit</h1>
-      <button id="new-post-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition-colors">
+      <button
+        class="bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition-colors"         id="new-post-btn"
+      >
         Create New Post
       </button>
     </div>
 
-    <div id="new-post-form-container" class="hidden mb-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+    <div
+      class="hidden mb-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border dark:border-gray-700"       id="new-post-form-container"
+    >
       <h2 class="text-2xl font-bold mb-4">New Post Details</h2>
       <form id="new-post-form">
         <div class="mb-4">
-          <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
-          <input type="text" id="title" name="title" required class="w-full p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Title
+            {/* eslint-disable-next-line astro/jsx-a11y/control-has-associated-label */}
+            <input
+              class="mt-1 w-full p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+              id="title"
+              name="title"
+              required
+              type="text"
+            />
+          </label>
         </div>
         <div class="mb-4">
-          <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-          <input type="text" id="description" name="description" required class="w-full p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Description
+            {/* eslint-disable-next-line astro/jsx-a11y/control-has-associated-label */}
+            <input
+              class="mt-1 w-full p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+              id="description"
+              name="description"
+              required
+              type="text"
+            />
+          </label>
         </div>
         <div class="mb-4">
-          <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</a-label>
-          <input type="text" id="category" name="category" required class="w-full p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Category
+            {/* eslint-disable-next-line astro/jsx-a11y/control-has-associated-label */}
+            <input
+              class="mt-1 w-full p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+              id="category"
+              name="category"
+              required
+              type="text"
+            />
+          </label>
         </div>
         <div>
-          <button type="submit" id="create-post-submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">Create Post</button>
-          <button type="button" id="cancel-new-post" class="ml-2 text-gray-600 dark:text-gray-400">Cancel</button>
+          <button
+            class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"             id="create-post-submit"             type="submit"
+            >Create Post</button
+          >
+          <button class="ml-2 text-gray-600 dark:text-gray-400" id="cancel-new-post" type="button"
+            >Cancel</button
+          >
         </div>
       </form>
     </div>
 
     <ul class="space-y-4">
-      {posts.map(post => (
-        <li>
-          <a href={`/admin/edit/${post.slug}`} class="block p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            <h2 class="text-xl font-semibold">{post.data.title}</h2>
-            <p class="text-gray-500 dark:text-gray-400 text-sm">
-              {post.data.pubDate.toDateString()}
-            </p>
-          </a>
-        </li>
-      ))}
+      {
+        posts.map(post => (
+          <li>
+            <a
+              class="block p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"               href={`/admin/edit/${post.slug}`}
+            >
+              <h2 class="text-xl font-semibold">{post.data.title}</h2>
+              <p class="text-gray-500 dark:text-gray-400 text-sm">
+                {post.data.pubDate.toDateString()}
+              </p>
+            </a>
+          </li>
+        ))
+      }
     </ul>
   </main>
 
@@ -76,7 +117,7 @@ const posts = (await getCollection('blog')).sort(
       newPostBtn.classList.remove('hidden');
     });
 
-    newPostForm.addEventListener('submit', async (e) => {
+    newPostForm.addEventListener('submit', async e => {
       e.preventDefault();
       submitBtn.disabled = true;
       submitBtn.textContent = 'Creating...';
