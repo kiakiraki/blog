@@ -1,3 +1,32 @@
-# OGP images - override Cloudflare default caching
+# ------------------------------------------------
+# Security Headers
+# Apply these to all pages.
+# ------------------------------------------------
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; object-src 'none'; frame-ancestors 'none';
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# ------------------------------------------------
+# Caching Rules
+# Cache immutable assets for one year.
+# ------------------------------------------------
+
+# Generated OG images, and other images.
 /og/*.png
+  Cache-Control: public, max-age=31536000, immutable
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+# Other static assets from the public directory
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+/*.woff2
   Cache-Control: public, max-age=31536000, immutable
