@@ -1,0 +1,11 @@
+---
+import { CATEGORIES } from '@/consts';
+
+export function getStaticPaths() {
+  return CATEGORIES.map(category => ({
+    params: { category: encodeURIComponent(category) },
+  }));
+}
+
+Astro.redirect(`/category/${Astro.params.category}/1`, 301);
+---
