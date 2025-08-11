@@ -1,0 +1,132 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import type { GetStaticPaths, Page } from 'astro';
+import Layout from '@/layouts/Layout.astro';
+import FormattedDate from '@/components/FormattedDate.astro';
+import { Image } from 'astro:assets';
+import { CATEGORIES } from '@/consts';
+import type { Category } from '@/consts';
+import Pagination from '@/components/Pagination.astro';
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const allPosts = (await getCollection('blog')).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
+
+  // カテゴリ別の記事数を計算
+  const categoryCounts = CATEGORIES.reduce(
+    (acc, category) => {
+      acc[category] = allPosts.filter(post => post.data.category === category).length;
+      return acc;
+    },
+    {} as Record<Category, number>
+  );
+
+  return paginate(allPosts, {
+    pageSize: 9,
+    props: { allPosts, categoryCounts },
+  });
+};
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>;
+  allPosts: CollectionEntry<'blog'>[];
+  categoryCounts: Record<Category, number>;
+}
+
+const { page, allPosts, categoryCounts } = Astro.props;
+const { data: posts } = page;
+---
+
+<Layout description="趣味についての雑多な記録" title="ブログ記事一覧">
+  <div class="container mx-auto px-4 py-16">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+          ブログ記事一覧
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          趣味についての雑多な記録
+        </p>
+        <div class="w-24 h-1 bg-primary-600 mx-auto mt-6"></div>
+      </div>
+
+      <!-- Category Links -->
+      <div class="mb-12">
+        <div class="flex flex-wrap justify-center gap-3">
+          <a
+            class="px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-primary-600 text-white"
+            href="/blog"
+          >
+            すべて ({allPosts.length})
+          </a>
+          {
+            CATEGORIES.map(category => (
+              <a
+                class="px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                href={`/category/${encodeURIComponent(category)}`}
+              >
+                {category} ({categoryCounts[category]})
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Posts Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {
+          posts.map(post => (
+            <article class="card group hover:shadow-xl transition-all duration-300">
+              <a class="block" href={`/blog/${post.id}/`}>
+                {post.data.heroImage && (
+                  <div class="mb-4 overflow-hidden rounded-lg">
+                    <Image
+                      alt={post.data.title}
+                      class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      height={225}
+                      src={post.data.heroImage}
+                      width={400}
+                    />
+                  </div>
+                )}
+
+                <div class="space-y-3">
+                  <h2 class="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+                    {post.data.title}
+                  </h2>
+
+                  {post.data.description && (
+                    <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">
+                      {post.data.description}
+                    </p>
+                  )}
+
+                  <div class="flex items-center justify-between pt-2">
+                    <div class="text-sm text-gray-500 dark:text-gray-300">
+                      <FormattedDate date={post.data.pubDate} />
+                    </div>
+
+                    <span class="text-primary-600 dark:text-primary-400 text-sm font-medium group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">
+                      続きを読む →
+                    </span>
+                  </div>
+
+                  <div class="mt-3">
+                    <span class="inline-block bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs px-2 py-1 rounded-full">
+                      {post.data.category}
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          ))
+        }
+      </div>
+
+      <!-- Pagination -->
+      <Pagination {page} />
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,81 @@
+---
+import type { Page } from 'astro';
+
+interface Props {
+  page: Page;
+}
+
+const { page } = Astro.props;
+---
+
+<nav aria-label="ページネーション" class="mt-16">
+  <div class="flex items-center justify-center space-x-4">
+    {
+      page.url.prev ? (
+        <a
+          aria-label="前のページへ"
+          class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          href={page.url.prev}
+          title="前のページへ"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              clip-rule="evenodd"
+              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </a>
+      ) : (
+        <span
+          class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed"
+          title="前のページはありません"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              clip-rule="evenodd"
+              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </span>
+      )
+    }
+
+    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+      {page.currentPage} / {page.lastPage}
+    </span>
+
+    {
+      page.url.next ? (
+        <a
+          aria-label="次のページへ"
+          class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          href={page.url.next}
+          title="次のページへ"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              clip-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </a>
+      ) : (
+        <span
+          class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed"
+          title="次のページはありません"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              clip-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              fill-rule="evenodd"
+            />
+          </svg>
+        </span>
+      )
+    }
+  </div>
+</nav>
