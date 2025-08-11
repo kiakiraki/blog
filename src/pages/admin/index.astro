@@ -21,14 +21,16 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold">Select a Post to Edit</h1>
       <button
-        class="bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition-colors"         id="new-post-btn"
+        class="bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition-colors"
+        id="new-post-btn"
       >
         Create New Post
       </button>
     </div>
 
     <div
-      class="hidden mb-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border dark:border-gray-700"       id="new-post-form-container"
+      class="hidden mb-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border dark:border-gray-700"
+      id="new-post-form-container"
     >
       <h2 class="text-2xl font-bold mb-4">New Post Details</h2>
       <form id="new-post-form">
@@ -73,8 +75,9 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
         </div>
         <div>
           <button
-            class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"             id="create-post-submit"             type="submit"
-            >Create Post</button
+            class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+            id="create-post-submit"
+            type="submit">Create Post</button
           >
           <button class="ml-2 text-gray-600 dark:text-gray-400" id="cancel-new-post" type="button"
             >Cancel</button
@@ -88,7 +91,8 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
         posts.map(post => (
           <li>
             <a
-              class="block p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"               href={`/admin/edit/${post.id}`}
+              class="block p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              href={`/admin/edit/${post.id}`}
             >
               <h2 class="text-xl font-semibold">{post.data.title}</h2>
               <p class="text-gray-500 dark:text-gray-400 text-sm">
