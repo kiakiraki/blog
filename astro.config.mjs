@@ -12,7 +12,13 @@ export default defineConfig({
   adapter: cloudflare({
     imageService: 'compile',
   }),
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      // エディタページをサイトマップから除外
+      filter: page => !page.includes('/editor'),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
     define: {
