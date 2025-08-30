@@ -34,7 +34,8 @@ export const GET: APIRoute = async ({ url }) => {
     const buf = await readFile(abs);
     const ext = path.extname(abs).toLowerCase();
     const type = mimeType(ext);
-    return new Response(buf, {
+    // Use Blob for cross-env BodyInit compatibility (CI may not accept Buffer)
+    return new Response(new Blob([buf]), {
       status: 200,
       headers: {
         'content-type': type,
