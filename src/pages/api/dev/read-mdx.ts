@@ -19,7 +19,8 @@ export const GET: APIRoute = async ({ url }) => {
     const content = await readFile(abs, 'utf-8');
     return json({ ok: true, path: rel, content });
   } catch (e: any) {
-    return json({ ok: false, error: String(e?.message || e) }, 500);
+    console.error('Error in read-mdx API:', e);
+    return json({ ok: false, error: "Internal server error" }, 500);
   }
 };
 
