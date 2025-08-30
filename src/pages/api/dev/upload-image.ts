@@ -55,7 +55,8 @@ export const POST: APIRoute = async ({ request }) => {
 
     return json({ ok: true, files, publishDate, yearMonth });
   } catch (err: any) {
-    return json({ ok: false, error: String(err?.message || err) }, 500);
+    console.error('Upload image failed:', err);
+    return json({ ok: false, error: "サーバーエラーが発生しました" }, 500);
   }
 };
 
