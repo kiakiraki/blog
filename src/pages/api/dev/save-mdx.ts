@@ -66,7 +66,9 @@ export const POST: APIRoute = async ({ request }) => {
     await writeFile(abs, data, { encoding: 'utf-8' as any });
     return json({ ok: true, path: toRel(abs) });
   } catch (e: any) {
-    return json({ ok: false, error: String(e?.message || e) }, 500);
+    // Log the error and stack trace for debugging, but do not expose to client
+    console.error('Error in save-mdx API:', e && e.stack ? e.stack : e);
+    return json({ ok: false, error: 'Internal Server Error' }, 500);
   }
 };
 
