@@ -219,7 +219,9 @@
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-2" for="captioned-slug">変数名スラッグ（任意）</label>
+        <label class="block text-sm font-medium mb-2" for="captioned-slug"
+          >変数名スラッグ（任意）</label
+        >
         <input
           id="captioned-slug"
           type="text"
@@ -1128,7 +1130,10 @@
       const content = this.input.value;
       const already = new RegExp(`^import\\s+${name}\\s+from`, 'm').test(content);
       if (already) return;
-      const path = name === 'CaptionedImage' ? "@/components/CaptionedImage.astro" : "@/components/ImageGrid.astro";
+      const path =
+        name === 'CaptionedImage'
+          ? '@/components/CaptionedImage.astro'
+          : '@/components/ImageGrid.astro';
       const fmMatch = content.match(/^---[\s\S]*?---\n?/);
       const startIndex = fmMatch ? fmMatch[0].length : 0;
       const head = content.slice(0, startIndex);
@@ -1143,7 +1148,9 @@
         return;
       }
       try {
-        const res = await fetch(`/api/dev/list-images?publishDate=${encodeURIComponent(publishDate)}`);
+        const res = await fetch(
+          `/api/dev/list-images?publishDate=${encodeURIComponent(publishDate)}`
+        );
         if (!res.ok) throw new Error('failed to list images');
         const data = await res.json();
         const files: string[] = Array.isArray(data?.files) ? data.files : [];
@@ -1187,11 +1194,13 @@
       if (m) return m[1];
 
       // Generate unique identifier
-      const base = preferredIdent ? this.normalizeIdent(preferredIdent) : this.toIdentifier(pathStr);
+      const base = preferredIdent
+        ? this.normalizeIdent(preferredIdent)
+        : this.toIdentifier(pathStr);
       const used = new Set(
-        Array.from(content.matchAll(/^import\s+([A-Za-z_$][\w$]*)\s+from\s+['"][^'"]+['"];?$/gm)).map(
-          x => x[1]
-        )
+        Array.from(
+          content.matchAll(/^import\s+([A-Za-z_$][\w$]*)\s+from\s+['"][^'"]+['"];?$/gm)
+        ).map(x => x[1])
       );
       let ident = base;
       let i = 1;
@@ -1222,7 +1231,10 @@
 
     nextIndexForSlug(slug: string): number {
       const content = this.input.value;
-      const re = new RegExp(`^import\\s+(${this.escapeForRegExp(slug)})(\\d+)\\s+from\\s+['\"][^'\"]+['\"];?\\s*$`, 'gm');
+      const re = new RegExp(
+        `^import\\s+(${this.escapeForRegExp(slug)})(\\d+)\\s+from\\s+['\"][^'\"]+['\"];?\\s*$`,
+        'gm'
+      );
       let max = 0;
       let m: RegExpExecArray | null;
       while ((m = re.exec(content))) {

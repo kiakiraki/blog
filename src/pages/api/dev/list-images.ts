@@ -18,7 +18,14 @@ export const GET: APIRoute = async ({ url }) => {
 
   try {
     const [y, m, d] = publishDate.split('-');
-    const baseDir = path.join(PROJECT_ROOT, 'src', 'content', 'blog', `${y}-${m}`, `${y}-${m}-${d}`);
+    const baseDir = path.join(
+      PROJECT_ROOT,
+      'src',
+      'content',
+      'blog',
+      `${y}-${m}`,
+      `${y}-${m}-${d}`
+    );
     const base = path.resolve(baseDir);
 
     const files: string[] = [];
@@ -57,4 +64,3 @@ function json(body: unknown, status = 200) {
     headers: { 'content-type': 'application/json; charset=utf-8' },
   });
 }
-
