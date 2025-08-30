@@ -20,7 +20,7 @@ export const GET: APIRoute = async ({ url }) => {
     return json({ ok: true, path: rel, content });
   } catch (e: any) {
     console.error('Error in read-mdx API:', e);
-    return json({ ok: false, error: "Internal server error" }, 500);
+    return json({ ok: false, error: 'Internal server error' }, 500);
   }
 };
 

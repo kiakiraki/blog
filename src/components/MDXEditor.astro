@@ -39,8 +39,8 @@
             id="load-btn">📂 読込</button
           >
           <button
-            class="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm"
-            id="download-btn">💾 DL</button
+            class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm"
+            id="save-btn">💾 保存</button
           >
           <button
             class="px-3 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors text-sm"
@@ -341,6 +341,7 @@
     loadModal: HTMLDivElement;
     mdxList: any[];
     uploadedImages: Array<{ name: string; url: string; file: File }>;
+    importMap: Record<string, string>;
 
     constructor() {
       this.input = document.getElementById('mdx-input') as HTMLTextAreaElement;
@@ -356,6 +357,7 @@
       this.mdxList = [];
 
       this.uploadedImages = [];
+      this.importMap = {};
 
       this.restore();
       this.setDefaultDate();
@@ -383,7 +385,7 @@
       this.publishDate.addEventListener('change', () => this.persist());
 
       document.getElementById('refresh-btn')?.addEventListener('click', () => this.updatePreview());
-      document.getElementById('download-btn')?.addEventListener('click', () => this.downloadMDX());
+      document.getElementById('save-btn')?.addEventListener('click', () => this.saveMDX());
       document.getElementById('load-btn')?.addEventListener('click', () => this.openLoadModal());
       document.getElementById('new-btn')?.addEventListener('click', () => this.newTemplate());
       document
@@ -427,6 +429,12 @@
 
       // フロントマター除去
       let body = content.replace(/^---[\s\S]*?---\n?/, '');
+
+      // import を解析し、画像のデフォルトインポートをマッピング。本文からは import 行を取り除く
+      this.importMap = this.parseDefaultImageImports(body);
+      if (Object.keys(this.importMap).length > 0) {
+        body = body.replace(/^import\s+[A-Za-z_$][\w$]*\s+from\s+['"][^'"]+['"];?\s*$/gm, '');
+      }
 
       // 独自コンポーネント（CaptionedImage / ImageGrid）の簡易プレビューに置換
       body = this.renderCustomComponents(body);
@@ -476,6 +484,19 @@
     }
 
     // ----- Custom component preview helpers -----
+    parseDefaultImageImports(input: string): Record<string, string> {
+      const map: Record<string, string> = {};
+      const re = /^import\s+([A-Za-z_$][\w$]*)\s+from\s+['"](.+?)['"];?/gm;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(input))) {
+        const id = m[1];
+        const p = m[2];
+        if (/\.(png|jpe?g|webp|gif|svg)$/i.test(p)) {
+          map[id] = p;
+        }
+      }
+      return map;
+    }
     renderCustomComponents(input: string): string {
       let out = input;
 
@@ -495,21 +516,31 @@
         this.renderImageGrid(attrs || '')
       );
 
+      // Astro Image component (<Image ... />)
+      out = out.replace(/<\s*Image\b([^>]*)\/\s*>/g, (_m, attrs) =>
+        this.renderAstroImage(attrs || '')
+      );
+      // Fallback if someone writes with closing tag
+      out = out.replace(/<\s*Image\b([^>]*)>([\s\S]*?)<\s*\/\s*Image\s*>/g, (_m, attrs) =>
+        this.renderAstroImage(attrs || '')
+      );
+
       return out;
     }
 
     renderCaptioned(attrs: string): string {
       const alt = this.readAttr(attrs, 'alt') || '';
       const caption = this.readAttr(attrs, 'caption') || '';
+      const srcAttr = this.readAttr(attrs, 'src') || '';
       const width = Number(this.readAttr(attrs, 'width') || 600) || 600;
       const height = Number(this.readAttr(attrs, 'height') || 400) || 400;
-      const src = this.placeholderDataURL(alt || 'image', width, height);
+      const resolved = this.resolveImageRef(srcAttr);
+      const src = resolved || this.placeholderDataURL(alt || 'image', width, height);
       const esc = (s: string) => this.escapeHtml(s);
-      return `
-<figure class="not-prose my-6 text-center">
-  <img src="${src}" alt="${esc(alt)}" class="inline-block max-w-full h-auto rounded border shadow-sm" width="${width}" height="${height}"/>
-  ${caption ? `<figcaption class="mt-2 text-sm text-gray-500 italic">${esc(caption)}</figcaption>` : ''}
-</figure>`;
+      const cap = caption
+        ? `<figcaption class="mt-2 text-sm text-gray-500 italic">${esc(caption)}</figcaption>`
+        : '';
+      return `<figure class=\"not-prose my-6 text-center\"><img src=\"${src}\" alt=\"${esc(alt)}\" class=\"inline-block max-w-full h-auto rounded border shadow-sm\" width=\"${width}\" height=\"${height}\"/>${cap}</figure>`;
     }
 
     renderImageGrid(attrs: string): string {
@@ -525,27 +556,48 @@
       if (imagesMatch) {
         const body = imagesMatch[1];
         const objRe =
-          /\{[^{}]*?src\s*:\s*['"]([^'"\n]+)['"][^{}]*?alt\s*:\s*['"]([^'"\n]*)['"][^{}]*?(?:caption\s*:\s*['"]([^'"\n]*)['"])?.*?\}/g;
+          /\{[^{}]*?src\s*:\s*(?:['"]([^'"\n]+)['"]|([A-Za-z_$][\w$]*))[^{}]*?alt\s*:\s*['"]([^'"\n]*)['"][^{}]*?(?:caption\s*:\s*['"]([^'"\n]*)['"])?.*?\}/g;
         let m: RegExpExecArray | null;
         while ((m = objRe.exec(body))) {
-          items.push({ src: m[1], alt: m[2], caption: m[3] });
+          const quoted = m[1];
+          const ident = m[2];
+          const alt = m[3] || '';
+          const caption = m[4];
+          const src = quoted || (ident ? this.importMap[ident] || '' : '');
+          items.push({ src, alt, caption });
         }
       }
 
       const placeholder = (alt: string) => this.placeholderDataURL(alt || 'image', 300, 200);
       const esc = (s: string) => this.escapeHtml(s);
-      const cards = (items.length ? items : new Array(4).fill({ alt: '' })).map(
-        it => `
-  <figure class="m-0 text-center">
-    <img src="${placeholder(it.alt)}" alt="${esc(it.alt || '')}" class="w-full h-auto rounded border shadow-sm" />
-    ${it.caption ? `<figcaption class="mt-1 text-xs text-gray-500 italic">${esc(it.caption)}</figcaption>` : ''}
-  </figure>`
-      );
+      const fallbackCount = Math.max(cols, 4);
+      const list = items.length ? items : new Array(fallbackCount).fill({ alt: '' });
+      const cards = list
+        .map(it => {
+          const imgSrc = it.src
+            ? this.resolveImageRef(it.src) || placeholder(it.alt)
+            : placeholder(it.alt);
+          const figcap = it.caption
+            ? `<figcaption class=\"mt-1 text-xs text-gray-500 italic\">${esc(it.caption)}</figcaption>`
+            : '';
+          return `<figure class=\"m-0 text-center\"><img src=\"${imgSrc}\" alt=\"${esc(it.alt || '')}\" class=\"w-full h-auto rounded border shadow-sm\"/>${figcap}</figure>`;
+        })
+        .join('');
 
-      return `
-<div class="not-prose my-6" style="display:grid;gap:.75rem;grid-template-columns:repeat(${cols},minmax(0,1fr));">
-${cards.join('\n')}
-</div>`;
+      return `<div class=\"not-prose my-6\" style=\"display:grid;gap:.75rem;grid-template-columns:repeat(${cols},minmax(0,1fr));\">${cards}</div>`;
+    }
+
+    renderAstroImage(attrs: string): string {
+      const alt = this.readAttr(attrs, 'alt') || '';
+      const srcAttr = this.readAttr(attrs, 'src') || '';
+      const width = Number(this.readAttr(attrs, 'width') || '') || undefined;
+      const height = Number(this.readAttr(attrs, 'height') || '') || undefined;
+      const cls = this.readAttr(attrs, 'class') || 'rounded border shadow-sm';
+      const resolved = this.resolveImageRef(srcAttr);
+      const src = resolved || this.placeholderDataURL(alt || 'image', width || 600, height || 400);
+      const esc = (s: string) => this.escapeHtml(s);
+      const size = `${width ? ` width=\"${width}\"` : ''}${height ? ` height=\"${height}\"` : ''}`;
+      return `<img src=\"${src}\" alt=\"${esc(alt)}\" class=\"${esc(cls)}\"${size} />`;
     }
 
     readAttr(attrs: string, name: string): string | undefined {
@@ -569,6 +621,26 @@ ${cards.join('\n')}
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+    }
+
+    // 画像リファレンスの解決: 文字列パス or 変数名（importMap参照）→ dev API URL
+    resolveImageRef(value: string | undefined): string | undefined {
+      if (!value) return undefined;
+      const v = String(value).trim();
+      const pub = (document.getElementById('publish-date') as HTMLInputElement)?.value;
+      if (!pub || !/^\d{4}-\d{2}-\d{2}$/.test(pub)) return undefined;
+      const asPath = (p: string) => {
+        const clean = p.replace(/^\.\//, '');
+        return `/api/dev/get-image?publishDate=${encodeURIComponent(pub)}&path=${encodeURIComponent(clean)}`;
+      };
+      // 変数名の場合は importMap から解決
+      if (/^[A-Za-z_$][\w$]*$/.test(v)) {
+        const mapped = this.importMap[v];
+        if (mapped) return asPath(mapped);
+        return undefined;
+      }
+      // 文字列パス（例: ./images/foo.jpg）
+      return asPath(v);
     }
 
     // 画像処理
@@ -1130,6 +1202,32 @@ category: ''
       this.fileName.value = 'new-article';
       this.updatePreview();
       this.persist();
+    }
+
+    async saveMDX() {
+      const content = this.input.value;
+      const filename = (this.fileName.value || 'article').trim();
+      const publishDate = this.publishDate.value;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(publishDate)) {
+        alert('公開日が不正です (YYYY-MM-DD)');
+        return;
+      }
+      try {
+        const res = await fetch('/api/dev/save-mdx', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ publishDate, filename, content }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data?.ok) throw new Error(String(data?.error || res.status));
+        const rel = data.path as string;
+        alert(`保存しました: ${rel}`);
+        // 最新の一覧を反映
+        await this.fetchMdxList();
+      } catch (e: any) {
+        alert('保存に失敗しました: ' + String(e?.message || e));
+        console.warn(e);
+      }
     }
 
     saveToLocalStorage() {
