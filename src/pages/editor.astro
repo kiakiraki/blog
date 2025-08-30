@@ -16,48 +16,19 @@ const description = 'MDXエディタ';
     <div class="container mx-auto py-8">
       <header class="mb-6">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">MDX Editor</h1>
-        <p class="text-gray-600 dark:text-gray-400">
-          MDXエディタ - リアルタイムプレビュー付き
-        </p>
+        <p class="text-gray-600 dark:text-gray-400">MDXエディタ（開発環境のみ）</p>
       </header>
 
       <MDXEditor />
 
       <section class="mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        <h2 class="text-xl font-semibold mb-4">使い方</h2>
-        <div class="space-y-4 text-sm text-gray-700 dark:text-gray-300">
-          <div>
-            <h3 class="font-semibold mb-2">基本機能</h3>
-            <ul class="list-disc list-inside space-y-1 ml-4">
-              <li><strong>新規:</strong> テンプレートから新しい記事を作成</li>
-              <li><strong>保存:</strong> MDXファイルをローカルにダウンロード</li>
-              <li><strong>読み込み:</strong> 既存のMDXファイルを編集</li>
-              <li><strong>プレビュー:</strong> リアルタイムでHTML表示</li>
-              <li><strong>自動保存:</strong> ブラウザのローカルストレージに自動保存</li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 class="font-semibold mb-2">対応フロントマター</h3>
-            <pre
-              class="bg-gray-100 dark:bg-gray-700 p-3 rounded text-xs overflow-x-auto"><code>---
-title: '記事タイトル'
-description: '記事の説明' 
-pubDate: '2025-01-15'
-heroImage: './hero-image.jpg'
-category: '技術' # 写真|旅行|競馬|技術|ガジェット|その他
----</code></pre>
-          </div>
-
-          <div>
-            <h3 class="font-semibold mb-2">記事配置構造</h3>
-            <pre
-              class="bg-gray-100 dark:bg-gray-700 p-3 rounded text-xs overflow-x-auto"><code>src/content/blog/YYYY-MM/YYYY-MM-DD/
-├── article-slug.mdx
-├── hero-image.jpg
-└── other-images.jpg</code></pre>
-          </div>
-        </div>
+        <h2 class="text-xl font-semibold mb-2">使い方</h2>
+        <ul class="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1 ml-4">
+          <li><strong>新規:</strong> 最小テンプレートを挿入します</li>
+          <li><strong>読込:</strong> 既存のMDX/MDを読み込みます</li>
+          <li><strong>DL:</strong> 編集中の内容をMDXとしてダウンロードします</li>
+          <li><strong>プレビュー:</strong> 右側に簡易プレビューを表示します</li>
+        </ul>
       </section>
     </div>
   </main>

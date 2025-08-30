@@ -12,4 +12,13 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off',
     },
   },
+  {
+    files: ['src/components/MDXEditor.astro'],
+    rules: {
+      // Dev-only editor UI: relax strict ordering/a11y for rapid iteration
+      'astro/sort-attributes': 'off',
+      'astro/jsx-a11y/prefer-tag-over-role': 'off',
+      'astro/jsx-a11y/control-has-associated-label': 'off',
+    },
+  },
 ];

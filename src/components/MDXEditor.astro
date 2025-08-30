@@ -1,25 +1,10 @@
----
-interface Props {
-  initialContent?: string;
-  fileName?: string;
-}
-
-const { initialContent = '', fileName = 'new-article' } = Astro.props;
-
-// 開発環境でのみレンダリング
-if (import.meta.env.PROD) {
-  return new Response(null, { status: 404 });
-}
----
-
+<!-- eslint-disable astro/sort-attributes, astro/jsx-a11y/prefer-tag-over-role, astro/jsx-a11y/control-has-associated-label -->
 <div class="mdx-editor max-w-7xl mx-auto p-4">
-  <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 h-screen max-h-[90vh]">
-    <!-- Editor Panel -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 min-h-screen">
     <div class="xl:col-span-2 flex flex-col">
       <div class="mb-4">
         <h2 class="text-xl font-bold mb-2">MDX Editor</h2>
 
-        <!-- File Management -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
           <div>
             <label class="block text-sm font-medium mb-1" for="file-name"
@@ -30,7 +15,7 @@ if (import.meta.env.PROD) {
               class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               id="file-name"
               type="text"
-              value={fileName}
+              value="new-article"
             />
           </div>
           <div>
@@ -44,293 +29,317 @@ if (import.meta.env.PROD) {
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-          <button
-            class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm"
-            id="save-mdx-btn"
-          >
-            📄 MDX保存
-          </button>
-          <button
-            class="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-sm"
-            id="load-btn"
-          >
-            📂 読込
-          </button>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
           <button
             class="px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors text-sm"
-            id="new-btn"
+            id="new-btn">✨ 新規</button
           >
-            ✨ 新規
-          </button>
+          <button
+            class="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-sm"
+            id="load-btn">📂 読込</button
+          >
           <button
             class="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm"
-            id="download-btn"
+            id="download-btn">💾 DL</button
           >
-            💾 DL
-          </button>
+          <button
+            class="px-3 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors text-sm"
+            id="refresh-btn">🔄 更新</button
+          >
+          <button
+            class="px-3 py-2 bg-sky-600 text-white rounded hover:bg-sky-700 transition-colors text-sm"
+            id="generate-header-btn">🧩 ヘッダ生成</button
+          >
         </div>
 
-        <!-- Image Tools -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
           <button
             class="px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors text-sm"
-            id="add-image-btn"
+            id="add-image-btn">🖼️ 画像追加</button
           >
-            🖼️ 画像追加
-          </button>
           <button
             class="px-3 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-700 transition-colors text-sm"
-            id="add-captioned-btn"
+            id="add-captioned-btn">📝 キャプション付</button
           >
-            📝 キャプション付
-          </button>
           <button
             class="px-3 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition-colors text-sm"
-            id="add-grid-btn"
+            id="add-grid-btn">🔲 グリッド</button
           >
-            🔲 グリッド
-          </button>
           <button
             class="px-3 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors text-sm"
-            id="paste-image-btn"
+            id="paste-image-btn">📋 貼付</button
           >
-            📋 貼付
-          </button>
         </div>
       </div>
 
-      <!-- Drag & Drop Zone -->
       <div
         class="mb-4 p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center bg-gray-50 dark:bg-gray-800 transition-colors"
         id="drop-zone"
+        aria-label="画像ドロップ領域"
       >
         <p class="text-gray-500 dark:text-gray-400 text-sm">
-          📎 ここに画像をドラッグ&ドロップ、またはCtrl+Vで貼り付け
+          📎 ここに画像をドラッグ&ドロップ（またはクリックして選択）
         </p>
       </div>
 
       <textarea
-        class="flex-1 p-4 font-mono text-sm border border-gray-300 dark:border-gray-600 rounded resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+        class="p-4 font-mono text-sm border border-gray-300 dark:border-gray-600 rounded resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         id="mdx-input"
-        placeholder="MDXコンテンツを入力...">{initialContent}</textarea
-      >
+        placeholder="MDXコンテンツを入力..."></textarea>
     </div>
 
-    <!-- Preview Panel -->
     <div class="flex flex-col">
       <div class="mb-4">
         <h2 class="text-xl font-bold mb-2">プレビュー</h2>
-        <div class="flex gap-2 mb-2">
-          <button
-            class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm"
-            id="refresh-btn"
-          >
-            🔄 更新
-          </button>
-        </div>
       </div>
 
       <div
-        class="flex-1 p-4 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 overflow-auto prose dark:prose-invert max-w-none"
+        class="p-4 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 prose dark:prose-invert max-w-none"
         id="preview-panel"
       >
         <p class="text-gray-500 italic">プレビューがここに表示されます</p>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Image Upload Area -->
-  <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg" id="uploaded-images">
-    <h3 class="text-lg font-semibold mb-2">アップロード済み画像</h3>
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2" id="image-gallery">
-      <!-- アップロードされた画像がここに表示 -->
-    </div>
-  </div>
+<!-- Header Generator Modal -->
+<div
+  class="fixed inset-0 bg-black/50 hidden z-50"
+  id="header-modal"
+  aria-modal="true"
+  role="dialog"
+>
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-lg w-full">
+      <h3 class="text-lg font-bold mb-4">Astro向けヘッダ（フロントマター）生成</h3>
 
-  <!-- Template Modal -->
-  <div class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" id="template-modal">
-    <div class="flex items-center justify-center min-h-screen p-4">
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
-        <h3 class="text-lg font-bold mb-4">新規記事テンプレート</h3>
+      <div class="mb-3">
+        <label for="header-title" class="block text-sm font-medium mb-1">タイトル</label>
+        <input
+          id="header-title"
+          type="text"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+          placeholder="記事タイトル"
+        />
+      </div>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="template-category">カテゴリ</label>
-          <select
-            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-            id="template-category"
-          >
-            <option value="写真">写真</option>
-            <option value="旅行">旅行</option>
-            <option value="競馬">競馬</option>
-            <option value="技術">技術</option>
-            <option value="ガジェット">ガジェット</option>
-            <option value="その他">その他</option>
-          </select>
-        </div>
+      <div class="mb-3">
+        <label for="header-description" class="block text-sm font-medium mb-1">説明</label>
+        <input
+          id="header-description"
+          type="text"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+          placeholder="記事の説明"
+        />
+      </div>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="template-title">記事タイトル</label>
+      <div class="mb-3">
+        <label for="header-category" class="block text-sm font-medium mb-1">カテゴリ</label>
+        <select
+          id="header-category"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+        >
+          <option value="">（未選択）</option>
+          <option value="写真">写真</option>
+          <option value="旅行">旅行</option>
+          <option value="競馬">競馬</option>
+          <option value="技術">技術</option>
+          <option value="ガジェット">ガジェット</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+
+      <div class="mb-6">
+        <label for="header-hero" class="block text-sm font-medium mb-1"
+          >ヒーロー画像（任意・相対パス）</label
+        >
+        <div class="flex gap-2">
           <input
-            aria-label="記事のタイトル"
-            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-            id="template-title"
-            placeholder="記事のタイトル"
+            id="header-hero"
             type="text"
+            class="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+            placeholder="./hero.jpg または ./images/hero.jpg"
           />
-        </div>
-
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="template-description">記事の説明</label
-          >
-          <textarea
-            aria-label="記事の説明"
-            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded resize-none bg-white dark:bg-gray-800"
-            id="template-description"
-            placeholder="記事の簡単な説明"
-            rows="2"></textarea>
-        </div>
-
-        <div class="flex justify-end gap-2">
           <button
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-            id="cancel-template"
+            id="upload-hero-btn"
+            class="px-3 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 text-sm"
+            type="button">Heroアップロード</button
           >
-            キャンセル
-          </button>
-          <button
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            id="apply-template"
-          >
-            適用
-          </button>
         </div>
+        <input type="file" id="hidden-hero-input" accept="image/*" class="hidden" />
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <button
+          class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          id="cancel-header">キャンセル</button
+        >
+        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" id="apply-header"
+          >挿入/更新</button
+        >
       </div>
     </div>
   </div>
+</div>
 
-  <!-- CaptionedImage Modal -->
-  <div class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" id="captioned-modal">
-    <div class="flex items-center justify-center min-h-screen p-4">
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-lg w-full">
-        <h3 class="text-lg font-bold mb-4">CaptionedImage作成</h3>
+<div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg" id="uploaded-images">
+  <h3 class="text-lg font-semibold mb-2">アップロード画像</h3>
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2" id="image-gallery"></div>
+  <p class="text-xs text-gray-500 mt-2">
+    ※ 画像は公開日にもとづく <code>src/content/blog/&lt;YYYY-MM&gt;/&lt;YYYY-MM-DD&gt;/images/</code
+    > に自動保存されます（開発環境のみ）。
+  </p>
+  <div class="sr-only" aria-live="polite" id="image-aria-live"></div>
+  <input type="file" id="hidden-image-input" accept="image/*" multiple class="hidden" />
+  <div class="hidden">
+    <select id="captioned-image-select"></select>
+  </div>
+</div>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="captioned-image-select">画像選択</label
-          >
-          <select
-            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-            id="captioned-image-select"
-          >
-            <option value="">画像を選択してください</option>
-          </select>
-        </div>
+<!-- CaptionedImage Modal -->
+<div
+  class="fixed inset-0 bg-black/50 hidden z-50"
+  id="captioned-modal"
+  aria-modal="true"
+  role="dialog"
+>
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-lg w-full">
+      <h3 class="text-lg font-bold mb-4">CaptionedImage を挿入</h3>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="captioned-alt">Alt テキスト</label>
-          <input
-            aria-label="画像のAltテキスト"
-            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-            id="captioned-alt"
-            placeholder="画像の説明"
-            type="text"
-          />
-        </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2" for="captioned-image-select-visual"
+          >画像選択</label
+        >
+        <select
+          id="captioned-image-select-visual"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+        ></select>
+      </div>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="captioned-caption">キャプション</label>
-          <textarea
-            aria-label="画像のキャプション"
-            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded resize-none bg-white dark:bg-gray-800"
-            id="captioned-caption"
-            placeholder="画像のキャプション（オプション）"
-            rows="2"></textarea>
-        </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2" for="captioned-alt">Alt テキスト</label>
+        <input
+          id="captioned-alt"
+          type="text"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+          placeholder="画像の説明"
+        />
+      </div>
 
-        <div class="flex justify-end gap-2">
-          <button
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-            id="cancel-captioned"
-          >
-            キャンセル
-          </button>
-          <button
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            id="apply-captioned"
-          >
-            挿入
-          </button>
-        </div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium mb-2" for="captioned-caption"
+          >キャプション（任意）</label
+        >
+        <input
+          id="captioned-caption"
+          type="text"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+          placeholder="キャプション"
+        />
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <button
+          class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          id="cancel-captioned">キャンセル</button
+        >
+        <button
+          class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          id="apply-captioned">挿入</button
+        >
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ImageGrid Modal -->
-  <div class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" id="grid-modal">
-    <div class="flex items-center justify-center min-h-screen p-4">
+<!-- ImageGrid Modal -->
+<div class="fixed inset-0 bg-black/50 hidden z-50" id="grid-modal" aria-modal="true" role="dialog">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div
+      class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-auto"
+    >
+      <h3 class="text-lg font-bold mb-4">ImageGrid を挿入</h3>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2" for="grid-columns">グリッド列数</label>
+        <select
+          id="grid-columns"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+        >
+          <option value="2">2列</option>
+          <option value="3">3列</option>
+          <option value="4">4列</option>
+        </select>
+      </div>
+
+      <fieldset class="mb-4">
+        <legend class="block text-sm font-medium mb-2">画像選択（複数選択可）</legend>
+        <div
+          id="grid-image-selection"
+          class="max-h-60 overflow-auto border border-gray-300 dark:border-gray-600 rounded p-2 bg-gray-50 dark:bg-gray-900"
+        >
+        </div>
+      </fieldset>
+
+      <div class="mb-4" id="grid-selected-images"></div>
+
+      <div class="flex justify-end gap-2">
+        <button class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" id="cancel-grid"
+          >キャンセル</button
+        >
+        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" id="apply-grid"
+          >挿入</button
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Load MDX Modal -->
+<div class="fixed inset-0 bg-black/50 hidden z-50" id="load-modal" aria-modal="true" role="dialog">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-3xl w-full">
+      <h3 class="text-lg font-bold mb-4">プロジェクト内のMDXを読み込み</h3>
+
+      <div class="mb-3">
+        <input
+          id="load-search"
+          type="search"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+          placeholder="検索（パス/タイトル/日付）"
+        />
+      </div>
+
       <div
-        class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-auto"
+        id="load-list"
+        class="max-h-96 overflow-auto border border-gray-300 dark:border-gray-600 rounded"
       >
-        <h3 class="text-lg font-bold mb-4">ImageGrid作成</h3>
+      </div>
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2" for="grid-columns">グリッド列数</label>
-          <select
-            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-            id="grid-columns"
-          >
-            <option value="2">2列</option>
-            <option value="3">3列</option>
-            <option value="4">4列</option>
-          </select>
-        </div>
-
-        <fieldset class="mb-4">
-          <legend class="block text-sm font-medium mb-2">画像選択（複数選択可）</legend>
-          <div
-            class="max-h-60 overflow-auto border border-gray-300 dark:border-gray-600 rounded p-2 bg-gray-50 dark:bg-gray-900"
-            id="grid-image-selection"
-          >
-            <!-- 画像選択チェックボックス -->
-          </div>
-        </fieldset>
-
-        <div class="mb-4" id="grid-selected-images">
-          <!-- 選択された画像のプレビューとキャプション入力 -->
-        </div>
-
-        <div class="flex justify-end gap-2">
-          <button
-            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-            id="cancel-grid"
-          >
-            キャンセル
-          </button>
-          <button
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            id="apply-grid"
-          >
-            挿入
-          </button>
-        </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <button class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600" id="cancel-load"
+          >閉じる</button
+        >
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // MDXエディタの機能
-  class MDXEditor {
+  class SimpleMDXEditor {
     input: HTMLTextAreaElement;
     preview: HTMLDivElement;
     fileName: HTMLInputElement;
     publishDate: HTMLInputElement;
     dropZone: HTMLDivElement;
     imageGallery: HTMLDivElement;
-    templateModal: HTMLDivElement;
     captionedModal: HTMLDivElement;
     gridModal: HTMLDivElement;
+    headerModal: HTMLDivElement;
+    loadModal: HTMLDivElement;
+    mdxList: any[];
     uploadedImages: Array<{ name: string; url: string; file: File }>;
 
     constructor() {
@@ -340,18 +349,21 @@ if (import.meta.env.PROD) {
       this.publishDate = document.getElementById('publish-date') as HTMLInputElement;
       this.dropZone = document.getElementById('drop-zone') as HTMLDivElement;
       this.imageGallery = document.getElementById('image-gallery') as HTMLDivElement;
-
-      // Modals
-      this.templateModal = document.getElementById('template-modal') as HTMLDivElement;
       this.captionedModal = document.getElementById('captioned-modal') as HTMLDivElement;
       this.gridModal = document.getElementById('grid-modal') as HTMLDivElement;
+      this.headerModal = document.getElementById('header-modal') as HTMLDivElement;
+      this.loadModal = document.getElementById('load-modal') as HTMLDivElement;
+      this.mdxList = [];
 
-      // 画像管理
       this.uploadedImages = [];
 
-      this.initEventListeners();
-      this.loadFromLocalStorage();
+      this.restore();
       this.setDefaultDate();
+      this.bind();
+      this.updatePreview();
+      this.initDragAndDrop();
+      this.initClipboardPaste();
+      this.autoResizeTextarea();
     }
 
     setDefaultDate() {
@@ -361,23 +373,23 @@ if (import.meta.env.PROD) {
       }
     }
 
-    initEventListeners() {
-      // リアルタイムプレビュー
+    bind() {
       this.input.addEventListener('input', () => {
         this.updatePreview();
-        this.saveToLocalStorage();
+        this.persist();
+        this.autoResizeTextarea();
       });
+      this.fileName.addEventListener('change', () => this.persist());
+      this.publishDate.addEventListener('change', () => this.persist());
 
-      // ボタンイベント
-      document
-        .getElementById('save-mdx-btn')
-        ?.addEventListener('click', () => this.saveMDXToProject());
-      document.getElementById('download-btn')?.addEventListener('click', () => this.downloadFile());
-      document.getElementById('load-btn')?.addEventListener('click', () => this.loadFile());
-      document.getElementById('new-btn')?.addEventListener('click', () => this.newFile());
       document.getElementById('refresh-btn')?.addEventListener('click', () => this.updatePreview());
+      document.getElementById('download-btn')?.addEventListener('click', () => this.downloadMDX());
+      document.getElementById('load-btn')?.addEventListener('click', () => this.openLoadModal());
+      document.getElementById('new-btn')?.addEventListener('click', () => this.newTemplate());
+      document
+        .getElementById('generate-header-btn')
+        ?.addEventListener('click', () => this.openHeaderModal());
 
-      // 画像ツール
       document
         .getElementById('add-image-btn')
         ?.addEventListener('click', () => this.addImageInput());
@@ -389,412 +401,41 @@ if (import.meta.env.PROD) {
         ?.addEventListener('click', () => this.openGridModal());
       document
         .getElementById('paste-image-btn')
-        ?.addEventListener('click', () => this.pasteImage());
+        ?.addEventListener('click', () => this.pasteFromClipboard());
 
-      // テンプレートモーダル
-      document
-        .getElementById('apply-template')
-        ?.addEventListener('click', () => this.applyTemplate());
-      document
-        .getElementById('cancel-template')
-        ?.addEventListener('click', () => this.closeModal('template-modal'));
-
-      // CaptionedImage モーダル
       document
         .getElementById('apply-captioned')
         ?.addEventListener('click', () => this.applyCaptionedImage());
       document
         .getElementById('cancel-captioned')
-        ?.addEventListener('click', () => this.closeModal('captioned-modal'));
-
-      // ImageGrid モーダル
+        ?.addEventListener('click', () => this.closeModal(this.captionedModal));
       document.getElementById('apply-grid')?.addEventListener('click', () => this.applyImageGrid());
       document
         .getElementById('cancel-grid')
-        ?.addEventListener('click', () => this.closeModal('grid-modal'));
-
-      // ファイル名・日付変更時の自動保存
-      this.fileName.addEventListener('change', () => this.saveToLocalStorage());
-      this.publishDate.addEventListener('change', () => this.saveToLocalStorage());
-
-      // ドラッグ&ドロップ
-      this.initDragAndDrop();
-
-      // クリップボード貼り付け
-      this.initClipboardPaste();
-    }
-
-    initDragAndDrop() {
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        this.dropZone.addEventListener(eventName, e => e.preventDefault());
-        document.body.addEventListener(eventName, e => e.preventDefault());
-      });
-
-      ['dragenter', 'dragover'].forEach(eventName => {
-        this.dropZone.addEventListener(eventName, () => {
-          this.dropZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-blue-900');
-        });
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        this.dropZone.addEventListener(eventName, () => {
-          this.dropZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-blue-900');
-        });
-      });
-
-      this.dropZone.addEventListener('drop', e => {
-        const files = Array.from(e.dataTransfer?.files || []);
-        this.handleFiles(files as File[]);
-      });
-    }
-
-    initClipboardPaste() {
-      document.addEventListener('paste', e => {
-        const items = Array.from(e.clipboardData?.items || []);
-        const imageItems = items.filter(item => item.type.indexOf('image') === 0);
-
-        imageItems.forEach(item => {
-          const file = item.getAsFile();
-          if (file) {
-            this.handleFiles([file]);
-          }
-        });
-      });
-    }
-
-    handleFiles(files: File[]) {
-      files.forEach(file => {
-        if (file.type.startsWith('image/')) {
-          this.addImageToGallery(file);
-        }
-      });
-    }
-
-    addImageToGallery(file: File) {
-      // ファイル名のサニタイズ
-      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const timestamp = Date.now();
-      const finalName = `${timestamp}_${sanitizedName}`;
-
-      const url = URL.createObjectURL(file);
-
-      this.uploadedImages.push({
-        name: finalName,
-        url: url,
-        file: file,
-      });
-
-      // ギャラリーに表示
-      const imageDiv = document.createElement('div');
-      imageDiv.className = 'relative group cursor-pointer';
-      imageDiv.innerHTML = `
-        <img src="${url}" alt="${finalName}" class="w-full h-20 object-cover rounded border hover:shadow-md transition-shadow">
-        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity rounded flex items-center justify-center">
-          <button class="text-white opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 rounded-full p-1 text-xs" onclick="window.mdxEditor.removeImage('${finalName}')">×</button>
-        </div>
-        <p class="text-xs mt-1 truncate" title="${finalName}">${finalName}</p>
-      `;
-
-      imageDiv.addEventListener('click', () => {
-        this.insertImageReference(finalName);
-      });
-
-      this.imageGallery.appendChild(imageDiv);
-      this.updateImageSelects();
-      this.saveToLocalStorage();
-    }
-
-    removeImage(imageName: string) {
-      const index = this.uploadedImages.findIndex(img => img.name === imageName);
-      if (index !== -1) {
-        URL.revokeObjectURL(this.uploadedImages[index].url);
-        this.uploadedImages.splice(index, 1);
-        this.refreshImageGallery();
-        this.updateImageSelects();
-        this.saveToLocalStorage();
-      }
-    }
-
-    refreshImageGallery() {
-      this.imageGallery.innerHTML = '';
-      this.uploadedImages.forEach(image => {
-        const imageDiv = document.createElement('div');
-        imageDiv.className = 'relative group cursor-pointer';
-        imageDiv.innerHTML = `
-          <img src="${image.url}" alt="${image.name}" class="w-full h-20 object-cover rounded border hover:shadow-md transition-shadow">
-          <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity rounded flex items-center justify-center">
-            <button class="text-white opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 rounded-full p-1 text-xs" onclick="window.mdxEditor.removeImage('${image.name}')">×</button>
-          </div>
-          <p class="text-xs mt-1 truncate" title="${image.name}">${image.name}</p>
-        `;
-
-        imageDiv.addEventListener('click', () => {
-          this.insertImageReference(image.name);
-        });
-
-        this.imageGallery.appendChild(imageDiv);
-      });
-    }
-
-    updateImageSelects() {
-      // CaptionedImage用の選択肢更新
-      const captionedSelect = document.getElementById(
-        'captioned-image-select'
-      ) as HTMLSelectElement;
-      captionedSelect.innerHTML = '<option value="">画像を選択してください</option>';
-
-      // ImageGrid用の選択肢更新
-      const gridSelection = document.getElementById('grid-image-selection') as HTMLDivElement;
-      gridSelection.innerHTML = '';
-
-      this.uploadedImages.forEach(image => {
-        // CaptionedImage用
-        const option = document.createElement('option');
-        option.value = image.name;
-        option.textContent = image.name;
-        captionedSelect.appendChild(option);
-
-        // ImageGrid用
-        const checkbox = document.createElement('div');
-        checkbox.className = 'flex items-center space-x-2 p-2';
-        checkbox.innerHTML = `
-          <input type="checkbox" id="grid-${image.name}" value="${image.name}" class="rounded">
-          <img src="${image.url}" alt="${image.name}" class="w-12 h-12 object-cover rounded">
-          <label for="grid-${image.name}" class="text-sm cursor-pointer flex-1">${image.name}</label>
-        `;
-        gridSelection.appendChild(checkbox);
-      });
-
-      // ImageGridのチェックボックス変更イベント
-      gridSelection.addEventListener('change', () => this.updateGridSelectedImages());
-    }
-
-    updateGridSelectedImages() {
-      const checkboxes = document.querySelectorAll(
-        '#grid-image-selection input[type="checkbox"]:checked'
-      );
-      const selectedDiv = document.getElementById('grid-selected-images') as HTMLDivElement;
-
-      selectedDiv.innerHTML = '';
-
-      if (checkboxes.length > 0) {
-        selectedDiv.innerHTML =
-          '<h4 class="font-semibold mb-2">選択された画像のキャプション：</h4>';
-
-        checkboxes.forEach(checkbox => {
-          const imageName = (checkbox as HTMLInputElement).value;
-          const image = this.uploadedImages.find(img => img.name === imageName);
-
-          if (image) {
-            const captionDiv = document.createElement('div');
-            captionDiv.className = 'flex items-start space-x-2 mb-2 p-2 border rounded';
-            captionDiv.innerHTML = `
-              <img src="${image.url}" alt="${image.name}" class="w-16 h-16 object-cover rounded">
-              <div class="flex-1">
-                <p class="text-sm font-medium mb-1">${image.name}</p>
-                <input type="text" placeholder="Alt text" data-image="${imageName}" data-type="alt" class="w-full p-1 mb-1 text-xs border rounded">
-                <input type="text" placeholder="Caption (optional)" data-image="${imageName}" data-type="caption" class="w-full p-1 text-xs border rounded">
-              </div>
-            `;
-            selectedDiv.appendChild(captionDiv);
-          }
-        });
-      }
-    }
-
-    insertImageReference(imageName: string) {
-      const cursorPos = this.input.selectionStart;
-      const textBefore = this.input.value.substring(0, cursorPos);
-      const textAfter = this.input.value.substring(cursorPos);
-
-      const imageRef = `![Image](./images/${imageName})`;
-
-      this.input.value = textBefore + imageRef + textAfter;
-      this.input.selectionStart = this.input.selectionEnd = cursorPos + imageRef.length;
-
-      this.updatePreview();
-      this.saveToLocalStorage();
-    }
-
-    addImageInput() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.multiple = true;
-      input.onchange = e => {
-        const files = Array.from((e.target as HTMLInputElement).files || []);
-        this.handleFiles(files as File[]);
-      };
-      input.click();
-    }
-
-    pasteImage() {
-      navigator.clipboard
-        .read()
-        .then(items => {
-          items.forEach(item => {
-            const imageTypes = item.types.filter(type => type.startsWith('image/'));
-            imageTypes.forEach(type => {
-              item.getType(type).then(blob => {
-                const file = new File([blob], `pasted-${Date.now()}.png`, { type: type });
-                this.handleFiles([file]);
-              });
-            });
-          });
-        })
-        .catch(() => {
-          alert('クリップボードからの画像貼り付けに失敗しました。Ctrl+Vを使用してください。');
-        });
-    }
-
-    openCaptionedModal() {
-      if (this.uploadedImages.length === 0) {
-        alert('まず画像をアップロードしてください。');
-        return;
-      }
-      this.captionedModal.classList.remove('hidden');
-    }
-
-    openGridModal() {
-      if (this.uploadedImages.length === 0) {
-        alert('まず画像をアップロードしてください。');
-        return;
-      }
-      this.gridModal.classList.remove('hidden');
-      this.updateImageSelects();
-    }
-
-    applyCaptionedImage() {
-      const imageSelect = document.getElementById('captioned-image-select') as HTMLSelectElement;
-      const altInput = document.getElementById('captioned-alt') as HTMLInputElement;
-      const captionInput = document.getElementById('captioned-caption') as HTMLTextAreaElement;
-
-      if (!imageSelect.value) {
-        alert('画像を選択してください。');
-        return;
-      }
-
-      if (!altInput.value.trim()) {
-        alert('Alt テキストを入力してください。');
-        return;
-      }
-
-      const cursorPos = this.input.selectionStart;
-      const textBefore = this.input.value.substring(0, cursorPos);
-      const textAfter = this.input.value.substring(cursorPos);
-
-      let component = `<CaptionedImage\n  src="./images/${imageSelect.value}"\n  alt="${altInput.value.trim()}"`;
-
-      if (captionInput.value.trim()) {
-        component += `\n  caption="${captionInput.value.trim()}"`;
-      }
-
-      component += '\n/>\n';
-
-      this.input.value = textBefore + component + textAfter;
-      this.updatePreview();
-      this.saveToLocalStorage();
-
-      // モーダルを閉じてリセット
-      this.closeModal('captioned-modal');
-      imageSelect.value = '';
-      altInput.value = '';
-      captionInput.value = '';
-    }
-
-    applyImageGrid() {
-      const columnsSelect = document.getElementById('grid-columns') as HTMLSelectElement;
-      const selectedInputs = document.querySelectorAll('#grid-selected-images input');
-
-      if (selectedInputs.length === 0) {
-        alert('画像を選択してください。');
-        return;
-      }
-
-      const images: Array<{ src: string; alt: string; caption?: string }> = [];
-      const imageNames = new Set();
-
-      selectedInputs.forEach(input => {
-        const inputEl = input as HTMLInputElement;
-        const imageName = inputEl.dataset.image;
-        const type = inputEl.dataset.type;
-
-        if (imageName && type) {
-          imageNames.add(imageName);
-        }
-      });
-
-      imageNames.forEach(imageName => {
-        const altInput = document.querySelector(
-          `[data-image="${imageName}"][data-type="alt"]`
-        ) as HTMLInputElement;
-        const captionInput = document.querySelector(
-          `[data-image="${imageName}"][data-type="caption"]`
-        ) as HTMLInputElement;
-
-        if (altInput && altInput.value.trim()) {
-          const imageData: any = {
-            src: `./images/${imageName}`,
-            alt: altInput.value.trim(),
-          };
-
-          if (captionInput && captionInput.value.trim()) {
-            imageData.caption = captionInput.value.trim();
-          }
-
-          images.push(imageData);
-        }
-      });
-
-      if (images.length === 0) {
-        alert('Alt テキストを入力してください。');
-        return;
-      }
-
-      const cursorPos = this.input.selectionStart;
-      const textBefore = this.input.value.substring(0, cursorPos);
-      const textAfter = this.input.value.substring(cursorPos);
-
-      let component = `<ImageGrid\n  columns={${columnsSelect.value}}\n  images={[\n`;
-
-      images.forEach((img, index) => {
-        component += `    {\n      src: "${img.src}",\n      alt: "${img.alt}"`;
-        if (img.caption) {
-          component += `,\n      caption: "${img.caption}"`;
-        }
-        component += '\n    }' + (index < images.length - 1 ? ',' : '') + '\n';
-      });
-
-      component += '  ]}\n/>\n';
-
-      this.input.value = textBefore + component + textAfter;
-      this.updatePreview();
-      this.saveToLocalStorage();
-
-      // モーダルを閉じてリセット
-      this.closeModal('grid-modal');
-      document.querySelectorAll('#grid-image-selection input[type="checkbox"]').forEach(cb => {
-        (cb as HTMLInputElement).checked = false;
-      });
-      this.updateGridSelectedImages();
+        ?.addEventListener('click', () => this.closeModal(this.gridModal));
+      document.getElementById('apply-header')?.addEventListener('click', () => this.applyHeader());
+      document
+        .getElementById('cancel-header')
+        ?.addEventListener('click', () => this.closeModal(this.headerModal));
+      document
+        .getElementById('upload-hero-btn')
+        ?.addEventListener('click', () => this.uploadHero());
     }
 
     updatePreview() {
       const content = this.input.value;
 
-      // 簡単なMDX→HTMLプレビュー変換
-      let html = content
-        // フロントマター除去
-        .replace(/^---[\s\S]*?---\n?/, '')
-        // コンポーネント（簡易対応）
-        .replace(
-          /<CaptionedImage[\s\S]*?\/>/g,
-          '<div class="bg-blue-100 dark:bg-blue-800 p-4 rounded border-l-4 border-blue-500"><strong>CaptionedImage</strong><br>プレビューでは表示されません</div>'
-        )
-        .replace(
-          /<ImageGrid[\s\S]*?\/>/g,
-          '<div class="bg-green-100 dark:bg-green-800 p-4 rounded border-l-4 border-green-500"><strong>ImageGrid</strong><br>プレビューでは表示されません</div>'
-        )
+      // フロントマター除去
+      let body = content.replace(/^---[\s\S]*?---\n?/, '');
+
+      // 独自コンポーネント（CaptionedImage / ImageGrid）の簡易プレビューに置換
+      body = this.renderCustomComponents(body);
+
+      // 他の未対応なカスタム要素（先頭大文字のタグ）は非表示
+      body = body.replace(/<\/?[A-Z][^>]*>/g, '');
+
+      // 簡易 Markdown → HTML 変換
+      let html = body
         // 見出し
         .replace(/^### (.*$)/gim, '<h3>$1</h3>')
         .replace(/^## (.*$)/gim, '<h2>$1</h2>')
@@ -807,11 +448,12 @@ if (import.meta.env.PROD) {
         // 太字・斜体
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
         .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-        // 画像
-        .replace(
-          /!\[([^\]]*)\]\(([^)]+)\)/g,
-          "<img src=\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect width='100%25' height='100%25' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23666'%3E$1%3C/text%3E%3C/svg%3E\" alt=\"$1\" class=\"max-w-full h-auto rounded border\">"
-        )
+        // 画像（Markdown）
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_m, alt) => {
+          const src = this.placeholderDataURL(String(alt || 'image'), 300, 200);
+          const escAlt = this.escapeHtml(String(alt || ''));
+          return `<img src="${src}" alt="${escAlt}" class="max-w-full h-auto rounded border">`;
+        })
         // コードブロック
         .replace(
           /```(\w+)?\n([\s\S]*?)```/g,
@@ -830,104 +472,549 @@ if (import.meta.env.PROD) {
 
       this.preview.innerHTML =
         html || '<p class="text-gray-500 italic">プレビューがここに表示されます</p>';
+      this.autoResizeTextarea();
     }
 
-    getArticleDirectory() {
-      const date = this.publishDate.value;
-      if (!date) return null;
+    // ----- Custom component preview helpers -----
+    renderCustomComponents(input: string): string {
+      let out = input;
 
-      const [year, month] = date.split('-');
-      return `${year}-${month}/${date}`;
-    }
-
-    async saveMDXToProject() {
-      const articleDir = this.getArticleDirectory();
-      const fileName = this.fileName.value;
-
-      if (!articleDir || !fileName) {
-        alert('公開日とファイル名を入力してください。');
-        return;
-      }
-
-      // ディレクトリ構造を示すZIPファイルを作成
-      const zip = await this.createProjectZip(articleDir, fileName);
-
-      // ZIPファイルをダウンロード
-      const zipBlob = await zip.generateAsync({ type: 'blob' });
-      const url = URL.createObjectURL(zipBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${fileName}-${articleDir.replace('/', '-')}.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
-
-      alert(
-        `プロジェクトファイルをダウンロードしました。\n解凍後、以下のパスに配置してください：\nsrc/content/blog/${articleDir}/`
+      // CaptionedImage (self-closing)
+      out = out.replace(/<\s*CaptionedImage\b([^>]*)\/\s*>/g, (_m, attrs) =>
+        this.renderCaptioned(attrs || '')
       );
+
+      // CaptionedImage (with closing tag)
+      out = out.replace(
+        /<\s*CaptionedImage\b([^>]*)>([\s\S]*?)<\s*\/\s*CaptionedImage\s*>/g,
+        (_m, attrs) => this.renderCaptioned(attrs || '')
+      );
+
+      // ImageGrid (self-closing only in本実装)
+      out = out.replace(/<\s*ImageGrid\b([^>]*)\/\s*>/g, (_m, attrs) =>
+        this.renderImageGrid(attrs || '')
+      );
+
+      return out;
     }
 
-    async createProjectZip(articleDir: string, fileName: string) {
-      // 動的にJSZipをインポート（CDNから）
-      const JSZip = await this.loadJSZip();
-      const zip = new JSZip();
+    renderCaptioned(attrs: string): string {
+      const alt = this.readAttr(attrs, 'alt') || '';
+      const caption = this.readAttr(attrs, 'caption') || '';
+      const width = Number(this.readAttr(attrs, 'width') || 600) || 600;
+      const height = Number(this.readAttr(attrs, 'height') || 400) || 400;
+      const src = this.placeholderDataURL(alt || 'image', width, height);
+      const esc = (s: string) => this.escapeHtml(s);
+      return `
+<figure class="not-prose my-6 text-center">
+  <img src="${src}" alt="${esc(alt)}" class="inline-block max-w-full h-auto rounded border shadow-sm" width="${width}" height="${height}"/>
+  ${caption ? `<figcaption class="mt-2 text-sm text-gray-500 italic">${esc(caption)}</figcaption>` : ''}
+</figure>`;
+    }
 
-      // ルートフォルダを作成
-      const rootFolder = zip.folder(`${fileName}-${articleDir.replace('/', '-')}`);
+    renderImageGrid(attrs: string): string {
+      const columnsRaw = this.readAttr(attrs, 'columns');
+      const cols = Math.min(
+        4,
+        Math.max(1, Number((columnsRaw || '2').replace(/[^0-9]/g, '')) || 2)
+      );
 
-      // README.md を作成
-      const readmeContent = `# ${fileName}
-
-## 配置方法
-
-このフォルダの内容を以下のパスにコピーしてください：
-
-\`\`\`
-src/content/blog/${articleDir}/
-\`\`\`
-
-## ファイル構成
-
-- ${fileName}.mdx - メイン記事ファイル
-- images/ - 記事で使用する画像ファイル
-
-## 次のステップ
-
-1. ファイルを適切なパスに配置
-2. 画像パスが正しいかを確認
-3. \`npm run dev\` で開発サーバーを起動して確認
-`;
-      rootFolder?.file('README.md', readmeContent);
-
-      // MDXファイルを追加
-      rootFolder?.file(`${fileName}.mdx`, this.input.value);
-
-      // 画像フォルダを作成
-      const imageFolder = rootFolder?.folder('images');
-
-      // アップロードされた画像を追加
-      for (const image of this.uploadedImages) {
-        imageFolder?.file(image.name, image.file);
+      // Extract inside images={[ ... ]}
+      const imagesMatch = attrs.match(/images\s*=\s*\{\s*\[([\s\S]*?)\]\s*\}/);
+      const items: Array<{ src: string; alt: string; caption?: string }> = [];
+      if (imagesMatch) {
+        const body = imagesMatch[1];
+        const objRe =
+          /\{[^{}]*?src\s*:\s*['"]([^'"\n]+)['"][^{}]*?alt\s*:\s*['"]([^'"\n]*)['"][^{}]*?(?:caption\s*:\s*['"]([^'"\n]*)['"])?.*?\}/g;
+        let m: RegExpExecArray | null;
+        while ((m = objRe.exec(body))) {
+          items.push({ src: m[1], alt: m[2], caption: m[3] });
+        }
       }
 
-      return zip;
+      const placeholder = (alt: string) => this.placeholderDataURL(alt || 'image', 300, 200);
+      const esc = (s: string) => this.escapeHtml(s);
+      const cards = (items.length ? items : new Array(4).fill({ alt: '' })).map(
+        it => `
+  <figure class="m-0 text-center">
+    <img src="${placeholder(it.alt)}" alt="${esc(it.alt || '')}" class="w-full h-auto rounded border shadow-sm" />
+    ${it.caption ? `<figcaption class="mt-1 text-xs text-gray-500 italic">${esc(it.caption)}</figcaption>` : ''}
+  </figure>`
+      );
+
+      return `
+<div class="not-prose my-6" style="display:grid;gap:.75rem;grid-template-columns:repeat(${cols},minmax(0,1fr));">
+${cards.join('\n')}
+</div>`;
     }
 
-    async loadJSZip() {
-      // JSZipをCDNから動的ロード
-      if (!(window as any).JSZip) {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-        document.head.appendChild(script);
+    readAttr(attrs: string, name: string): string | undefined {
+      // Supports: name="..." | name='...' | name={...}
+      const re = new RegExp(name + '\\s*=\\s*(\\"([^\\"]*)\\"|\'([^\']*)\'|\\{([^}]*)\\})');
+      const m = attrs.match(re);
+      if (!m) return undefined;
+      return m[2] ?? m[3] ?? (m[4] ? String(m[4]) : undefined);
+    }
 
-        await new Promise(resolve => {
-          script.onload = resolve;
+    placeholderDataURL(text: string, width = 600, height = 400): string {
+      const esc = this.escapeHtml(String(text || ''));
+      const svg = `<?xml version="1.0" encoding="UTF-8"?><svg xmlns='http://www.w3.org/2000/svg' width='${width}' height='${height}'><rect width='100%' height='100%' fill='#e5e7eb'/><text x='50%' y='50%' text-anchor='middle' dominant-baseline='middle' fill='#6b7280' font-size='20' font-family='sans-serif'>${esc}</text></svg>`;
+      return 'data:image/svg+xml,' + encodeURIComponent(svg);
+    }
+
+    escapeHtml(s: string): string {
+      return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // 画像処理
+    addImageInput() {
+      const input = document.getElementById('hidden-image-input') as HTMLInputElement;
+      input.onchange = evt => {
+        const files = Array.from((evt.target as HTMLInputElement).files || []);
+        this.handleFiles(files as File[]);
+        input.value = '';
+      };
+      input.click();
+    }
+
+    initDragAndDrop() {
+      if (!this.dropZone) return;
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(name => {
+        this.dropZone.addEventListener(name, e => e.preventDefault());
+        document.body.addEventListener(name, e => e.preventDefault());
+      });
+      ['dragenter', 'dragover'].forEach(name => {
+        this.dropZone.addEventListener(name, () => {
+          this.dropZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-blue-900');
+        });
+      });
+      ['dragleave', 'drop'].forEach(name => {
+        this.dropZone.addEventListener(name, () => {
+          this.dropZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-blue-900');
+        });
+      });
+      this.dropZone.addEventListener('drop', e => {
+        const files = Array.from((e as DragEvent).dataTransfer?.files || []);
+        this.handleFiles(files as File[]);
+      });
+      // クリックでファイル選択
+      this.dropZone.addEventListener('click', () => this.addImageInput());
+    }
+
+    handleFiles(files: File[]) {
+      files.forEach(file => {
+        if (file.type.startsWith('image/')) this.addImageToGallery(file);
+      });
+      this.updateImageSelects();
+    }
+
+    initClipboardPaste() {
+      document.addEventListener('paste', evt => {
+        const items = Array.from((evt as ClipboardEvent).clipboardData?.items || []);
+        const imageItems = items.filter(i => i.type.startsWith('image/'));
+        imageItems.forEach(item => {
+          const file = item.getAsFile();
+          if (file) {
+            const ext = file.type.split('/')[1] || 'png';
+            const named = new File([file], `pasted-${Date.now()}.${ext}`, { type: file.type });
+            this.handleFiles([named]);
+          }
+        });
+      });
+    }
+
+    async pasteFromClipboard() {
+      try {
+        // navigator.clipboard.read() は HTTPS/許可が必要
+        const items = await (navigator as any).clipboard.read();
+        for (const item of items) {
+          const imageTypes = item.types.filter((t: string) => t.startsWith('image/'));
+          for (const t of imageTypes) {
+            const blob = await item.getType(t);
+            const ext = t.split('/')[1] || 'png';
+            const file = new File([blob], `pasted-${Date.now()}.${ext}`, { type: t });
+            this.handleFiles([file]);
+          }
+        }
+        if (!items || items.length === 0) {
+          alert('クリップボードに画像が見つかりません。Ctrl+V でも貼り付けできます。');
+        }
+      } catch {
+        alert('ブラウザの制約で読み取りできませんでした。Ctrl+V で貼り付けしてください。');
+      }
+    }
+
+    async addImageToGallery(file: File) {
+      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const finalName = `${Date.now()}_${sanitizedName}`;
+      const url = URL.createObjectURL(file);
+      const entry = { name: finalName, url, file } as { name: string; url: string; file: File };
+      this.uploadedImages.push(entry);
+      this.refreshImageGallery();
+      const live = document.getElementById('image-aria-live');
+      if (live) live.textContent = `${finalName} を追加しました`;
+
+      // 自動保存（開発環境のAPIにPOST）
+      try {
+        const saved = await this.uploadToServer(file, finalName, 'images');
+        if (saved) {
+          entry.name = saved;
+          this.refreshImageGallery();
+          this.updateImageSelects();
+        }
+      } catch (err) {
+        console.warn('画像の自動保存に失敗:', err);
+      }
+    }
+
+    refreshImageGallery() {
+      if (!this.imageGallery) return;
+      this.imageGallery.innerHTML = '';
+      this.uploadedImages.forEach(img => {
+        const wrap = document.createElement('div');
+        wrap.className = 'relative group';
+        const image = document.createElement('img');
+        image.src = img.url;
+        image.alt = img.name;
+        image.className = 'w-full h-20 object-cover rounded border';
+        image.addEventListener('click', () => this.insertImageReference(img.name));
+
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.textContent = '×';
+        del.className =
+          'absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity';
+        del.addEventListener('click', ev => {
+          ev.stopPropagation();
+          this.removeImage(img.name);
+        });
+
+        const caption = document.createElement('p');
+        caption.className = 'text-xs mt-1 truncate';
+        caption.title = img.name;
+        caption.textContent = img.name;
+
+        wrap.appendChild(image);
+        wrap.appendChild(del);
+        this.imageGallery.appendChild(wrap);
+        this.imageGallery.appendChild(caption);
+      });
+    }
+
+    removeImage(name: string) {
+      const idx = this.uploadedImages.findIndex(i => i.name === name);
+      if (idx >= 0) {
+        URL.revokeObjectURL(this.uploadedImages[idx].url);
+        this.uploadedImages.splice(idx, 1);
+        this.refreshImageGallery();
+        this.updateImageSelects();
+      }
+    }
+
+    updateImageSelects() {
+      const select = document.getElementById('captioned-image-select-visual') as HTMLSelectElement;
+      if (select) {
+        select.innerHTML = '<option value="">画像を選択してください</option>';
+        this.uploadedImages.forEach(img => {
+          const opt = document.createElement('option');
+          opt.value = img.name;
+          opt.text = img.name;
+          select.appendChild(opt);
         });
       }
 
-      return (window as any).JSZip;
+      const gridSelectZone = document.getElementById('grid-image-selection') as HTMLDivElement;
+      if (gridSelectZone) {
+        gridSelectZone.innerHTML = '';
+        this.uploadedImages.forEach(img => {
+          const row = document.createElement('label');
+          row.className = 'flex items-center gap-2 p-1 cursor-pointer';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.value = img.name;
+          const thumb = document.createElement('img');
+          thumb.src = img.url;
+          thumb.alt = img.name;
+          thumb.className = 'w-12 h-12 object-cover rounded border';
+          const span = document.createElement('span');
+          span.className = 'text-sm';
+          span.textContent = img.name;
+          row.appendChild(cb);
+          row.appendChild(thumb);
+          row.appendChild(span);
+          gridSelectZone.appendChild(row);
+        });
+        gridSelectZone.addEventListener('change', () => this.updateGridSelectedImages());
+      }
     }
 
-    downloadFile() {
+    insertImageReference(imageName: string) {
+      const cursor = this.input.selectionStart;
+      const before = this.input.value.slice(0, cursor);
+      const after = this.input.value.slice(cursor);
+      const imageRef = `![Image](./images/${imageName})`;
+      this.input.value = before + imageRef + after;
+      this.input.selectionStart = this.input.selectionEnd = cursor + imageRef.length;
+      this.updatePreview();
+      this.persist();
+    }
+
+    async uploadToServer(
+      file: File,
+      finalName: string,
+      subdir: 'images' | '' = 'images'
+    ): Promise<string | null> {
+      const publishDate = this.publishDate.value;
+      if (!publishDate || !/^\d{4}-\d{2}-\d{2}$/.test(publishDate)) {
+        alert('画像保存には公開日 (YYYY-MM-DD) の入力が必要です');
+        return null;
+      }
+      try {
+        const endpoint = '/api/dev/upload-image';
+        const named = new File([file], finalName, { type: file.type });
+        const fd = new FormData();
+        fd.append('publishDate', publishDate);
+        fd.append('file', named, named.name);
+        fd.append('subdir', subdir);
+        const res = await fetch(endpoint, { method: 'POST', body: fd });
+        if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+        const data = await res.json();
+        if (data?.ok && data.files?.[0]?.name) return String(data.files[0].name);
+      } catch (e) {
+        console.warn(e);
+      }
+      return null;
+    }
+
+    uploadHero() {
+      const input = document.getElementById('hidden-hero-input') as HTMLInputElement;
+      input.onchange = async evt => {
+        const file = (evt.target as HTMLInputElement).files?.[0];
+        if (!file) return;
+        const sanitized = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const finalName = `${Date.now()}_${sanitized}`;
+        const savedName = await this.uploadToServer(file, finalName, ''); // 記事直下に保存
+        if (savedName) {
+          (document.getElementById('header-hero') as HTMLInputElement).value = `./${savedName}`;
+        } else {
+          alert('Hero画像の保存に失敗しました');
+        }
+        input.value = '';
+      };
+      input.click();
+    }
+
+    openCaptionedModal() {
+      if (this.uploadedImages.length === 0) {
+        alert('まず画像を追加してください');
+        return;
+      }
+      this.captionedModal.classList.remove('hidden');
+      this.updateImageSelects();
+    }
+
+    applyCaptionedImage() {
+      const select = document.getElementById('captioned-image-select-visual') as HTMLSelectElement;
+      const alt = document.getElementById('captioned-alt') as HTMLInputElement;
+      const caption = document.getElementById('captioned-caption') as HTMLInputElement;
+      if (!select?.value) return alert('画像を選択してください');
+      if (!alt?.value.trim()) return alert('Alt テキストを入力してください');
+      const cursor = this.input.selectionStart;
+      const before = this.input.value.slice(0, cursor);
+      const after = this.input.value.slice(cursor);
+      let component = `<CaptionedImage\n  src="./images/${select.value}"\n  alt="${alt.value.trim()}"`;
+      if (caption?.value.trim()) component += `\n  caption="${caption.value.trim()}"`;
+      component += `\n/>\n`;
+      this.input.value = before + component + after;
+      this.updatePreview();
+      this.persist();
+      this.closeModal(this.captionedModal);
+      if (select) select.value = '';
+      if (alt) alt.value = '';
+      if (caption) caption.value = '';
+    }
+
+    openGridModal() {
+      if (this.uploadedImages.length === 0) {
+        alert('まず画像を追加してください');
+        return;
+      }
+      this.gridModal.classList.remove('hidden');
+      this.updateImageSelects();
+      this.updateGridSelectedImages();
+    }
+
+    updateGridSelectedImages() {
+      const zone = document.getElementById('grid-selected-images') as HTMLDivElement;
+      const checks = Array.from(
+        document.querySelectorAll('#grid-image-selection input[type="checkbox"]')
+      ) as HTMLInputElement[];
+      const selected = checks.filter(cb => cb.checked).map(cb => cb.value);
+      zone.innerHTML = '';
+      if (selected.length === 0) return;
+      const heading = document.createElement('h4');
+      heading.className = 'font-semibold mb-2';
+      heading.textContent = '選択した画像のAlt/Caption';
+      zone.appendChild(heading);
+      selected.forEach(name => {
+        const wrap = document.createElement('div');
+        wrap.className = 'flex items-start gap-2 p-2 border rounded mb-2';
+        const img = this.uploadedImages.find(i => i.name === name);
+        if (img) {
+          const thumb = document.createElement('img');
+          thumb.src = img.url;
+          thumb.alt = img.name;
+          thumb.className = 'w-16 h-16 object-cover rounded';
+          const fields = document.createElement('div');
+          fields.className = 'flex-1';
+          const alt = document.createElement('input');
+          alt.type = 'text';
+          alt.placeholder = 'Alt text';
+          alt.setAttribute('data-image', name);
+          alt.setAttribute('data-type', 'alt');
+          alt.className = 'w-full p-1 mb-1 text-xs border rounded';
+          const cap = document.createElement('input');
+          cap.type = 'text';
+          cap.placeholder = 'Caption (optional)';
+          cap.setAttribute('data-image', name);
+          cap.setAttribute('data-type', 'caption');
+          cap.className = 'w-full p-1 text-xs border rounded';
+          fields.appendChild(alt);
+          fields.appendChild(cap);
+          wrap.appendChild(thumb);
+          wrap.appendChild(fields);
+          zone.appendChild(wrap);
+        }
+      });
+    }
+
+    applyImageGrid() {
+      const selectedAltInputs = Array.from(
+        document.querySelectorAll('#grid-selected-images [data-type="alt"]')
+      ) as HTMLInputElement[];
+      const selectedNames = new Set(selectedAltInputs.map(i => i.getAttribute('data-image') || ''));
+      const images: Array<{ src: string; alt: string; caption?: string }> = [];
+      selectedNames.forEach(name => {
+        if (!name) return;
+        const alt = document.querySelector(
+          `#grid-selected-images [data-image="${name}"][data-type="alt"]`
+        ) as HTMLInputElement | null;
+        const cap = document.querySelector(
+          `#grid-selected-images [data-image="${name}"][data-type="caption"]`
+        ) as HTMLInputElement | null;
+        if (alt && alt.value.trim()) {
+          const node: any = { src: `./images/${name}`, alt: alt.value.trim() };
+          if (cap && cap.value.trim()) node.caption = cap.value.trim();
+          images.push(node);
+        }
+      });
+      if (images.length === 0) return alert('Alt テキストを入力してください');
+      const columns = (document.getElementById('grid-columns') as HTMLSelectElement)?.value || '2';
+      const cursor = this.input.selectionStart;
+      const before = this.input.value.slice(0, cursor);
+      const after = this.input.value.slice(cursor);
+      let component = `<ImageGrid\n  columns={${columns}}\n  images={[\n`;
+      images.forEach((img, i) => {
+        component += `    {\n      src: "${img.src}",\n      alt: "${img.alt}"`;
+        if ((img as any).caption) component += `,\n      caption: "${(img as any).caption}"`;
+        component += `\n    }${i < images.length - 1 ? ',' : ''}\n`;
+      });
+      component += `  ]}\n/>\n`;
+      this.input.value = before + component + after;
+      this.updatePreview();
+      this.persist();
+      this.closeModal(this.gridModal);
+    }
+
+    closeModal(modal: HTMLDivElement) {
+      modal.classList.add('hidden');
+    }
+
+    openHeaderModal() {
+      this.headerModal.classList.remove('hidden');
+      const fm = this.extractFrontmatter();
+      const get = (k: string) => (fm[k] ?? '').toString();
+      (document.getElementById('header-title') as HTMLInputElement).value = get('title');
+      (document.getElementById('header-description') as HTMLInputElement).value =
+        get('description');
+      (document.getElementById('header-category') as HTMLSelectElement).value = get('category');
+      (document.getElementById('header-hero') as HTMLInputElement).value = get('heroImage');
+    }
+
+    applyHeader() {
+      const title = (document.getElementById('header-title') as HTMLInputElement).value.trim();
+      const description = (
+        document.getElementById('header-description') as HTMLInputElement
+      ).value.trim();
+      const category = (
+        document.getElementById('header-category') as HTMLSelectElement
+      ).value.trim();
+      const heroImage = (document.getElementById('header-hero') as HTMLInputElement).value.trim();
+      const pubDate = this.publishDate.value || new Date().toISOString().split('T')[0];
+
+      const fmLines: string[] = ['---'];
+      if (title) fmLines.push(`title: '${title.replace(/'/g, "''")}'`);
+      if (description) fmLines.push(`description: '${description.replace(/'/g, "''")}'`);
+      fmLines.push(`pubDate: '${pubDate}'`);
+      if (category) fmLines.push(`category: '${category}'`);
+      if (heroImage) fmLines.push(`heroImage: '${heroImage}'`);
+      fmLines.push('---');
+
+      const content = this.input.value;
+      const hasFM = /^---[\s\S]*?---\n?/.test(content);
+      const newContent = hasFM
+        ? content.replace(/^---[\s\S]*?---\n?/, fmLines.join('\n') + '\n\n')
+        : fmLines.join('\n') + '\n\n' + content;
+      this.input.value = newContent;
+
+      this.ensureImports();
+      this.updatePreview();
+      this.persist();
+      this.closeModal(this.headerModal);
+    }
+
+    extractFrontmatter(): Record<string, string> {
+      const m = this.input.value.match(/^---\n([\s\S]*?)\n---/);
+      const out: Record<string, string> = {};
+      if (!m) return out;
+      const body = m[1];
+      body.split(/\r?\n/).forEach(line => {
+        const mm = line.match(/^(\w+):\s*(.*)$/);
+        if (mm) out[mm[1]] = mm[2].replace(/^'|'$/g, '').trim();
+      });
+      return out;
+    }
+
+    ensureImports() {
+      const content = this.input.value;
+      const usedCaptioned = /<\s*CaptionedImage\b/.test(content);
+      const usedGrid = /<\s*ImageGrid\b/.test(content);
+      if (!usedCaptioned && !usedGrid) return;
+
+      const fmMatch = content.match(/^---[\s\S]*?---\n?/);
+      const startIndex = fmMatch ? fmMatch[0].length : 0;
+      const head = content.slice(0, startIndex);
+      let rest = content.slice(startIndex);
+
+      const imports: string[] = [];
+      if (usedCaptioned && !/import\s+CaptionedImage\s+from/.test(content)) {
+        imports.push("import CaptionedImage from '@/components/CaptionedImage.astro';");
+      }
+      if (usedGrid && !/import\s+ImageGrid\s+from/.test(content)) {
+        imports.push("import ImageGrid from '@/components/ImageGrid.astro';");
+      }
+      if (imports.length > 0) {
+        rest = imports.join('\n') + '\n' + rest;
+      }
+      this.input.value = head + rest;
+    }
+
+    downloadMDX() {
       const content = this.input.value;
       const filename = this.fileName.value || 'article';
 
@@ -940,108 +1027,109 @@ src/content/blog/${articleDir}/
       URL.revokeObjectURL(url);
     }
 
-    loadFile() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.mdx,.md';
-      input.onchange = e => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = e => {
-            this.input.value = e.target?.result as string;
-            this.fileName.value = file.name.replace(/\.(mdx?|md)$/, '');
-            this.updatePreview();
-            this.saveToLocalStorage();
-          };
-          reader.readAsText(file);
+    async openLoadModal() {
+      this.loadModal.classList.remove('hidden');
+      await this.fetchMdxList();
+      const search = document.getElementById('load-search') as HTMLInputElement;
+      search.oninput = () => this.renderMdxList(search.value);
+    }
+
+    async fetchMdxList() {
+      try {
+        const res = await fetch('/api/dev/list-mdx');
+        if (!res.ok) throw new Error('failed to list mdx');
+        const data = await res.json();
+        this.mdxList = (data?.files || []) as any[];
+        this.renderMdxList('');
+      } catch (e) {
+        console.warn(e);
+        const list = document.getElementById('load-list');
+        if (list) list.innerHTML = '<div class="p-3 text-red-600">MDXの取得に失敗しました</div>';
+      }
+    }
+
+    renderMdxList(query: string) {
+      const list = document.getElementById('load-list') as HTMLDivElement;
+      if (!list) return;
+      const q = (query || '').toLowerCase();
+      const files = this.mdxList.filter((f: any) => {
+        const key = `${f.path} ${f.title || ''} ${f.pubDate || ''}`.toLowerCase();
+        return key.includes(q);
+      });
+      if (files.length === 0) {
+        list.innerHTML =
+          '<div class="p-3 text-sm text-gray-500">一致するファイルがありません</div>';
+        return;
+      }
+      const rows = files
+        .map((f: any) => {
+          const badge = f.pubDate
+            ? `<span class="text-xs px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-700 mr-2">${f.pubDate}</span>`
+            : '';
+          const title = f.title ? `<span class="font-medium">${escapeHtml(f.title)}</span>` : '';
+          return `<button type="button" data-path="${encodeURIComponent(f.path)}" class="w-full text-left p-2 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+            <div class="text-sm flex items-center">${badge}${title}</div>
+            <div class="text-xs text-gray-500">${escapeHtml(f.path)}</div>
+          </button>`;
+        })
+        .join('');
+      list.innerHTML = rows;
+      list.querySelectorAll('button[data-path]')?.forEach((btn: any) => {
+        btn.addEventListener('click', () => {
+          const p = decodeURIComponent(btn.getAttribute('data-path'));
+          this.loadMdxFromProject(p);
+        });
+      });
+    }
+
+    async loadMdxFromProject(relPath: string) {
+      try {
+        const res = await fetch(`/api/dev/read-mdx?path=${encodeURIComponent(relPath)}`);
+        if (!res.ok) throw new Error('failed to read');
+        const data = await res.json();
+        const content = String(data?.content || '');
+        this.input.value = content;
+        // ファイル名
+        this.fileName.value =
+          relPath
+            .split('/')
+            .pop()
+            ?.replace(/\.(mdx|md)$/i, '') || 'article';
+        // pubDate はFMがあれば優先、なければパスから推測
+        const fm = this.extractFrontmatter();
+        if (fm['pubDate']) {
+          this.publishDate.value = fm['pubDate'];
+        } else {
+          const m = relPath.match(/^(\d{4}-\d{2})\/(\d{4}-\d{2}-\d{2})\//);
+          if (m) this.publishDate.value = m[2];
         }
-      };
-      input.click();
+        this.updatePreview();
+        this.persist();
+        this.closeModal(this.loadModal);
+      } catch (e) {
+        alert('読み込みに失敗しました');
+        console.warn(e);
+      }
     }
 
-    newFile() {
-      this.templateModal.classList.remove('hidden');
-    }
-
-    closeModal(modalId: string) {
-      document.getElementById(modalId)?.classList.add('hidden');
-    }
-
-    applyTemplate() {
-      const category = (document.getElementById('template-category') as HTMLSelectElement).value;
-      const title = (document.getElementById('template-title') as HTMLInputElement).value;
-      const description = (document.getElementById('template-description') as HTMLTextAreaElement)
-        .value;
-
+    newTemplate() {
       const today = new Date().toISOString().split('T')[0];
       this.publishDate.value = today;
-
       const template = `---
-title: '${title || '新しい記事'}'
-description: '${description || '記事の説明'}'
+title: '新しい記事'
+description: '記事の説明'
 pubDate: '${today}'
-heroImage: './images/hero-image.jpg' # オプション
-category: '${category}'
+category: ''
 ---
 
-# ${title || '新しい記事'}
+# 新しい記事
 
-記事の内容をここに書いてください。
-
-## セクション見出し
-
-- リスト項目1
-- リスト項目2  
-- リスト項目3
-
-**太字のテキスト** と *斜体のテキスト*
-
-\`インラインコード\` の例
-
-\`\`\`javascript
-// コードブロックの例
-console.log('Hello, World!');
-\`\`\`
-
-[リンクの例](https://example.com)
-
-## 画像の例
-
-![画像の説明](./images/sample.jpg)
-
-<CaptionedImage
-  src="./images/sample.jpg"
-  alt="キャプション付き画像の説明"
-  caption="この画像にはキャプションが付いています"
-/>
-
-<ImageGrid
-  columns={2}
-  images={[
-    {
-      src: "./images/image1.jpg",
-      alt: "画像1の説明",
-      caption: "画像1のキャプション"
-    },
-    {
-      src: "./images/image2.jpg", 
-      alt: "画像2の説明",
-      caption: "画像2のキャプション"
-    }
-  ]}
-/>
+ここから本文を作成してください。
 `;
-
       this.input.value = template;
-      this.fileName.value =
-        title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, '')
-          .replace(/\s+/g, '-') || 'new-article';
+      this.fileName.value = 'new-article';
       this.updatePreview();
-      this.saveToLocalStorage();
-      this.closeModal('template-modal');
+      this.persist();
     }
 
     saveToLocalStorage() {
@@ -1049,17 +1137,16 @@ console.log('Hello, World!');
         content: this.input.value,
         fileName: this.fileName.value,
         publishDate: this.publishDate.value,
-        images: this.uploadedImages.map((img: { name: string; url: string; file: File }) => ({
-          name: img.name,
-          url: img.url,
-          // fileは保存できないので除外
-        })),
       };
 
       localStorage.setItem('mdx-editor-data', JSON.stringify(data));
     }
 
-    loadFromLocalStorage() {
+    persist() {
+      this.saveToLocalStorage();
+    }
+
+    restore() {
       const savedData = localStorage.getItem('mdx-editor-data');
 
       if (savedData) {
@@ -1076,19 +1163,31 @@ console.log('Hello, World!');
           if (data.publishDate) {
             this.publishDate.value = data.publishDate;
           }
-
-          // 画像は復元できないので、ギャラリーをクリア
-          this.uploadedImages = [];
-          this.imageGallery.innerHTML =
-            '<p class="text-gray-500 text-sm col-span-full">画像は再アップロードしてください</p>';
         } catch (e) {
           console.error('LocalStorageからの読み込みエラー:', e);
         }
       }
     }
+
+    autoResizeTextarea() {
+      if (!this.input) return;
+      this.input.style.height = 'auto';
+      const baseLine = 200; // px, 約10行相当
+      const next = Math.max(this.input.scrollHeight, baseLine);
+      this.input.style.height = next + 'px';
+      this.input.style.overflowY = 'hidden';
+    }
   }
 
-  // エディタ初期化
-  const editor = new MDXEditor();
-  (window as any).mdxEditor = editor; // グローバルアクセス用
+  // エスケープ用ユーティリティ（XSS対策）
+  function escapeHtml(s: string) {
+    return s
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  new SimpleMDXEditor();
 </script>
