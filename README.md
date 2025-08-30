@@ -45,6 +45,20 @@ https://blog.kiakiraki.dev/
 このプロジェクトは [Cloudflare Pages](https://pages.cloudflare.com/)
 を使用してデプロイされています。
 
+## 開発用エディタと画像アップロード
+
+- 開発時は `src/components/MDXEditor.astro`
+  の簡易エディタから画像をアップロードできます。
+- アップロード先（開発環境のみ）
+  - 通常の画像（ドラッグ&ドロップ／貼り付け）:
+    `src/content/blog/<YYYY-MM>/<YYYY-MM-DD>/images/<filename>`
+  - ヒーロー画像（Hero アップロード）:
+    `src/content/blog/<YYYY-MM>/<YYYY-MM-DD>/<filename>`
+- プレビューは開発用 API を介して行われます。
+  - 取得: `GET /api/dev/get-image?publishDate=YYYY-MM-DD&path=...`
+  - 保存: `POST /api/dev/upload-image`
+- これらの API は開発環境専用で、本番では無効化されています。
+
 ## 参考
 
 - [Astro ドキュメント](https://docs.astro.build/ja/)

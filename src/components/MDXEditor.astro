@@ -219,6 +219,18 @@
       </div>
 
       <div class="mb-4">
+        <label class="block text-sm font-medium mb-2" for="captioned-slug"
+          >変数名スラッグ（任意）</label
+        >
+        <input
+          id="captioned-slug"
+          type="text"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+          placeholder="例: station（結果例: station01）"
+        />
+      </div>
+
+      <div class="mb-4">
         <label class="block text-sm font-medium mb-2" for="captioned-alt">Alt テキスト</label>
         <input
           id="captioned-alt"
@@ -261,6 +273,16 @@
       class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-auto"
     >
       <h3 class="text-lg font-bold mb-4">ImageGrid を挿入</h3>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2" for="grid-slug">変数名スラッグ（任意）</label>
+        <input
+          id="grid-slug"
+          type="text"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+          placeholder="例: station（結果例: station01, station02 ...）"
+        />
+      </div>
 
       <div class="mb-4">
         <label class="block text-sm font-medium mb-2" for="grid-columns">グリッド列数</label>
@@ -341,6 +363,7 @@
     loadModal: HTMLDivElement;
     mdxList: any[];
     uploadedImages: Array<{ name: string; url: string; file: File }>;
+    availableImages: Array<{ name: string; path: string; url: string }>;
     importMap: Record<string, string>;
 
     constructor() {
@@ -357,6 +380,7 @@
       this.mdxList = [];
 
       this.uploadedImages = [];
+      this.availableImages = [];
       this.importMap = {};
 
       this.restore();
@@ -788,14 +812,15 @@
       }
     }
 
-    updateImageSelects() {
+    async updateImageSelects() {
+      await this.fetchAvailableImages();
       const select = document.getElementById('captioned-image-select-visual') as HTMLSelectElement;
       if (select) {
         select.innerHTML = '<option value="">画像を選択してください</option>';
-        this.uploadedImages.forEach(img => {
+        this.availableImages.forEach(img => {
           const opt = document.createElement('option');
-          opt.value = img.name;
-          opt.text = img.name;
+          opt.value = img.path;
+          opt.text = img.path;
           select.appendChild(opt);
         });
       }
@@ -803,19 +828,19 @@
       const gridSelectZone = document.getElementById('grid-image-selection') as HTMLDivElement;
       if (gridSelectZone) {
         gridSelectZone.innerHTML = '';
-        this.uploadedImages.forEach(img => {
+        this.availableImages.forEach(img => {
           const row = document.createElement('label');
           row.className = 'flex items-center gap-2 p-1 cursor-pointer';
           const cb = document.createElement('input');
           cb.type = 'checkbox';
-          cb.value = img.name;
+          cb.value = img.path;
           const thumb = document.createElement('img');
           thumb.src = img.url;
           thumb.alt = img.name;
           thumb.className = 'w-12 h-12 object-cover rounded border';
           const span = document.createElement('span');
           span.className = 'text-sm';
-          span.textContent = img.name;
+          span.textContent = img.path;
           row.appendChild(cb);
           row.appendChild(thumb);
           row.appendChild(span);
@@ -881,13 +906,11 @@
       input.click();
     }
 
-    openCaptionedModal() {
-      if (this.uploadedImages.length === 0) {
-        alert('まず画像を追加してください');
-        return;
-      }
+    async openCaptionedModal() {
+      // 先にコンポーネントの import を確保
+      this.ensureComponentImport('CaptionedImage');
       this.captionedModal.classList.remove('hidden');
-      this.updateImageSelects();
+      await this.updateImageSelects();
     }
 
     applyCaptionedImage() {
@@ -896,28 +919,35 @@
       const caption = document.getElementById('captioned-caption') as HTMLInputElement;
       if (!select?.value) return alert('画像を選択してください');
       if (!alt?.value.trim()) return alert('Alt テキストを入力してください');
+      const original = this.input.value;
       const cursor = this.input.selectionStart;
-      const before = this.input.value.slice(0, cursor);
-      const after = this.input.value.slice(cursor);
-      let component = `<CaptionedImage\n  src="./images/${select.value}"\n  alt="${alt.value.trim()}"`;
+      const relPath = `./${select.value}`;
+      const slugInput = document.getElementById('captioned-slug') as HTMLInputElement | null;
+      const slugRaw = (slugInput?.value || '').trim();
+      const slug = this.normalizeSlugForIdent(slugRaw || this.fileName.value || 'img');
+      const next = this.nextIndexForSlug(slug);
+      const ident = this.ensureImageImport(relPath, `${slug}${this.zeroPad(next)}`);
+      let component = `<CaptionedImage\n  src={${ident}}\n  alt="${alt.value.trim()}"`;
       if (caption?.value.trim()) component += `\n  caption="${caption.value.trim()}"`;
       component += `\n/>\n`;
-      this.input.value = before + component + after;
+      const mutated = this.input.value; // ensureImageImport() で変更された可能性あり
+      const delta = mutated.length - original.length;
+      const insertPos = Math.max(0, Math.min(mutated.length, cursor + delta));
+      this.input.value = mutated.slice(0, insertPos) + component + mutated.slice(insertPos);
       this.updatePreview();
       this.persist();
       this.closeModal(this.captionedModal);
       if (select) select.value = '';
       if (alt) alt.value = '';
       if (caption) caption.value = '';
+      this.ensureImports();
     }
 
-    openGridModal() {
-      if (this.uploadedImages.length === 0) {
-        alert('まず画像を追加してください');
-        return;
-      }
+    async openGridModal() {
+      // 先にコンポーネントの import を確保
+      this.ensureComponentImport('ImageGrid');
       this.gridModal.classList.remove('hidden');
-      this.updateImageSelects();
+      await this.updateImageSelects();
       this.updateGridSelectedImages();
     }
 
@@ -936,7 +966,7 @@
       selected.forEach(name => {
         const wrap = document.createElement('div');
         wrap.className = 'flex items-start gap-2 p-2 border rounded mb-2';
-        const img = this.uploadedImages.find(i => i.name === name);
+        const img = this.availableImages.find(i => i.path === name);
         if (img) {
           const thumb = document.createElement('img');
           thumb.src = img.url;
@@ -980,27 +1010,37 @@
           `#grid-selected-images [data-image="${name}"][data-type="caption"]`
         ) as HTMLInputElement | null;
         if (alt && alt.value.trim()) {
-          const node: any = { src: `./images/${name}`, alt: alt.value.trim() };
+          const node: any = { src: `./${name}`, alt: alt.value.trim() };
           if (cap && cap.value.trim()) node.caption = cap.value.trim();
           images.push(node);
         }
       });
       if (images.length === 0) return alert('Alt テキストを入力してください');
       const columns = (document.getElementById('grid-columns') as HTMLSelectElement)?.value || '2';
+      const original = this.input.value;
       const cursor = this.input.selectionStart;
-      const before = this.input.value.slice(0, cursor);
-      const after = this.input.value.slice(cursor);
+      // Ensure imports for all images and use identifiers with slug +連番
+      const paths = images.map(i => i.src);
+      const slugInput = document.getElementById('grid-slug') as HTMLInputElement | null;
+      const slugRaw = (slugInput?.value || '').trim();
+      const slug = this.normalizeSlugForIdent(slugRaw || this.fileName.value || 'img');
+      const idMap = this.ensureImageImportsWithSlug(paths, slug);
       let component = `<ImageGrid\n  columns={${columns}}\n  images={[\n`;
       images.forEach((img, i) => {
-        component += `    {\n      src: "${img.src}",\n      alt: "${img.alt}"`;
+        const ident = idMap[img.src] || this.ensureImageImport(img.src);
+        component += `    {\n      src: ${ident},\n      alt: "${img.alt}"`;
         if ((img as any).caption) component += `,\n      caption: "${(img as any).caption}"`;
         component += `\n    }${i < images.length - 1 ? ',' : ''}\n`;
       });
       component += `  ]}\n/>\n`;
-      this.input.value = before + component + after;
+      const mutated = this.input.value; // ensureImageImportsWithSlug() で変更された可能性あり
+      const delta = mutated.length - original.length;
+      const insertPos = Math.max(0, Math.min(mutated.length, cursor + delta));
+      this.input.value = mutated.slice(0, insertPos) + component + mutated.slice(insertPos);
       this.updatePreview();
       this.persist();
       this.closeModal(this.gridModal);
+      this.ensureImports();
     }
 
     closeModal(modal: HTMLDivElement) {
@@ -1084,6 +1124,160 @@
         rest = imports.join('\n') + '\n' + rest;
       }
       this.input.value = head + rest;
+    }
+
+    ensureComponentImport(name: 'CaptionedImage' | 'ImageGrid') {
+      const content = this.input.value;
+      const already = new RegExp(`^import\\s+${name}\\s+from`, 'm').test(content);
+      if (already) return;
+      const path =
+        name === 'CaptionedImage'
+          ? '@/components/CaptionedImage.astro'
+          : '@/components/ImageGrid.astro';
+      const fmMatch = content.match(/^---[\s\S]*?---\n?/);
+      const startIndex = fmMatch ? fmMatch[0].length : 0;
+      const head = content.slice(0, startIndex);
+      const rest = content.slice(startIndex);
+      this.input.value = `${head}import ${name} from '${path}';\n${rest}`;
+    }
+
+    async fetchAvailableImages() {
+      const publishDate = this.publishDate.value;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(publishDate)) {
+        this.availableImages = [];
+        return;
+      }
+      try {
+        const res = await fetch(
+          `/api/dev/list-images?publishDate=${encodeURIComponent(publishDate)}`
+        );
+        if (!res.ok) throw new Error('failed to list images');
+        const data = await res.json();
+        const files: string[] = Array.isArray(data?.files) ? data.files : [];
+        this.availableImages = files.map(p => ({
+          name: p.split('/').pop() || p,
+          path: p,
+          url: `/api/dev/get-image?publishDate=${encodeURIComponent(publishDate)}&path=${encodeURIComponent(p)}`,
+        }));
+      } catch (e) {
+        console.warn('画像リストの取得に失敗:', e);
+        this.availableImages = [];
+      }
+    }
+
+    // ----- Image import helpers -----
+    ensureImageImportsWithSlug(paths: string[], slug: string): Record<string, string> {
+      const map: Record<string, string> = {};
+      let idx = this.nextIndexForSlug(slug);
+      for (const p of paths) {
+        const idExisting = this.getImportedIdentifierForPath(p);
+        if (idExisting) {
+          map[p] = idExisting;
+        } else {
+          const ident = `${slug}${this.zeroPad(idx++)}`;
+          map[p] = this.ensureImageImport(p, ident);
+        }
+      }
+      return map;
+    }
+
+    ensureImageImport(relPath: string, preferredIdent?: string): string {
+      const pathStr = String(relPath).trim();
+      if (!pathStr) return 'img0';
+      const content = this.input.value;
+      // If already imported, reuse identifier
+      const re = new RegExp(
+        `^import\\s+([A-Za-z_$][\\w$]*)\\s+from\\s+['\"]${this.escapeForRegExp(pathStr)}['\"];?\\s*$`,
+        'm'
+      );
+      const m = content.match(re);
+      if (m) return m[1];
+
+      // Generate unique identifier
+      const base = preferredIdent
+        ? this.normalizeIdent(preferredIdent)
+        : this.toIdentifier(pathStr);
+      const used = new Set(
+        Array.from(
+          content.matchAll(/^import\s+([A-Za-z_$][\w$]*)\s+from\s+['"][^'"]+['"];?$/gm)
+        ).map(x => x[1])
+      );
+      let ident = base;
+      let i = 1;
+      while (used.has(ident)) {
+        ident = preferredIdent ? `${base}${this.zeroPad(i++)}` : `${base}${i++}`;
+      }
+
+      // Insert import after frontmatter
+      const fmMatch = content.match(/^---[\s\S]*?---\n?/);
+      const startIndex = fmMatch ? fmMatch[0].length : 0;
+      const head = content.slice(0, startIndex);
+      const rest = content.slice(startIndex);
+      const importLine = `import ${ident} from '${pathStr}';\n`;
+      this.input.value = head + importLine + rest;
+      return ident;
+    }
+
+    getImportedIdentifierForPath(relPath: string): string | null {
+      const pathStr = String(relPath).trim();
+      const content = this.input.value;
+      const re = new RegExp(
+        `^import\\s+([A-Za-z_$][\\w$]*)\\s+from\\s+['\"]${this.escapeForRegExp(pathStr)}['\"];?\\s*$`,
+        'm'
+      );
+      const m = content.match(re);
+      return m ? m[1] : null;
+    }
+
+    nextIndexForSlug(slug: string): number {
+      const content = this.input.value;
+      const re = new RegExp(
+        `^import\\s+(${this.escapeForRegExp(slug)})(\\d+)\\s+from\\s+['\"][^'\"]+['\"];?\\s*$`,
+        'gm'
+      );
+      let max = 0;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(content))) {
+        const n = parseInt(m[2], 10);
+        if (!isNaN(n) && n > max) max = n;
+      }
+      return max + 1;
+    }
+
+    zeroPad(n: number): string {
+      if (n >= 100) return String(n);
+      return n < 10 ? `0${n}` : String(n);
+    }
+
+    normalizeSlugForIdent(s: string): string {
+      return (s || 'img')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9_]+/g, '-')
+        .replace(/-+$/g, '')
+        .replace(/^-+/g, '')
+        .replace(/-([a-z0-9])/g, (_m, ch) => ch.toUpperCase());
+    }
+
+    normalizeIdent(s: string): string {
+      let out = s.replace(/[^A-Za-z0-9_$]/g, '');
+      if (!/^[A-Za-z_$]/.test(out)) out = 'img' + out;
+      return out;
+    }
+
+    toIdentifier(pathStr: string): string {
+      const file = pathStr.split('/').pop() || 'img';
+      const name = file.replace(/\.[a-z0-9]+$/i, '');
+      const camel = name
+        .replace(/[^a-zA-Z0-9]+(.)/g, (_m, ch: string) => ch.toUpperCase())
+        .replace(/^[^a-zA-Z_]+/, '');
+      const prefixed = camel ? camel : 'img';
+      const safe = /^[A-Za-z_$]/.test(prefixed) ? prefixed : 'img' + prefixed;
+      return safe;
+    }
+
+    escapeForRegExp(s: string): string {
+      return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     downloadMDX() {
@@ -1216,7 +1410,7 @@ category: ''
         const res = await fetch('/api/dev/save-mdx', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ publishDate, filename, content }),
+          body: JSON.stringify({ publishDate, filename, content, overwrite: true }),
         });
         const data = await res.json();
         if (!res.ok || !data?.ok) throw new Error(String(data?.error || res.status));
