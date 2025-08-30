@@ -32,7 +32,8 @@ export const GET: APIRoute = async () => {
     );
     return json({ ok: true, files: enriched });
   } catch (e: any) {
-    return json({ ok: false, error: String(e?.message || e) }, 500);
+    console.error("Error in list-mdx API:", e);
+    return json({ ok: false, error: "Internal server error" }, 500);
   }
 };
 
