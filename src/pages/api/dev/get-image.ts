@@ -42,7 +42,8 @@ export const GET: APIRoute = async ({ url }) => {
       },
     });
   } catch (e: any) {
-    return new Response(String(e?.message || e), { status: 404 });
+    console.error(e); // Log for server-side debugging only.
+    return new Response('Not found', { status: 404 }); // Generic message, no details exposed.
   }
 };
 
