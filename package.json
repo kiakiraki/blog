@@ -23,7 +23,7 @@
     "@vercel/og": "^0.8.5",
     "astro": "^5.13.7",
     "satori": "^0.18.2",
-    "sharp": "^0.34.3",
+    "sharp": "^0.34.4",
     "tailwindcss": "^4.1.12"
   },
   "devDependencies": {
