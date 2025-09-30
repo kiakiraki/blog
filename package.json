@@ -24,7 +24,7 @@
     "astro": "^5.13.7",
     "satori": "^0.18.2",
     "sharp": "^0.34.4",
-    "tailwindcss": "^4.1.12"
+    "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
