@@ -21,7 +21,7 @@
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.12",
     "@vercel/og": "^0.8.5",
-    "astro": "^5.13.7",
+    "astro": "^5.14.1",
     "satori": "^0.18.2",
     "sharp": "^0.34.4",
     "tailwindcss": "^4.1.13"
