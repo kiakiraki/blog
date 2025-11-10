@@ -1,3 +1,8 @@
+// Add DOMPurify import.
+// If this is for browser, you can use: import DOMPurify from 'dompurify';
+// Or, for legacy environments, include dompurify via a script tag (modify as appropriate for your build)
+import DOMPurify from 'dompurify';
+
 class SimpleMDXEditor {
   input: HTMLTextAreaElement;
   preview: HTMLDivElement;
@@ -150,8 +155,11 @@ class SimpleMDXEditor {
       html = '<p>' + html + '</p>';
     }
 
+    // Sanitize the generated HTML before inserting.
     this.preview.innerHTML =
-      html || '<p class="text-gray-500 italic">プレビューがここに表示されます</p>';
+      html
+        ? DOMPurify.sanitize(html)
+        : '<p class="text-gray-500 italic">プレビューがここに表示されます</p>';
     this.autoResizeTextarea();
   }
 
