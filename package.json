@@ -19,7 +19,7 @@
     "@astrojs/rss": "^4.0.13",
     "@astrojs/sitemap": "^3.6.0",
     "@tailwindcss/typography": "^0.5.19",
-    "@tailwindcss/vite": "^4.1.15",
+    "@tailwindcss/vite": "^4.1.17",
     "@vercel/og": "^0.8.5",
     "astro": "^5.16.0",
     "satori": "^0.18.3",
