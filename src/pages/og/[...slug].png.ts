@@ -1,10 +1,21 @@
-import { ImageResponse } from '@vercel/og';
+import satori from 'satori';
+import sharp from 'sharp';
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { CATEGORIES } from '../../consts';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { APIContext } from 'astro';
 
-export const runtime = 'edge';
+export const prerender = true;
+
+// Load fonts from public directory at build time
+const fontsDir = path.join(process.cwd(), 'public/fonts');
+const fontRegular = fs.readFileSync(path.join(fontsDir, 'noto-sans-jp-400.woff'));
+const fontBold = fs.readFileSync(path.join(fontsDir, 'noto-sans-jp-700.woff'));
 
 type Props = {
   post?: CollectionEntry<'blog'>;
+  categoryPage?: string;
 };
 
 export async function getStaticPaths() {
@@ -19,14 +30,22 @@ export async function getStaticPaths() {
     { params: { slug: 'about' }, props: {} as Props }
   );
 
+  // Add category pages
+  CATEGORIES.forEach(category => {
+    paths.push({
+      params: { slug: `category-${category}` },
+      props: { categoryPage: category } as Props,
+    });
+  });
+
   return paths;
 }
 
-function h(type: string, props: Record<string, any> = {}, ...children: any[]): any {
+function h(type: string, props: Record<string, unknown> = {}, ...children: unknown[]): unknown {
   return { type, props: { ...props, children: children.length > 1 ? children : children[0] } };
 }
 
-export async function GET({ params, props }: { params: { slug: string }; props: Props }) {
+export async function GET({ params, props }: APIContext<Props>) {
   const { slug } = params;
 
   let title = '趣味の記録';
@@ -39,6 +58,11 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
     description = props.post.data.description || '';
     category = props.post.data.category || '';
     type = 'ブログ記事';
+  } else if (props.categoryPage) {
+    title = `${props.categoryPage}の記事一覧`;
+    description = `${props.categoryPage}に関する記事を表示しています`;
+    category = props.categoryPage;
+    type = 'カテゴリ';
   } else if (slug === 'home') {
     title = '趣味の記録';
     description = 'あきらきの趣味について記録しているブログです';
@@ -48,13 +72,6 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
     description = 'あきらき（kiakiraki）のプロフィール';
     type = 'プロフィール';
   }
-
-  const fontRegular = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-400-normal.woff'
-  ).then(res => res.arrayBuffer());
-  const fontBold = await fetch(
-    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@latest/files/noto-sans-jp-japanese-700-normal.woff'
-  ).then(res => res.arrayBuffer());
 
   const element = h(
     'div',
@@ -167,12 +184,23 @@ export async function GET({ params, props }: { params: { slug: string }; props: 
     )
   );
 
-  return new ImageResponse(element as any, {
+  // Generate SVG using satori
+  const svg = await satori(element as any, {
     width: 1200,
     height: 630,
     fonts: [
       { name: 'Noto Sans JP', data: fontRegular, weight: 400, style: 'normal' },
       { name: 'Noto Sans JP', data: fontBold, weight: 700, style: 'normal' },
     ],
+  });
+
+  // Convert SVG to PNG using sharp
+  const png = await sharp(Buffer.from(svg)).png().toBuffer();
+
+  return new Response(new Uint8Array(png), {
+    headers: {
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
   });
 }

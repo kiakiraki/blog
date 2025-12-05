@@ -7,6 +7,7 @@ import { getCollection } from 'astro:content';
 import TableOfContents from '@/components/TableOfContents.astro';
 import RelatedPosts from '@/components/RelatedPosts.astro';
 import { getRelatedPosts } from '@/utils/relatedPosts';
+import { AUTHOR_NAME, SITE_TITLE } from '../consts';
 
 // 新しくTweetButtonをインポート
 import TweetButton from '../components/TweetButton.astro';
@@ -42,6 +43,32 @@ const relatedPosts = getRelatedPosts(currentPost, allPosts, 3);
 ---
 
 <Layout description={description} image={heroImage} ogSlug={slug} title={title}>
+  <!-- BlogPosting Structured Data -->
+  <script
+    is:inline
+    set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: title,
+      description: description,
+      datePublished: pubDate.toISOString(),
+      dateModified: (updatedDate || pubDate).toISOString(),
+      author: {
+        '@type': 'Person',
+        name: AUTHOR_NAME,
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: SITE_TITLE,
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': articleUrl,
+      },
+      ...(category && { articleSection: category }),
+    })}
+    type="application/ld+json"
+  />
   <article class="py-8">
     {
       heroImage && (

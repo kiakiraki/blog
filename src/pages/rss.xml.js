@@ -19,7 +19,7 @@ export async function GET(context) {
       pubDate: post.data.pubDate,
       link: `/blog/${post.slug}/`,
       guid: `/blog/${post.slug}/`,
-      categories: post.data.tags || [],
+      categories: [post.data.category],
       author: AUTHOR_NAME,
     })),
     customData: `

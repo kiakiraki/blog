@@ -115,13 +115,15 @@ if (image && typeof image === 'string') {
 ></script>
 
 <!-- JSON-LD Structured Data -->
-<script is:inline type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "{SITE_TITLE}",
-    "url": "{Astro.site}",
-    "description": "{description}",
-    "inLanguage": "ja"
-  }
-</script>
+<script
+  is:inline
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_TITLE,
+    url: Astro.site?.toString() ?? '',
+    description: description,
+    inLanguage: 'ja',
+  })}
+  type="application/ld+json"
+/>
