@@ -42,9 +42,7 @@ export async function getPostsForPage(
 /**
  * Get posts by category.
  */
-export async function getPostsByCategory(
-  category: string
-): Promise<CollectionEntry<'blog'>[]> {
+export async function getPostsByCategory(category: string): Promise<CollectionEntry<'blog'>[]> {
   const allPosts = await getAllPosts();
   return allPosts.filter(post => post.data.category === category);
 }

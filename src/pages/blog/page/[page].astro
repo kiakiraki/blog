@@ -54,7 +54,9 @@ const { posts, currentPage, totalPages, totalPosts } = Astro.props;
           ブログ記事一覧
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          全{totalPosts}件中 {(currentPage - 1) * POSTS_PER_PAGE + 1}〜{Math.min(currentPage * POSTS_PER_PAGE, totalPosts)}件を表示
+          全{totalPosts}件中 {(currentPage - 1) * POSTS_PER_PAGE + 1}〜{
+            Math.min(currentPage * POSTS_PER_PAGE, totalPosts)
+          }件を表示
         </p>
         <div class="w-24 h-1 bg-primary-600 mx-auto mt-6"></div>
       </div>
