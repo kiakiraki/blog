@@ -19,6 +19,26 @@ export default [
       'astro/sort-attributes': 'off',
       'astro/jsx-a11y/prefer-tag-over-role': 'off',
       'astro/jsx-a11y/control-has-associated-label': 'off',
+      'astro/no-unsafe-inline-scripts': 'off',
+    },
+  },
+  {
+    files: ['src/components/BaseHead.astro', 'src/layouts/BlogPost.astro'],
+    rules: {
+      // JSON-LD structured data using JSON.stringify is safe from XSS
+      'astro/no-set-html-directive': 'off',
+    },
+  },
+  {
+    files: [
+      'src/components/Header.astro',
+      'src/components/HeaderLink.astro',
+      'src/components/TableOfContents.astro',
+      'src/components/ThemeToggle.astro',
+    ],
+    rules: {
+      // Inline scripts required for View Transitions and client-side interactivity
+      'astro/no-unsafe-inline-scripts': 'off',
     },
   },
 ];

@@ -185,7 +185,6 @@ export async function GET({ params, props }: APIContext<Props>) {
   );
 
   // Generate SVG using satori
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const svg = await satori(element as any, {
     width: 1200,
     height: 630,
