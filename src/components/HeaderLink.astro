@@ -17,8 +17,35 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
       'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30': isActive,
     },
   ]}
+  data-href={href}
+  data-nav-link
   href={href}
   {...props}
 >
   <slot />
 </a>
+
+<script>
+  const activeClass = 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30';
+  const activeClasses = activeClass.split(' ');
+
+  function updateActiveLinks(): void {
+    const pathname = window.location.pathname;
+    const subpath = pathname.match(/[^\/]+/g);
+    const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+
+    navLinks.forEach(link => {
+      const href = link.dataset.href || '';
+      const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+
+      if (isActive) {
+        link.classList.add(...activeClasses);
+      } else {
+        link.classList.remove(...activeClasses);
+      }
+    });
+  }
+
+  // Update on View Transitions page swap
+  document.addEventListener('astro:after-swap', updateActiveLinks);
+</script>

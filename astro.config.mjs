@@ -20,6 +20,7 @@ export default defineConfig({
     }),
   ],
   vite: {
+    // @ts-expect-error - Type mismatch between @tailwindcss/vite and Astro's bundled Vite
     plugins: [tailwindcss()],
     define: {
       __DATE__: `'${new Date().toISOString()}'`,
