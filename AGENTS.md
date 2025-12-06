@@ -1,18 +1,20 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- Astro blog deployed to Cloudflare Pages; configuration lives in `astro.config.mjs`
-  and `tsconfig.json`.
+
+- Astro blog deployed to Cloudflare Pages; configuration lives in
+  `astro.config.mjs` and `tsconfig.json`.
 - Source code sits in `src/` with `components/` (Astro UI), `layouts/` (page
   shells), `pages/` (routes), `styles/` (global CSS), `utils/` (helpers), and
   `content/` (Markdown/MDX posts).
-- Static assets belong in `public/`; generated output from builds goes to `dist/`
-  (ignored in Git).
+- Static assets belong in `public/`; generated output from builds goes to
+  `dist/` (ignored in Git).
 - Blog posts follow date-based folders under
   `src/content/blog/YYYY-MM/YYYY-MM-DD/`; images stay in the adjacent `images/`
   subfolder.
 
 ## Build, Test, and Development Commands
+
 - `npm install` once to sync dependencies.
 - `npm run dev` starts the dev server at `http://localhost:4321`.
 - `npm run build` produces the production bundle in `dist/`; `npm run preview`
@@ -24,6 +26,7 @@
 - `npm run typecheck` runs `astro check` for TypeScript and template safety.
 
 ## Coding Style & Naming Conventions
+
 - Use Prettier defaults (2-space indent, semicolons, single quotes) and ESLint
   with `eslint-plugin-astro`/TypeScript configs.
 - Components and layouts: PascalCase filenames; utilities and constants:
@@ -34,15 +37,17 @@
   otherwise use `src/styles/`.
 
 ## Testing Guidelines
-- No dedicated test suite yet; rely on `npm run lint:check`, `npm run
-  format:check`, `npm run typecheck`, and `npm run build` before proposing
-  changes.
+
+- No dedicated test suite yet; rely on `npm run lint:check`,
+  `npm run format:check`, `npm run typecheck`, and `npm run build` before
+  proposing changes.
 - For content or UI edits, verify locally via `npm run preview` and check image
   uploads under `src/content/blog/.../images`.
 - Add regression coverage (unit or integration) alongside new functionality when
   introducing logic-heavy utilities.
 
 ## Commit & Pull Request Guidelines
+
 - Follow the existing conventional pattern (`feat:`, `fix:`, `style:`, etc.);
   keep subjects imperative and under ~72 chars.
 - Include scope when helpful (e.g., `fix(header): adjust logo spacing`).
