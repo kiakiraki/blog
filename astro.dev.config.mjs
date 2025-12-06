@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 import baseConfig from './astro.config.mjs';
 import fg from 'fast-glob';
