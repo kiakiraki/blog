@@ -12,10 +12,8 @@ const posts = (await getCollection('blog'))
 ---
 
 <Layout description={SITE_DESCRIPTION} ogSlug="home" title={SITE_TITLE}>
-  <script
-    is:inline
-    type="application/ld+json"
-    set:html={JSON.stringify({
+  <script is:inline type="application/ld+json">
+    {JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
       name: SITE_TITLE,
@@ -28,7 +26,7 @@ const posts = (await getCollection('blog'))
         url: Astro.site ? new URL(`/blog/${post.id}/`, Astro.site).toString() : `/blog/${post.id}/`,
       })),
     })}
-  />
+  </script>
   <!-- Hero Section -->
   <section
     class="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 py-16 md:py-24"
