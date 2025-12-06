@@ -35,8 +35,10 @@ const categoryCounts = CATEGORIES.reduce(
 <Layout description={`${category}に関する記事一覧`} title={`${category}の記事`}>
   <div class="container mx-auto px-4 py-16">
     <div class="max-w-6xl mx-auto">
-      <script is:inline type="application/ld+json">
-        {JSON.stringify({
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'CollectionPage',
           name: `${category}の記事`,
@@ -79,7 +81,7 @@ const categoryCounts = CATEGORIES.reduce(
             ],
           },
         })}
-      </script>
+      />
       <!-- Header -->
       <div class="text-center mb-16">
         <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
