@@ -23,16 +23,22 @@ const GITHUB_URL = 'https://github.com/kiakiraki/blog';
           <HeaderLink href="/blog">ブログ</HeaderLink>
 
           <!-- Categories Dropdown -->
-          <div class="relative group">
-            <button class="nav-link flex items-center gap-1" type="button">
+          <div class="relative">
+            <button
+              aria-controls="desktop-category-menu"
+              aria-expanded="false"
+              aria-haspopup="true"
+              class="nav-link flex items-center gap-1"
+              id="desktop-category-button"
+              type="button"
+            >
               カテゴリ
-              <Icon
-                class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180"
-                name="chevron-down"
-              />
+              <Icon class="w-4 h-4 transition-transform duration-200" name="chevron-down" />
             </button>
             <div
-              class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10"
+              class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10 hidden"
+              id="desktop-category-menu"
+              role="menu"
             >
               <div class="py-2">
                 {
@@ -40,6 +46,7 @@ const GITHUB_URL = 'https://github.com/kiakiraki/blog';
                     <a
                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       href={`/blog?category=${encodeURIComponent(category)}`}
+                      role="menuitem"
                     >
                       {category}
                     </a>
@@ -75,9 +82,12 @@ const GITHUB_URL = 'https://github.com/kiakiraki/blog';
         <ThemeToggle />
 
         <button
-          aria-label="メニューを開く"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          aria-label="メニューを開閉"
           class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           id="mobile-menu-button"
+          type="button"
         >
           <Icon class="w-6 h-6" name="menu" />
         </button>
@@ -134,14 +144,99 @@ const GITHUB_URL = 'https://github.com/kiakiraki/blog';
 </header>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function initHeader() {
+    const cleanup: Array<() => void> = [];
+
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
     if (mobileMenuButton && mobileMenu) {
-      mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
+      const toggleMobileMenu = () => {
+        const expanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+        const next = !expanded;
+        mobileMenuButton.setAttribute('aria-expanded', String(next));
+        mobileMenu.classList.toggle('hidden', !next);
+      };
+      mobileMenuButton.addEventListener('click', toggleMobileMenu);
+      cleanup.push(() => mobileMenuButton.removeEventListener('click', toggleMobileMenu));
+    }
+
+    const desktopButton = document.getElementById('desktop-category-button');
+    const desktopMenu = document.getElementById('desktop-category-menu');
+
+    if (desktopButton && desktopMenu) {
+      const closeMenu = () => {
+        desktopMenu.classList.add('hidden');
+        desktopButton.setAttribute('aria-expanded', 'false');
+      };
+
+      const openMenu = () => {
+        desktopMenu.classList.remove('hidden');
+        desktopButton.setAttribute('aria-expanded', 'true');
+      };
+
+      const toggleMenu = () => {
+        const expanded = desktopButton.getAttribute('aria-expanded') === 'true';
+        if (expanded) {
+          closeMenu();
+        } else {
+          openMenu();
+          const firstItem = desktopMenu.querySelector('a');
+          if (firstItem instanceof HTMLElement) {
+            firstItem.focus();
+          }
+        }
+      };
+
+      const handleOutsideClick = (event: MouseEvent) => {
+        if (
+          !desktopMenu.contains(event.target as Node) &&
+          !desktopButton.contains(event.target as Node)
+        ) {
+          closeMenu();
+        }
+      };
+
+      const handleEscape = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          closeMenu();
+          desktopButton.focus();
+        }
+      };
+
+      const handleArrowDown = (event: KeyboardEvent) => {
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          openMenu();
+          const firstItem = desktopMenu.querySelector('a');
+          if (firstItem instanceof HTMLElement) {
+            firstItem.focus();
+          }
+        }
+      };
+
+      desktopButton.addEventListener('click', toggleMenu);
+      desktopButton.addEventListener('keydown', handleArrowDown);
+      desktopMenu.addEventListener('keydown', handleEscape);
+      document.addEventListener('click', handleOutsideClick);
+
+      cleanup.push(() => {
+        desktopButton.removeEventListener('click', toggleMenu);
+        desktopButton.removeEventListener('keydown', handleArrowDown);
+        desktopMenu.removeEventListener('keydown', handleEscape);
+        document.removeEventListener('click', handleOutsideClick);
       });
     }
-  });
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cleanup.forEach(fn => fn());
+      },
+      { once: true }
+    );
+  }
+
+  document.addEventListener('DOMContentLoaded', initHeader);
+  document.addEventListener('astro:after-swap', initHeader);
 </script>

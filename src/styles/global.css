@@ -1,5 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+@font-face {
+  font-family: 'Noto Sans JP';
+  src:
+    url('/fonts/noto-sans-jp-400.woff') format('woff'),
+    local('Noto Sans JP');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans JP';
+  src:
+    url('/fonts/noto-sans-jp-700.woff') format('woff'),
+    local('Noto Sans JP');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
@@ -35,6 +52,29 @@
 
   body {
     @apply transition-colors duration-200;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 100;
+    background: #0ea5e9;
+    color: #ffffff;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .skip-link:focus {
+    left: 1rem;
+    top: 1rem;
+    width: auto;
+    height: auto;
   }
 
   .dark {

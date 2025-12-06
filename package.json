@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "dev:editor": "ASTRO_TELEMETRY_DISABLED=1 astro dev --config astro.dev.config.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -20,22 +21,23 @@
     "@astrojs/sitemap": "^3.6.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.17",
-    "astro": "^5.16.0",
+    "astro": "^5.16.4",
     "satori": "^0.18.3",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4.1.16"
+    "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
-    "@typescript-eslint/eslint-plugin": "^8.47.0",
-    "@typescript-eslint/parser": "^8.47.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
+    "@typescript-eslint/parser": "^8.48.1",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-astro": "^1.5.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "prettier": "^3.7.3",
+    "prettier": "^3.7.4",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.48.0"
+    "typescript-eslint": "^8.48.1",
+    "fast-glob": "^3.3.2"
   }
 }

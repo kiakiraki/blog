@@ -11,19 +11,41 @@ export interface Props {
   description?: string;
   image?: ImageMetadata | string;
   ogSlug?: string;
+  robots?: string;
 }
 
-const { title, description, image, ogSlug } = Astro.props;
+const { title, description, image, ogSlug, robots } = Astro.props;
 ---
 
 <!doctype html>
 <html class="h-full" lang="ja">
   <head>
-    <BaseHead description={description} image={image} ogSlug={ogSlug} title={title} />
+    <script is:inline>
+      // 初期描画前にテーマを適用してFOUCを防ぐ
+      (() => {
+        try {
+          const stored = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const useDark = stored ? stored === 'dark' : prefersDark;
+          document.documentElement.classList.toggle('dark', useDark);
+          document.documentElement.style.colorScheme = useDark ? 'dark' : 'light';
+        } catch {
+          // localStorage が使えない環境では何もしない
+        }
+      })();
+    </script>
+    <BaseHead
+      description={description}
+      image={image}
+      ogSlug={ogSlug}
+      robots={robots}
+      title={title}
+    />
   </head>
   <body class="min-h-full flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-50">
+    <a class="skip-link" href="#main-content">メインコンテンツへスキップ</a>
     <Header />
-    <main class="flex-1">
+    <main class="flex-1" id="main-content">
       <slot />
     </main>
     <Footer />

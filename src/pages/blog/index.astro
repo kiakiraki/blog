@@ -1,4 +1,5 @@
 ---
+/* eslint-disable astro/no-set-html-directive */
 import Layout from '@/layouts/Layout.astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import { getCollection } from 'astro:content';
@@ -24,11 +25,46 @@ const categoryCounts = CATEGORIES.reduce(
   },
   {} as Record<Category, number>
 );
+const structuredBlogList = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'ブログ記事一覧',
+  url: Astro.site ? new URL(Astro.url).toString() : '',
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: posts.length,
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: Astro.site ? new URL(`/blog/${post.id}/`, Astro.site).toString() : `/blog/${post.id}/`,
+      name: post.data.title,
+    })),
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'ホーム',
+        item: Astro.site ? new URL('/', Astro.site).toString() : '/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'ブログ',
+        item: Astro.site ? new URL('/blog/', Astro.site).toString() : '/blog/',
+      },
+    ],
+  },
+});
 ---
 
+<!-- eslint-disable astro/no-set-html-directive -->
 <Layout description="趣味についての雑多な記録" title="ブログ記事一覧">
   <div class="container mx-auto px-4 py-16">
     <div class="max-w-6xl mx-auto">
+      <script is:inline set:html={structuredBlogList} type="application/ld+json" />
       <!-- Header -->
       <div class="text-center mb-16">
         <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
@@ -73,7 +109,9 @@ const categoryCounts = CATEGORIES.reduce(
                     <Image
                       alt={post.data.title}
                       class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      decoding="async"
                       height={225}
+                      loading="lazy"
                       src={post.data.heroImage}
                       width={400}
                     />
