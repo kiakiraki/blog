@@ -8,11 +8,17 @@ interface Props {
   description?: string;
   image?: ImageMetadata | string;
   ogSlug?: string;
+  robots?: string;
 }
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const { title, description = SITE_DESCRIPTION, image, ogSlug } = Astro.props;
+const { title, description = SITE_DESCRIPTION, image, ogSlug, robots } = Astro.props;
+const canonicalURL = Astro.site ? new URL(Astro.url) : null;
+
+if (canonicalURL && !canonicalURL.pathname.endsWith('/')) {
+  canonicalURL.pathname = `${canonicalURL.pathname}/`;
+}
 const pageTitle = title === SITE_TITLE ? title : `${title} | ${SITE_TITLE}`;
+const robotsContent = robots ?? 'index, follow';
 
 // OGP画像のURLとタイプを生成
 let ogImageUrl: string;
@@ -65,14 +71,14 @@ if (image && typeof image === 'string') {
 <meta content="IE=edge" http-equiv="X-UA-Compatible" />
 
 <!-- Canonical URL -->
-<link href={canonicalURL} rel="canonical" />
+{canonicalURL && <link href={canonicalURL} rel="canonical" />}
 
 <!-- Primary Meta Tags -->
 <title>{pageTitle}</title>
 <meta content={pageTitle} name="title" />
 <meta content={description} name="description" />
 <meta content={AUTHOR_NAME} name="author" />
-<meta content="index, follow" name="robots" />
+<meta content={robotsContent} name="robots" />
 
 <!-- Open Graph / Facebook -->
 <meta content="website" property="og:type" />
@@ -101,10 +107,6 @@ if (image && typeof image === 'string') {
 <!-- Theme -->
 <meta content="#0ea5e9" media="(prefers-color-scheme: light)" name="theme-color" />
 <meta content="#0c4a6e" media="(prefers-color-scheme: dark)" name="theme-color" />
-
-<!-- Preconnect to external domains -->
-<link href="https://fonts.googleapis.com" rel="preconnect" />
-<link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
 
 <!-- Google AdSense -->
 <script

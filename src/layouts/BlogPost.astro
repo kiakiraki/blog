@@ -76,7 +76,9 @@ const relatedPosts = getRelatedPosts(currentPost, allPosts, 3);
           <Image
             alt={title}
             class="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+            decoding="async"
             height={600}
+            loading="eager"
             src={heroImage}
             width={1200}
           />

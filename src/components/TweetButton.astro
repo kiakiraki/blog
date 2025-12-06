@@ -41,10 +41,18 @@ const twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=
     font-size: 0.9em;
     transition: background-color 0.2s ease-in-out;
     margin-top: 2em; /* 上部に余白 */
+    outline: 2px solid transparent;
+    outline-offset: 4px;
   }
 
   .tweet-button:hover {
     background-color: #1a91da; /* ホバー時の色 */
+  }
+
+  .tweet-button:focus-visible {
+    outline: 2px solid #0ea5e9;
+    outline-offset: 4px;
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2);
   }
 
   .tweet-button svg {

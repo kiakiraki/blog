@@ -121,10 +121,14 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
 
           if (entry.isIntersecting) {
             // Remove active class from all links
-            tocLinks.forEach(link => link.classList.remove('active'));
+            tocLinks.forEach(link => {
+              link.classList.remove('active');
+              link.removeAttribute('aria-current');
+            });
             // Add active class to current link
             if (tocLink) {
               tocLink.classList.add('active');
+              tocLink.setAttribute('aria-current', 'true');
             }
           }
         });

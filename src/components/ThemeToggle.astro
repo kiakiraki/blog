@@ -76,6 +76,7 @@
   function updateTheme(): void {
     const theme = getThemePreference();
     document.documentElement.classList[isDark() ? 'add' : 'remove']('dark');
+    document.documentElement.style.colorScheme = isDark() ? 'dark' : 'light';
     safeSetItem('theme', theme);
   }
 
