@@ -12,6 +12,7 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off',
       // Astro's <script> tags (without is:inline) are bundled at build time and safe
       'astro/no-unsafe-inline-scripts': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
   {

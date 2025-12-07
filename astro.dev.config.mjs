@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import baseConfig from './astro.config.mjs';
 import fg from 'fast-glob';
+import path from 'path';
 const base = /** @type {import('astro').AstroUserConfig} */ (baseConfig);
 
 function devPagesIntegration() {
@@ -18,7 +19,7 @@ function devPagesIntegration() {
 
           injectRoute({
             pattern,
-            entryPoint: file,
+            entrypoint: file,
           });
         });
       },
@@ -36,7 +37,7 @@ export default defineConfig({
     server: {
       ...(base.vite?.server ?? {}),
       fs: {
-        allow: ['src/dev-pages', ...(base.vite?.server?.fs?.allow ?? [])],
+        allow: [path.resolve('.'), ...(base.vite?.server?.fs?.allow ?? [])],
       },
     },
   },

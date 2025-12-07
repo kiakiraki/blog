@@ -4,11 +4,14 @@
   "exclude": ["dist"],
   "compilerOptions": {
     "strictNullChecks": true,
+    "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@/components/*": ["src/components/*"],
       "@/layouts/*": ["src/layouts/*"]
-    }
+    },
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }
