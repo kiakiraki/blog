@@ -41,7 +41,7 @@ export async function compileMDXForPreview(content: string, filePath?: string): 
       .replace(/^export\s+.*$/gm, '');
 
     // 1.5. Resolve standard markdown relative images ![alt](./path)
-    preprocessed = preprocessed.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
+    preprocessed = preprocessed.replace(/!\[(.*?)\]\((.*?)\)/g, (_, alt, src) => {
       let resolved = src;
       if (filePath && src.startsWith('.')) {
         const dir = filePath.split('/').slice(0, -1).join('/');
@@ -67,7 +67,7 @@ export async function compileMDXForPreview(content: string, filePath?: string): 
       // <CaptionedImage src={var} ... /> or src="..."
       .replace(
         /<CaptionedImage\s+src=(['"{].*?['"}])\s+alt=['"](.*?)['"].*?\/>/g,
-        (match, srcRaw, alt) => {
+        (_, srcRaw, alt) => {
           const src = resolveSrc(srcRaw);
           // clean quotes if literal
           const cleanSrc = src.replace(/^['"]|['"]$/g, '');
@@ -75,7 +75,7 @@ export async function compileMDXForPreview(content: string, filePath?: string): 
         }
       )
       // <ImageGrid ... />
-      .replace(/<ImageGrid.*?images={(\[.*?\])}.*?\/>/s, (match, jsonRaw) => {
+      .replace(/<ImageGrid.*?images={(\[.*?\])}.*?\/>/s, (_, jsonRaw) => {
         // Attempt to parse the JS array string.
         // It might contain objects with src: varName.
         // We can't use JSON.parse because it's JS (prop: val).
@@ -102,7 +102,7 @@ export async function compileMDXForPreview(content: string, filePath?: string): 
         return gridHtml;
       })
       // Generic proper closing
-      .replace(/<([A-Z][a-zA-Z0-9]*)\s*[^>]*?\/?>/g, (match, name) => {
+      .replace(/<([A-Z][a-zA-Z0-9]*)\s*[^>]*?\/?>/g, (_, name) => {
         return `<div class="border border-dashed border-gray-400 p-2 rounded text-gray-500 text-xs bg-gray-50 dark:bg-gray-800 inline-block">Component: ${name}</div>`;
       });
 
