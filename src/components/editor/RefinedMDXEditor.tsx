@@ -17,7 +17,9 @@ import {
 } from 'lucide-react';
 
 export default function RefinedMDXEditor() {
-  const [content, setContent] = React.useState<string>('---\ntitle: New Article\n---\n\n# Hello World');
+  const [content, setContent] = React.useState<string>(
+    '---\ntitle: New Article\n---\n\n# Hello World'
+  );
   const [filename, setFilename] = React.useState('new-article');
   const [publishDate, setPublishDate] = React.useState(new Date().toISOString().split('T')[0]);
   const [previewHtml, setPreviewHtml] = React.useState<string>('');
@@ -226,7 +228,7 @@ export default function RefinedMDXEditor() {
               >
                 <div className="p-2 text-xs font-semibold uppercase text-gray-500">Files</div>
                 <div className="flex-1 overflow-auto">
-                  {fileList.map((f: {path: string}, i: number) => (
+                  {fileList.map((f: { path: string }, i: number) => (
                     <div
                       key={i}
                       onClick={() => loadFile(f.path)}
@@ -270,7 +272,7 @@ export default function RefinedMDXEditor() {
                     className="flex-1 overflow-auto relative text-base"
                     onPaste={onPaste}
                     onDrop={onDrop}
-                  onDragOver={(e: React.DragEvent) => e.preventDefault()}
+                    onDragOver={(e: React.DragEvent) => e.preventDefault()}
                   >
                     <CodeMirror
                       value={content}
