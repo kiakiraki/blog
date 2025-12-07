@@ -4,6 +4,7 @@
   "exclude": ["dist"],
   "compilerOptions": {
     "strictNullChecks": true,
+    "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
