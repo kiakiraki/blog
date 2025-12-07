@@ -1,6 +1,5 @@
 // @ts-nocheck
-import { useState, useEffect, useCallback } from 'react';
-import type { DragEvent, ClipboardEvent, ChangeEvent } from 'react';
+import React from 'react';
 import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
@@ -18,24 +17,24 @@ import {
 } from 'lucide-react';
 
 export default function RefinedMDXEditor() {
-  const [content, setContent] = useState<string>('---\ntitle: New Article\n---\n\n# Hello World');
-  const [filename, setFilename] = useState('new-article');
-  const [publishDate, setPublishDate] = useState(new Date().toISOString().split('T')[0]);
-  const [previewHtml, setPreviewHtml] = useState<string>('');
-  const [fileList, setFileList] = useState<
+  const [content, setContent] = React.useState<string>('---\ntitle: New Article\n---\n\n# Hello World');
+  const [filename, setFilename] = React.useState('new-article');
+  const [publishDate, setPublishDate] = React.useState(new Date().toISOString().split('T')[0]);
+  const [previewHtml, setPreviewHtml] = React.useState<string>('');
+  const [fileList, setFileList] = React.useState<
     Array<{ path: string; title?: string; pubDate?: string }>
   >([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [currentPath, setCurrentPath] = useState<string>('');
-  const [editorView, setEditorView] = useState<EditorView | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const [currentPath, setCurrentPath] = React.useState<string>('');
+  const [editorView, setEditorView] = React.useState<EditorView | null>(null);
 
   // Initial fetch
-  useEffect(() => {
+  React.useEffect(() => {
     fetchFileList();
     updatePreview(content, currentPath);
   }, []); // content dependency removed from initial mount to avoid double render, logic handles it
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Debounced preview update could go here, but for now we rely on explicit calls or simple effect
     updatePreview(content, currentPath);
   }, [content]);
@@ -75,7 +74,7 @@ export default function RefinedMDXEditor() {
     }
   };
 
-  const updatePreview = useCallback(async (mdx: string, path: string) => {
+  const updatePreview = React.useCallback(async (mdx: string, path: string) => {
     // Debounce/Throttle could be added here if needed
     try {
       const { compileMDXForPreview } = await import('../../lib/mdx-processor');
@@ -120,7 +119,7 @@ export default function RefinedMDXEditor() {
     });
   };
 
-  const handleValidation = useCallback(
+  const handleValidation = React.useCallback(
     async (files: FileList | null) => {
       if (!files) return;
       const items = Array.from(files).filter(f => f.type.startsWith('image/'));
@@ -150,13 +149,13 @@ export default function RefinedMDXEditor() {
     [publishDate, editorView]
   );
 
-  const onPaste = (event: ClipboardEvent) => {
+  const onPaste = (event: React.ClipboardEvent) => {
     if (event.clipboardData.files.length > 0) {
       handleValidation(event.clipboardData.files);
     }
   };
 
-  const onDrop = (event: DragEvent) => {
+  const onDrop = (event: React.DragEvent) => {
     event.preventDefault();
     handleValidation(event.dataTransfer.files);
   };
@@ -177,7 +176,7 @@ export default function RefinedMDXEditor() {
             <input
               type="text"
               value={filename}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setFilename(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilename(e.target.value)}
               className="bg-transparent border-none focus:ring-0 text-sm px-2 w-40"
               placeholder="Filename"
             />
@@ -185,7 +184,7 @@ export default function RefinedMDXEditor() {
             <input
               type="date"
               value={publishDate}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setPublishDate(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPublishDate(e.target.value)}
               className="bg-transparent border-none focus:ring-0 text-sm px-2"
             />
           </div>
@@ -271,7 +270,7 @@ export default function RefinedMDXEditor() {
                     className="flex-1 overflow-auto relative text-base"
                     onPaste={onPaste}
                     onDrop={onDrop}
-                  onDragOver={(e: DragEvent) => e.preventDefault()}
+                  onDragOver={(e: React.DragEvent) => e.preventDefault()}
                   >
                     <CodeMirror
                       value={content}
