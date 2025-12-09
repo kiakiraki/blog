@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, access } from 'node:fs/promises';
 import path from 'node:path';
 
 const PROJECT_ROOT = process.cwd();
@@ -33,7 +33,8 @@ export const POST: APIRoute = async ({ request }) => {
     );
     if (subdir) baseDir = path.join(baseDir, subdir);
 
-    await mkdir(baseDir, { recursive: true });
+    const baseDirResolved = path.resolve(baseDir);
+    await mkdir(baseDirResolved, { recursive: true });
 
     const files: Array<{ name: string }> = [];
 
@@ -42,15 +43,12 @@ export const POST: APIRoute = async ({ request }) => {
       const file = value as unknown as File;
       const arrayBuf = await file.arrayBuffer();
       const buf = Buffer.from(arrayBuf);
-      const sanitized = sanitizeFileName(file.name || `image-${Date.now()}.png`);
-      const outPath = path.join(baseDir, sanitized);
-      // ディレクトリトラバーサル対策
-      const resolved = path.resolve(outPath);
-      if (!resolved.startsWith(path.resolve(baseDir))) {
-        return json({ ok: false, error: 'Invalid path' }, 400);
-      }
-      await writeFile(resolved, buf);
-      files.push({ name: sanitized });
+      const { fileName, resolvedPath } = await buildUniqueFilePath(
+        baseDirResolved,
+        file.name || `image-${Date.now()}.png`
+      );
+      await writeFile(resolvedPath, buf);
+      files.push({ name: fileName });
     }
 
     return json({ ok: true, files, publishDate, yearMonth });
@@ -63,6 +61,30 @@ export const POST: APIRoute = async ({ request }) => {
 function sanitizeFileName(name: string) {
   // 半角英数と .-_ のみ許可
   return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+}
+
+async function buildUniqueFilePath(baseDirResolved: string, rawName: string) {
+  const sanitized = sanitizeFileName(rawName);
+  const { name, ext } = path.parse(sanitized);
+  const base = name || 'image';
+  const extension = ext || '.png';
+
+  let counter = 0;
+  // 衝突を避けるため既存ファイルを確認し、存在する場合は連番を付与
+  while (true) {
+    const candidate = counter === 0 ? `${base}${extension}` : `${base}-${counter}${extension}`;
+    const outPath = path.join(baseDirResolved, candidate);
+    const resolved = path.resolve(outPath);
+    if (!resolved.startsWith(baseDirResolved)) {
+      throw new Error('Invalid path');
+    }
+    try {
+      await access(resolved);
+      counter += 1;
+    } catch {
+      return { fileName: candidate, resolvedPath: resolved };
+    }
+  }
 }
 
 function normalizeSubdir(input: string) {
