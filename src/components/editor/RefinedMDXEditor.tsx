@@ -175,7 +175,7 @@ export default function RefinedMDXEditor() {
             : ensureImportLine(content, CAPTIONED_IMPORT);
           json.files.forEach((f: { name: string }) => {
             const baseName = f.name.replace(/\.[^.]+$/, '');
-            const safeText = baseName.replace(/"/g, '\\"');
+            const safeText = baseName.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
             const identifier = createImageIdentifier(workingText, baseName);
             const relPath = `./images/${f.name}`;
             const snippet = `\n<CaptionedImage\n  src={${identifier}}\n  alt="${safeText}"\n  caption="${safeText}"\n/>\n`;
