@@ -31,6 +31,8 @@ export default function RefinedMDXEditor() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [currentPath, setCurrentPath] = React.useState<string>('');
   const [editorView, setEditorView] = React.useState<EditorView | null>(null);
+  const [toasts, setToasts] = React.useState<Array<ToastMessage>>([]);
+  const originalReloadRef = React.useRef<() => void>();
 
   const ensureCaptionedImport = React.useCallback(() => {
     const insertImport = (text: string) => {
@@ -66,6 +68,9 @@ export default function RefinedMDXEditor() {
     if (lastPath) {
       loadFile(lastPath, { skipConfirm: true });
     }
+
+    // Prevent full page reload when MDX files are saved via API (Vite full-reload)
+    setupReloadGuard(originalReloadRef);
   }, []); // content dependency removed from initial mount to avoid double render, logic handles it
 
   React.useEffect(() => {
@@ -138,18 +143,72 @@ export default function RefinedMDXEditor() {
       });
       const json = await res.json();
       if (json.ok) {
-        alert('Saved successfully!');
+        pushToast(setToasts, { message: '保存しました', tone: 'success' });
         if (json.path) {
           setCurrentPath(json.path);
           localStorage.setItem(LAST_PATH_KEY, json.path);
         }
         fetchFileList(); // refresh list
       } else {
-        alert('Save failed: ' + json.error);
+        pushToast(setToasts, { message: `保存に失敗しました: ${json.error}`, tone: 'error' });
       }
     } catch (e) {
       console.error(e);
-      alert('Error saving');
+      pushToast(setToasts, { message: '保存中にエラーが発生しました', tone: 'error' });
+    }
+  };
+
+  const handleNew = async () => {
+    if (content && !confirm('現在の内容を破棄して新規作成し、ファイルを生成しますか？')) {
+      return;
+    }
+    const safePublishDate = publishDate.trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(safePublishDate)) {
+      alert('公開日が不正です (YYYY-MM-DD)');
+      return;
+    }
+
+    const slug = sanitizeSlug(filename || 'new-article');
+    const template = buildNewTemplate(slug, safePublishDate);
+
+    try {
+      const res = await fetch('/api/dev/save-mdx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: slug,
+          publishDate: safePublishDate,
+          content: template,
+          overwrite: false,
+        }),
+      });
+      const json = await res.json();
+      if (!json.ok) {
+        pushToast(setToasts, {
+          message: `新規作成に失敗しました: ${json.error || 'Unknown error'}`,
+          tone: 'error',
+        });
+        return;
+      }
+
+      const savedPath = json.path || '';
+      const savedName =
+        savedPath
+          .split('/')
+          .pop()
+          ?.replace(/\.mdx$/, '') || slug;
+
+      setFilename(savedName);
+      setPublishDate(safePublishDate);
+      setContent(template);
+      setCurrentPath(savedPath);
+      if (savedPath) localStorage.setItem(LAST_PATH_KEY, savedPath);
+      fetchFileList();
+      updatePreview(template, savedPath);
+      pushToast(setToasts, { message: '新しいMDXファイルを作成しました', tone: 'success' });
+    } catch (e) {
+      console.error(e);
+      pushToast(setToasts, { message: '新規作成中にエラーが発生しました', tone: 'error' });
     }
   };
 
@@ -269,18 +328,22 @@ export default function RefinedMDXEditor() {
 
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={handleSave}
             className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors"
           >
             <Save size={16} /> Save
           </button>
           <button
+            type="button"
             className="p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded transition-colors"
             title="Load"
           >
             <FolderOpen size={18} />
           </button>
           <button
+            type="button"
+            onClick={handleNew}
             className="p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded transition-colors"
             title="New"
           >
@@ -405,6 +468,10 @@ export default function RefinedMDXEditor() {
           </Panel>
         </PanelGroup>
       </div>
+      <ToastStack
+        toasts={toasts}
+        onClose={id => setToasts(prev => prev.filter(t => t.id !== id))}
+      />
     </div>
   );
 }
@@ -428,7 +495,7 @@ function ensureFrontmatterFields(content: string, opts: FrontmatterOptions) {
   ensureLine('title', `title: '${fallbackTitle.replace(/'/g, "''")}'`);
   ensureLine('description', "description: ''");
   ensureLine('pubDate', `pubDate: '${publishDate}'`);
-  ensureLine('category', "category: ''");
+  ensureLine('category', "category: 'その他'");
 
   const fm = ['---', ...fmLines.filter(Boolean), '---', ''].join('\n');
   return fm + rest.replace(/^\n+/, '');
@@ -490,4 +557,95 @@ function applyChangesSequentially(
     offset += change.insert.length - (change.to - change.from);
   });
   return next;
+}
+
+type ToastTone = 'success' | 'error';
+
+type ToastMessage = {
+  id: number;
+  message: string;
+  tone: ToastTone;
+};
+
+function pushToast(
+  setter: React.Dispatch<React.SetStateAction<Array<ToastMessage>>>,
+  toast: Omit<ToastMessage, 'id'>
+) {
+  const id = Date.now() + Math.floor(Math.random() * 1000);
+  setter(prev => [...prev, { ...toast, id }]);
+  setTimeout(() => {
+    setter(prev => prev.filter(t => t.id !== id));
+  }, 3000);
+}
+
+function ToastStack({
+  toasts,
+  onClose,
+}: {
+  toasts: Array<ToastMessage>;
+  onClose: (id: number) => void;
+}) {
+  return (
+    <div className="fixed top-4 right-4 space-y-2 z-50">
+      {toasts.map(t => (
+        <div
+          key={t.id}
+          className={`px-4 py-2 rounded shadow text-white text-sm flex items-center gap-2 ${
+            t.tone === 'success' ? 'bg-emerald-600' : 'bg-red-600'
+          }`}
+        >
+          <span>{t.message}</span>
+          <button
+            className="text-white/80 hover:text-white ml-2"
+            onClick={() => onClose(t.id)}
+            aria-label="Close toast"
+          >
+            ×
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function sanitizeSlug(input: string) {
+  const ascii = input
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+  return ascii || 'article';
+}
+
+function buildNewTemplate(titleSlug: string, publishDate: string) {
+  const safeTitle = titleSlug || 'new-article';
+  const escapedTitle = safeTitle.replace(/'/g, "''");
+  return `---
+title: '${escapedTitle}'
+description: ''
+pubDate: '${publishDate}'
+category: 'その他'
+---
+
+# ${safeTitle}
+
+ここから本文を作成してください。
+`;
+}
+
+function setupReloadGuard(originalReloadRef: React.MutableRefObject<(() => void) | undefined>) {
+  if (!import.meta.hot || originalReloadRef.current) return;
+  originalReloadRef.current = window.location.reload.bind(window.location);
+  const handler = () => {
+    window.location.reload = () => {};
+    // 元に戻すが、余裕を持って遅延
+    setTimeout(() => {
+      if (originalReloadRef.current) {
+        window.location.reload = originalReloadRef.current;
+      }
+    }, 2000);
+  };
+  import.meta.hot.on('vite:beforeFullReload', handler);
 }
