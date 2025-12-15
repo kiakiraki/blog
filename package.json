@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "test": "node --test",
     "lint": "eslint . --ext .js,.ts,.astro --fix",
     "lint:check": "eslint . --ext .js,.ts,.astro",
     "format": "prettier --write .",
