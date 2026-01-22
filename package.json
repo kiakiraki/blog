@@ -44,7 +44,8 @@
     "unified": "^11.0.5"
   },
   "overrides": {
-    "wrangler": "^4.59.3"
+    "wrangler": "^4.59.3",
+    "lodash": "^4.17.23"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
