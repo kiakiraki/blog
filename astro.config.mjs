@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
@@ -16,7 +17,8 @@ const MDX_REHYPE_PLUGINS = [[rehypeLinkPreview, { site: SITE }]];
 // https://astro.build/config
 export default defineConfig({
   site: SITE,
-  output: 'static',
+  output: 'server',
+  adapter: cloudflare(),
   markdown: {
     rehypePlugins: MARKDOWN_REHYPE_PLUGINS,
   },

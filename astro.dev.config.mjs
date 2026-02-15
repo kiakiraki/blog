@@ -31,6 +31,7 @@ export default defineConfig({
   ...base,
   // 開発時は SSR で dev API を使えるようにする
   output: 'server',
+  adapter: undefined, // dev モードでは Cloudflare adapter を使わない
   integrations: [...(base.integrations ?? []), devPagesIntegration()],
   vite: {
     ...(base.vite ?? {}),

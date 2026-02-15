@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "dev:editor": "ASTRO_TELEMETRY_DISABLED=1 astro dev --config astro.dev.config.mjs",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "wrangler dev",
+    "deploy": "wrangler deploy",
     "astro": "astro",
     "test": "node --test",
     "lint": "eslint . --ext .js,.ts,.astro --fix",
@@ -44,7 +45,6 @@
     "unified": "^11.0.5"
   },
   "overrides": {
-    "wrangler": "^4.59.3",
     "lodash": "^4.17.23"
   },
   "devDependencies": {
@@ -61,6 +61,7 @@
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.55.0"
+    "typescript-eslint": "^8.55.0",
+    "wrangler": "^4.59.3"
   }
 }
