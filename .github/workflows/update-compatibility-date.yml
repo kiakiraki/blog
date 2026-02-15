@@ -1,0 +1,45 @@
+name: Update Wrangler Compatibility Date
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # 毎月1日に実行
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  update-compatibility-date:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Update compatibility_date
+        id: update
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          CURRENT=$(grep -oP '"compatibility_date":\s*"\K[^"]+' wrangler.jsonc)
+          if [ "$CURRENT" = "$TODAY" ]; then
+            echo "already_current=true" >> "$GITHUB_OUTPUT"
+          else
+            sed -i "s/\"compatibility_date\": \"$CURRENT\"/\"compatibility_date\": \"$TODAY\"/" wrangler.jsonc
+            echo "already_current=false" >> "$GITHUB_OUTPUT"
+            echo "new_date=$TODAY" >> "$GITHUB_OUTPUT"
+            echo "old_date=$CURRENT" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        if: steps.update.outputs.already_current == 'false'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/update-compatibility-date
+          commit-message: 'chore: update wrangler compatibility_date to ${{ steps.update.outputs.new_date }}'
+          title: 'chore: update wrangler compatibility_date to ${{ steps.update.outputs.new_date }}'
+          body: |
+            `compatibility_date` を `${{ steps.update.outputs.old_date }}` から `${{ steps.update.outputs.new_date }}` に更新します。
+
+            [Compatibility dates - Cloudflare Workers](https://developers.cloudflare.com/workers/configuration/compatibility-flags/)
+          labels: dependencies
