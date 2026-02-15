@@ -2,9 +2,7 @@
 import HeaderLink from './HeaderLink.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import Icon from './Icon.astro';
-import { SITE_TITLE, CATEGORIES } from '../consts';
-
-const GITHUB_URL = 'https://github.com/kiakiraki/blog';
+import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
 ---
 
 <header
@@ -45,7 +43,7 @@ const GITHUB_URL = 'https://github.com/kiakiraki/blog';
                   CATEGORIES.map(category => (
                     <a
                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                      href={`/blog?category=${encodeURIComponent(category)}`}
+                      href={`/category/${category}/`}
                       role="menuitem"
                     >
                       {category}
@@ -110,7 +108,7 @@ const GITHUB_URL = 'https://github.com/kiakiraki/blog';
               CATEGORIES.map(category => (
                 <a
                   class="block px-2 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                  href={`/blog?category=${encodeURIComponent(category)}`}
+                  href={`/category/${category}/`}
                 >
                   {category}
                 </a>

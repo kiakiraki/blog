@@ -26,7 +26,7 @@ const { images, columns = 2, class: className } = Astro.props;
           class="grid-image"
           height={400}
           inferSize={false}
-          src={image.src as any}
+          src={image.src as ImageMetadata}
           width={600}
         />
         {image.caption && <figcaption class="image-caption">{image.caption}</figcaption>}
@@ -36,6 +36,8 @@ const { images, columns = 2, class: className } = Astro.props;
 </div>
 
 <style>
+  @reference "tailwindcss";
+
   .image-grid {
     display: grid;
     gap: 1rem;
@@ -77,13 +79,9 @@ const { images, columns = 2, class: className } = Astro.props;
   .image-caption {
     margin-top: 0.5rem;
     font-size: 0.875rem;
-    color: #6b7280;
     font-style: italic;
     line-height: 1.4;
-  }
-
-  :global(.dark) .image-caption {
-    color: #9ca3af;
+    @apply text-gray-500 dark:text-gray-400;
   }
 
   /* モバイル対応 */

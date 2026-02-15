@@ -45,8 +45,8 @@ https://blog.kiakiraki.dev/
 ## デプロイ
 
 このプロジェクトは [Cloudflare Workers](https://workers.cloudflare.com/)
-を使用してデプロイされています。`output: 'server'` + 全ページ `prerender = true` の構成で、
-ビルド時に静的生成しつつ Workers で配信しています。
+を使用してデプロイされています。`output: 'server'` + 全ページ `prerender = true`
+の構成で、ビルド時に静的生成しつつ Workers で配信しています。
 
 ### 開発用エディタとAPIの扱い
 

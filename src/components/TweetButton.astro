@@ -3,6 +3,11 @@
 // 記事のタイトルとURLをプロパティとして受け取ります
 import { SITE_TITLE } from '../consts';
 
+interface Props {
+  title: string;
+  url: string;
+}
+
 const { title, url } = Astro.props;
 
 // ツイートのテキストをエンコードします
@@ -16,8 +21,7 @@ const twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=
 <a class="tweet-button" href={twitterShareUrl} rel="noopener noreferrer" target="_blank">
   <svg
     aria-hidden="true"
-    class="r-4qtqp9 r-yyyy05 r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1nao33i r-o7ynqc r-64hb5y r-1mf7evn r-1wzrnnt r-lwhw9o r-1inky4w r-rjixqe r-b88u0q r-1s2bzr4"
-    style="color: currentColor; width: 1.2em; height: 1.2em; vertical-align: middle; margin-right: 0.5em;"
+    class="w-[1.2em] h-[1.2em] align-middle mr-2 fill-current"
     viewBox="0 0 24 24"
     ><g
       ><path

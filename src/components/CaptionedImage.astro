@@ -17,7 +17,7 @@ const { src, alt, caption, width, height, class: className } = Astro.props;
 <figure class:list={[`captioned-image`, `${className || ''}`]}>
   <Image
     alt={alt}
-    src={src as any}
+    src={src as ImageMetadata}
     {...width && { width }}
     {...height && { height }}
     class="image"
@@ -27,6 +27,8 @@ const { src, alt, caption, width, height, class: className } = Astro.props;
 </figure>
 
 <style>
+  @reference "tailwindcss";
+
   .captioned-image {
     margin: 2rem 0;
     text-align: center;
@@ -49,13 +51,9 @@ const { src, alt, caption, width, height, class: className } = Astro.props;
   .caption {
     margin-top: 0.75rem;
     font-size: 0.875rem;
-    color: #6b7280;
     font-style: italic;
     line-height: 1.4;
-  }
-
-  :global(.dark) .caption {
-    color: #9ca3af;
+    @apply text-gray-500 dark:text-gray-400;
   }
 
   @media (max-width: 768px) {
