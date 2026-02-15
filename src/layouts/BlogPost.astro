@@ -43,11 +43,12 @@ const currentPost = { id: slug, data: Astro.props } as CollectionEntry<'blog'>;
 const relatedPosts = getRelatedPosts(currentPost, allPosts, 3);
 
 // OGP画像URLを構築（構造化データ用）
-const ogImageUrl = heroImage && typeof heroImage === 'object' && 'src' in heroImage
-  ? new URL(heroImage.src, Astro.url).toString()
-  : slug
-    ? new URL(`/og/${slug}.png`, Astro.site).toString()
-    : undefined;
+const ogImageUrl =
+  heroImage && typeof heroImage === 'object' && 'src' in heroImage
+    ? new URL(heroImage.src, Astro.url).toString()
+    : slug
+      ? new URL(`/og/${slug}.png`, Astro.site).toString()
+      : undefined;
 ---
 
 <Layout description={description} image={heroImage} ogSlug={slug} title={title}>
@@ -180,7 +181,10 @@ const ogImageUrl = heroImage && typeof heroImage === 'object' && 'src' in heroIm
                           href={`/blog/${prevPost.id}/`}
                         >
                           <div class="flex items-center gap-3">
-                            <Icon class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" name="chevron-left" />
+                            <Icon
+                              class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+                              name="chevron-left"
+                            />
                             <div class="flex-1 min-w-0">
                               <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
                                 {prevPost.data.title}
@@ -211,7 +215,10 @@ const ogImageUrl = heroImage && typeof heroImage === 'object' && 'src' in heroIm
                                 <FormattedDate date={nextPost.data.pubDate} />
                               </p>
                             </div>
-                            <Icon class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" name="chevron-right" />
+                            <Icon
+                              class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+                              name="chevron-right"
+                            />
                           </div>
                         </a>
                       </div>
