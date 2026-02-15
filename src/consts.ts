@@ -7,7 +7,7 @@ export const SITE_DESCRIPTION = '趣味について雑多に書き綴るとこ�
 export const POSTS_PER_PAGE = 6;
 export const AUTHOR_NAME = 'あきらき';
 export const AUTHOR_TWITTER = '@__kiakiraki__';
-export const GITHUB_URL = 'https://github.com';
+export const GITHUB_URL = 'https://github.com/kiakiraki/blog';
 
 export const CATEGORIES = ['写真', '旅行', '競馬', '技術', 'ガジェット', 'その他'] as const;
 

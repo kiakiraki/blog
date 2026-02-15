@@ -11,19 +11,17 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   return CATEGORIES.map(category => ({
-    params: { category: encodeURIComponent(category) },
+    params: { category },
     props: { category },
   }));
 }
 
 const { category } = Astro.props;
 
-const posts = (await getCollection('blog'))
+const allPosts = await getCollection('blog');
+const posts = allPosts
   .filter(post => post.data.category === category)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-// カテゴリ別の記事数を計算
-const allPosts = await getCollection('blog');
 const categoryCounts = CATEGORIES.reduce(
   (acc, cat) => {
     acc[cat] = allPosts.filter(post => post.data.category === cat).length;
@@ -66,8 +64,8 @@ const structuredCategoryList = JSON.stringify({
         position: 3,
         name: category,
         item: Astro.site
-          ? new URL(`/category/${encodeURIComponent(category)}/`, Astro.site).toString()
-          : `/category/${encodeURIComponent(category)}/`,
+          ? new URL(`/category/${category}/`, Astro.site).toString()
+          : `/category/${category}/`,
       },
     ],
   },

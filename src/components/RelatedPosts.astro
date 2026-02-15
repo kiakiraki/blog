@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import FormattedDate from './FormattedDate.astro';
+import Icon from './Icon.astro';
 
 interface Props {
   relatedPosts: CollectionEntry<'blog'>[];
@@ -57,19 +58,7 @@ const { relatedPosts } = Astro.props;
 
                 <div class="flex items-center text-primary-600 dark:text-primary-400 text-sm font-medium group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">
                   続きを読む
-                  <svg
-                    class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M9 5l7 7-7 7"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                    />
-                  </svg>
+                  <Icon class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" name="chevron-right" />
                 </div>
               </div>
             </a>
@@ -79,16 +68,3 @@ const { relatedPosts } = Astro.props;
     </section>
   )
 }
-
-<style>
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .aspect-video {
-    aspect-ratio: 16 / 9;
-  }
-</style>
