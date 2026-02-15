@@ -6,7 +6,7 @@
 
 - **サイトURL**: https://blog.kiakiraki.dev
 - **技術スタック**: Astro + TypeScript + Tailwind CSS + MDX
-- **デプロイ**: Cloudflare Pages
+- **デプロイ**: Cloudflare Workers
 - **コンテンツ**: 日本語ブログ記事（競馬、旅行、ガジェット、技術）
 
 ## プロジェクト構造
@@ -52,6 +52,7 @@
 │   ├── consts.ts          # サイト定数・カテゴリ定義
 │   └── content.config.ts  # コンテンツスキーマ定義
 ├── astro.config.mjs       # Astro設定
+├── wrangler.jsonc         # Cloudflare Workers設定
 ├── package.json           # 依存関係とスクリプト
 ├── tsconfig.json          # TypeScript設定
 └── eslint.config.js       # ESLint設定
@@ -106,8 +107,11 @@ npm run dev
 # プロダクションビルド
 npm run build
 
-# プレビュー
+# プレビュー（wrangler dev）
 npm run preview
+
+# デプロイ
+npm run deploy
 
 # コード品質チェック
 npm run lint          # ESLint自動修正
@@ -128,9 +132,9 @@ npm run typecheck     # TypeScript型チェック
 
 #### デプロイ・インフラ
 
-- **Cloudflare Pages**: ホスティング・CDN
-- **Cloudflare KV**: セッション管理
-- **Sharp**: 画像最適化
+- **Cloudflare Workers**: ホスティング・CDN
+- **Wrangler**: Workers CLI・ローカルプレビュー
+- **Sharp**: 画像最適化（ビルド時のみ）
 
 #### 開発ツール
 
@@ -255,6 +259,7 @@ export const CATEGORIES = [
 - [x] **カテゴリシステム** - ブログ記事のカテゴリ分類・フィルタ機能
 - [x] **自動目次生成** - h2-h4見出しから目次を自動生成、スクロール連動ハイライト
 - [x] **レスポンシブTOC** - デスクトップ：サイドバー固定、モバイル：折りたたみ式
+- [x] **サイトマップXML自動生成** - Astro Sitemap統合（`/sitemap-index.xml`）
 
 ## 実装待ちの改善リスト
 
@@ -316,12 +321,6 @@ export const CATEGORIES = [
   - 実装箇所: `TweetButton.astro` → `ShareButtons.astro`
 
 ### 🔧 管理・メンテナンス
-
-- [ ] **サイトマップXML自動生成**
-  - 優先度: 低
-  - 概要: SEO向けサイトマップ（現在は手動RSS）
-  - 技術案: Astro Sitemap統合
-  - 実装箇所: `/sitemap.xml`
 
 - [ ] **記事下書き機能**
   - 優先度: 低

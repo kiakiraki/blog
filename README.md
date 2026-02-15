@@ -39,13 +39,14 @@ https://blog.kiakiraki.dev/
 | `npm run dev`        | 開発サーバーを起動します (本番相当: dev用APIなし) (`localhost:4321`) |
 | `npm run dev:editor` | 開発サーバーを起動します (MDXエディタ/開発用APIを有効化)             |
 | `npm run build`      | プロダクション用にビルドします (`./dist/`)                           |
-| `npm run preview`    | ビルドされたサイトをローカルでプレビューします                       |
+| `npm run preview`    | ビルドされたサイトをローカルでプレビューします (`wrangler dev`)      |
+| `npm run deploy`     | Cloudflare Workers にデプロイします                                  |
 
 ## デプロイ
 
-このプロジェクトは [Cloudflare Pages](https://pages.cloudflare.com/)
-を使用してデプロイされています。現在は静的出力 (`output: static`) のため、Cloudflare
-Pages の静的ホスティングにそのまま配置できます。
+このプロジェクトは [Cloudflare Workers](https://workers.cloudflare.com/)
+を使用してデプロイされています。`output: 'server'` + 全ページ `prerender = true` の構成で、
+ビルド時に静的生成しつつ Workers で配信しています。
 
 ### 開発用エディタとAPIの扱い
 
