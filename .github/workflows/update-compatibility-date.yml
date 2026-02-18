@@ -33,7 +33,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.update.outputs.already_current == 'false'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/update-compatibility-date
           commit-message: 'chore: update wrangler compatibility_date to ${{ steps.update.outputs.new_date }}'
