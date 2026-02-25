@@ -25,7 +25,7 @@
     "@codemirror/lang-markdown": "^6.5.0",
     "@codemirror/language-data": "^6.5.2",
     "@tailwindcss/typography": "^0.5.19",
-    "@tailwindcss/vite": "^4.1.18",
+    "@tailwindcss/vite": "^4.2.1",
     "@uiw/react-codemirror": "^4.25.4",
     "astro": "^5.17.2",
     "clsx": "^2.1.1",
@@ -40,7 +40,7 @@
     "remark-rehype": "^11.1.2",
     "satori": "^0.19.2",
     "sharp": "^0.34.5",
-    "tailwind-merge": "^3.4.1",
+    "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.1.17",
     "unified": "^11.0.5"
   },
