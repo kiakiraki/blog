@@ -31,7 +31,7 @@ const structuredHome = JSON.stringify({
   <script is:inline set:html={structuredHome} type="application/ld+json" />
   <!-- Hero Section -->
   <section
-    class="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 py-16 md:py-24"
+    class="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 py-16 md:py-24 animate-fade-in"
   >
     <div class="container mx-auto px-4">
       <div class="max-w-4xl mx-auto text-center">
@@ -52,17 +52,22 @@ const structuredHome = JSON.stringify({
   </section>
 
   <!-- Featured Posts -->
-  <section class="py-16 md:py-20">
+  <section class="py-16 md:py-20 animate-fade-in-delay-1">
     <div class="container mx-auto px-4">
       <div class="max-w-6xl mx-auto">
-        <div class="flex items-center justify-between mb-8">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">最新記事</h2>
-          <a
-            class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
-            href="/blog"
-          >
-            すべての記事を見る →
-          </a>
+        <div class="mb-8">
+          <div class="section-label mb-4">
+            <span>Latest Posts</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">最新記事</h2>
+            <a
+              class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+              href="/blog"
+            >
+              すべての記事を見る →
+            </a>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
