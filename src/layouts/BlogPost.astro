@@ -8,7 +8,7 @@ import TableOfContents from '@/components/TableOfContents.astro';
 import RelatedPosts from '@/components/RelatedPosts.astro';
 import { getRelatedPosts } from '@/utils/relatedPosts';
 import Icon from '@/components/Icon.astro';
-import { AUTHOR_NAME, SITE_TITLE } from '../consts';
+import { AUTHOR_NAME, SITE_TITLE, CATEGORY_COLORS } from '../consts';
 
 // 新しくTweetButtonをインポート
 import TweetButton from '../components/TweetButton.astro';
@@ -108,7 +108,7 @@ const ogImageUrl =
           <!-- Main Content -->
           <div class="lg:col-span-8">
             <!-- Article Header -->
-            <header class="mb-8 text-center">
+            <header class="mb-8 text-center animate-fade-in">
               <h1
                 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 text-pretty"
               >
@@ -138,15 +138,20 @@ const ogImageUrl =
               <!-- Category Badge -->
               <div class="mt-4">
                 <a
-                  class="inline-flex items-center gap-2 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 px-3 py-1 rounded-full text-sm font-medium hover:bg-primary-200 dark:hover:bg-primary-800 transition-colors"
+                  class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all hover:opacity-80"
                   href={`/category/${category || ''}/`}
+                  style={category
+                    ? `color: ${CATEGORY_COLORS[category].fg}; background: ${CATEGORY_COLORS[category].bg};`
+                    : ''}
                 >
                   <Icon class="w-4 h-4" name="tag" />
                   {category}
                 </a>
               </div>
 
-              <div class="w-24 h-1 bg-primary-600 mx-auto mt-6"></div>
+              <div class="section-label justify-center mt-6 max-w-xs mx-auto">
+                <span>Article</span>
+              </div>
             </header>
 
             <!-- Mobile TOC -->
@@ -170,7 +175,7 @@ const ogImageUrl =
             <!-- Article Navigation -->
             {
               (prevPost || nextPost) && (
-                <nav class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <nav class="mt-12 pt-8 border-t border-gray-200 dark:border-[rgba(51,65,85,0.3)]">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {prevPost && (
                       <div class="text-left">
@@ -229,7 +234,7 @@ const ogImageUrl =
             }
 
             <!-- Article Footer -->
-            <footer class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <footer class="mt-8 pt-8 border-t border-gray-200 dark:border-[rgba(51,65,85,0.3)]">
               <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
                   <a
