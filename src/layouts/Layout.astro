@@ -42,7 +42,9 @@ const { title, description, image, ogSlug, robots } = Astro.props;
       title={title}
     />
   </head>
-  <body class="min-h-full flex flex-col bg-white dark:bg-[#0c0f14] text-gray-900 dark:text-[#e2e8f0]">
+  <body
+    class="min-h-full flex flex-col bg-white dark:bg-[#0c0f14] text-gray-900 dark:text-[#e2e8f0]"
+  >
     <a class="skip-link" href="#main-content">メインコンテンツへスキップ</a>
     <Header />
     <main class="flex-1" id="main-content">
