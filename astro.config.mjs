@@ -18,7 +18,10 @@ const MDX_REHYPE_PLUGINS = [[rehypeLinkPreview, { site: SITE }]];
 export default defineConfig({
   site: SITE,
   output: 'server',
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    imageService: 'compile',
+    prerenderEnvironment: 'node',
+  }),
   markdown: {
     rehypePlugins: MARKDOWN_REHYPE_PLUGINS,
   },
@@ -33,7 +36,6 @@ export default defineConfig({
     }),
   ],
   vite: {
-    // @ts-expect-error - Type mismatch between @tailwindcss/vite and Astro's bundled Vite
     plugins: [tailwindcss()],
     define: {
       __DATE__: `'${new Date().toISOString()}'`,
