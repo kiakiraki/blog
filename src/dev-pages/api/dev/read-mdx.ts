@@ -14,7 +14,9 @@ export const GET: APIRoute = async ({ url }) => {
     if (!rel) return json({ ok: false, error: 'path is required' }, 400);
     const safe = path.normalize(rel).replace(/^\/+/, '');
     const abs = path.resolve(path.join(CONTENT_ROOT, safe));
-    if (!abs.startsWith(path.resolve(CONTENT_ROOT)))
+    const root = path.resolve(CONTENT_ROOT);
+    // 前方一致だけだと兄弟ディレクトリ（root + '-evil'等）を通すため、セパレータ込みで比較
+    if (abs !== root && !abs.startsWith(root + path.sep))
       return json({ ok: false, error: 'Invalid path' }, 400);
     const content = await readFile(abs, 'utf-8');
     return json({ ok: true, path: rel, content });

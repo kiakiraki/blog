@@ -75,7 +75,8 @@ async function buildUniqueFilePath(baseDirResolved: string, rawName: string) {
     const candidate = counter === 0 ? `${base}${extension}` : `${base}-${counter}${extension}`;
     const outPath = path.join(baseDirResolved, candidate);
     const resolved = path.resolve(outPath);
-    if (!resolved.startsWith(baseDirResolved)) {
+    // 前方一致だけだと兄弟ディレクトリ（root + '-evil'等）を通すため、セパレータ込みで比較
+    if (!resolved.startsWith(baseDirResolved + path.sep)) {
       throw new Error('Invalid path');
     }
     try {
@@ -90,7 +91,7 @@ async function buildUniqueFilePath(baseDirResolved: string, rawName: string) {
 function normalizeSubdir(input: string) {
   // 空文字 or 'images' のみ許容（任意の相対パスは不可）
   if (!input || input === '.' || input === 'root') return '';
-  return input === 'images' ? 'images' : 'images';
+  return 'images';
 }
 
 function json(body: unknown, status = 200) {
