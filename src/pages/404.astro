@@ -1,0 +1,23 @@
+---
+import Layout from '@/layouts/Layout.astro';
+
+export const prerender = true;
+---
+
+<Layout description="お探しのページが見つかりませんでした" robots="noindex" title="ページが見つかりません">
+  <div class="container mx-auto px-4 py-24">
+    <div class="max-w-2xl mx-auto text-center animate-fade-in">
+      <p class="text-7xl md:text-8xl font-bold text-primary-600 dark:text-primary-400 mb-6">404</p>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        ページが見つかりません
+      </h1>
+      <p class="text-gray-600 dark:text-gray-300 mb-8">
+        お探しのページは移動または削除された可能性があります。
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a class="btn-primary" href="/">ホームへ戻る</a>
+        <a class="btn-secondary" href="/blog/">ブログ記事一覧</a>
+      </div>
+    </div>
+  </div>
+</Layout>
