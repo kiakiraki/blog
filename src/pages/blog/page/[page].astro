@@ -1,39 +1,32 @@
 ---
+import type { CollectionEntry } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
-import FormattedDate from '@/components/FormattedDate.astro';
-import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
+import PostCard from '@/components/PostCard.astro';
 import { POSTS_PER_PAGE } from '@/consts';
+import { getAllPosts, getPostsForPage } from '@/utils/posts';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const posts = (await getCollection('blog')).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
-
-  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  const allPosts = await getAllPosts();
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
 
   // Generate pages 2 onwards (page 1 is /blog/)
-  return Array.from({ length: totalPages - 1 }, (_, i) => {
-    const page = i + 2;
-    const start = (page - 1) * POSTS_PER_PAGE;
-    const end = start + POSTS_PER_PAGE;
+  return Promise.all(
+    Array.from({ length: totalPages - 1 }, async (_, i) => {
+      const page = i + 2;
+      const { posts, totalPosts } = await getPostsForPage(page, POSTS_PER_PAGE);
 
-    return {
-      params: { page: String(page) },
-      props: {
-        posts: posts.slice(start, end),
-        currentPage: page,
-        totalPages,
-        totalPosts: posts.length,
-      },
-    };
-  });
+      return {
+        params: { page: String(page) },
+        props: { posts, currentPage: page, totalPages, totalPosts },
+      };
+    })
+  );
 }
 
 interface Props {
-  posts: Awaited<ReturnType<typeof getCollection<'blog'>>>;
+  posts: CollectionEntry<'blog'>[];
   currentPage: number;
   totalPages: number;
   totalPosts: number;
@@ -64,55 +57,7 @@ const { posts, currentPage, totalPages, totalPosts } = Astro.props;
 
       <!-- Posts Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {
-          posts.map(post => (
-            <article class="card group hover:shadow-xl transition-all duration-300">
-              <a class="block" href={`/blog/${post.id}/`}>
-                {post.data.heroImage && (
-                  <div class="mb-4 overflow-hidden rounded-lg">
-                    <Image
-                      alt={post.data.title}
-                      class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      decoding="async"
-                      height={225}
-                      loading="lazy"
-                      src={post.data.heroImage}
-                      width={400}
-                    />
-                  </div>
-                )}
-
-                <div class="space-y-3">
-                  <h2 class="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
-                    {post.data.title}
-                  </h2>
-
-                  {post.data.description && (
-                    <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">
-                      {post.data.description}
-                    </p>
-                  )}
-
-                  <div class="flex items-center justify-between pt-2">
-                    <div class="text-sm text-gray-500 dark:text-gray-300">
-                      <FormattedDate date={post.data.pubDate} />
-                    </div>
-
-                    <span class="text-primary-600 dark:text-primary-400 text-sm font-medium group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">
-                      続きを読む →
-                    </span>
-                  </div>
-
-                  <div class="mt-3">
-                    <span class="inline-block bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs px-2 py-1 rounded-full">
-                      {post.data.category}
-                    </span>
-                  </div>
-                </div>
-              </a>
-            </article>
-          ))
-        }
+        {posts.map(post => <PostCard post={post} />)}
       </div>
 
       <!-- Pagination -->

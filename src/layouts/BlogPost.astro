@@ -3,52 +3,46 @@ import type { CollectionEntry } from 'astro:content';
 import Layout from './Layout.astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
 import TableOfContents from '@/components/TableOfContents.astro';
 import RelatedPosts from '@/components/RelatedPosts.astro';
 import { getRelatedPosts } from '@/utils/relatedPosts';
+import { getAllPosts } from '@/utils/posts';
 import Icon from '@/components/Icon.astro';
 import { AUTHOR_NAME, SITE_TITLE, CATEGORY_COLORS } from '../consts';
-
-// 新しくTweetButtonをインポート
 import TweetButton from '../components/TweetButton.astro';
 
-type Props = CollectionEntry<'blog'>['data'] & {
-  slug?: string;
+interface Props {
+  post: CollectionEntry<'blog'>;
   headings?: Array<{
     depth: number;
     slug: string;
     text: string;
   }>;
-};
+}
 
-const { title, description, pubDate, updatedDate, heroImage, slug, category, headings } =
-  Astro.props;
+const { post, headings } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, category } = post.data;
+const slug = post.id;
 
 // 記事のURLを取得
 const articleUrl = Astro.url.href;
 
 // Get all posts sorted by date
-const allPosts = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const allPosts = await getAllPosts();
 
 // Find current post index and get prev/next posts
-const currentIndex = allPosts.findIndex(post => post.id === slug);
-const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
+const currentIndex = allPosts.findIndex(p => p.id === post.id);
+const prevPost =
+  currentIndex !== -1 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
 const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 
 // Get related posts
-const currentPost = { id: slug, data: Astro.props } as CollectionEntry<'blog'>;
-const relatedPosts = getRelatedPosts(currentPost, allPosts, 3);
+const relatedPosts = getRelatedPosts(post, allPosts, 3);
 
 // OGP画像URLを構築（構造化データ用）
-const ogImageUrl =
-  heroImage && typeof heroImage === 'object' && 'src' in heroImage
-    ? new URL(heroImage.src, Astro.url).toString()
-    : slug
-      ? new URL(`/og/${slug}.png`, Astro.site).toString()
-      : undefined;
+const ogImageUrl = heroImage
+  ? new URL(heroImage.src, Astro.url).toString()
+  : new URL(`/og/${slug}.png`, Astro.site).toString();
 ---
 
 <Layout description={description} image={heroImage} ogSlug={slug} title={title}>
@@ -74,13 +68,11 @@ const ogImageUrl =
         '@type': 'WebPage',
         '@id': articleUrl,
       },
-      ...(category && { articleSection: category }),
-      ...(ogImageUrl && {
-        image: {
-          '@type': 'ImageObject',
-          url: ogImageUrl,
-        },
-      }),
+      articleSection: category,
+      image: {
+        '@type': 'ImageObject',
+        url: ogImageUrl,
+      },
     })}
     type="application/ld+json"
   />
@@ -139,10 +131,8 @@ const ogImageUrl =
               <div class="mt-4">
                 <a
                   class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all hover:opacity-80"
-                  href={`/category/${category || ''}/`}
-                  style={category
-                    ? `color: ${CATEGORY_COLORS[category].fg}; background: ${CATEGORY_COLORS[category].bg};`
-                    : ''}
+                  href={`/category/${category}/`}
+                  style={`color: ${CATEGORY_COLORS[category].fg}; background: ${CATEGORY_COLORS[category].bg};`}
                 >
                   <Icon class="w-4 h-4" name="tag" />
                   {category}

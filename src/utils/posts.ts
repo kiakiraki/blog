@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { CATEGORIES, type Category } from '../consts';
 
 let cachedPosts: CollectionEntry<'blog'>[] | null = null;
 
@@ -45,4 +46,18 @@ export async function getPostsForPage(
 export async function getPostsByCategory(category: string): Promise<CollectionEntry<'blog'>[]> {
   const allPosts = await getAllPosts();
   return allPosts.filter(post => post.data.category === category);
+}
+
+/**
+ * Get the number of posts in each category.
+ */
+export async function getCategoryCounts(): Promise<Record<Category, number>> {
+  const allPosts = await getAllPosts();
+  return CATEGORIES.reduce(
+    (acc, category) => {
+      acc[category] = allPosts.filter(post => post.data.category === category).length;
+      return acc;
+    },
+    {} as Record<Category, number>
+  );
 }
