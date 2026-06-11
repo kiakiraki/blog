@@ -148,7 +148,8 @@ npm run typecheck     # TypeScript型チェック
 
 #### フレームワーク・ライブラリ
 
-- **Astro 6.x**: 静的サイトジェネレーター（output: 'server' + 全ページ prerender）
+- **Astro 6.x**: 静的サイトジェネレーター（output:
+  'server' + 全ページ prerender）
 - **TypeScript 5.9.x**: 型安全性
 - **Tailwind CSS 4.1.x**: ユーティリティファーストCSS
 - **@astrojs/mdx 6.x**: Markdown + JSX
@@ -248,8 +249,11 @@ export const CATEGORIES = [
 - **画像**: 記事と同じディレクトリに配置
 - **日付形式**: `YYYY-MM-DD` 形式必須
 - **ファイル名**: 記事URLに影響するため適切な命名を
-- **lockfile**: CIと同じ npm 10系で生成する（`npx -y npm@10.9.2 install`）。npm 11だとoptional依存の配置が変わりCIの `npm ci` が失敗する
-- **compatibility_date**: `wrangler.jsonc` の値は同梱workerdの対応日付を超えられない。上げるときは `wrangler` / `@astrojs/cloudflare` も同じPRで更新する
+- **lockfile**: CIと同じ npm 10系で生成する（`npx -y npm@10.9.2 install`）。npm
+  11だとoptional依存の配置が変わりCIの `npm ci` が失敗する
+- **compatibility_date**: `wrangler.jsonc`
+  の値は同梱workerdの対応日付を超えられない。上げるときは `wrangler` /
+  `@astrojs/cloudflare` も同じPRで更新する
 
 ### 🔒 セキュリティ
 
@@ -288,8 +292,10 @@ export const CATEGORIES = [
 - [x] **サイトマップXML自動生成** - Astro Sitemap統合（`/sitemap-index.xml`）
 - [x] **関連記事表示** - カテゴリ・時系列・タイトル類似度によるスコアリング（`utils/relatedPosts.ts`）
 - [x] **リンクカード** - 単独リンク段落をOGP付きリンクカードへ変換（`lib/rehype-link-preview.js`）
-- [x] **ページネーション** - `/blog/`（1ページ目）+ `/blog/page/[page]/`（2ページ目以降）
-- [x] **MDXエディタ（dev専用）** - `npm run dev:editor` で `/editor` から記事作成・画像アップロード
+- [x] **ページネーション** - `/blog/`（1ページ目）+
+      `/blog/page/[page]/`（2ページ目以降）
+- [x] **MDXエディタ（dev専用）** - `npm run dev:editor` で `/editor`
+      から記事作成・画像アップロード
 
 ## 実装待ちの改善リスト
 

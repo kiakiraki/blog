@@ -21,7 +21,8 @@ export default [
       'src/layouts/BlogPost.astro',
       'src/pages/index.astro',
       'src/pages/blog/index.astro',
-      'src/pages/category/[category].astro',
+      // [category] はglobの文字クラスと解釈されるため * で指定
+      'src/pages/category/*.astro',
     ],
     rules: {
       // JSON-LD structured data using JSON.stringify is safe from XSS
