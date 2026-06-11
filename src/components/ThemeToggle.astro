@@ -69,30 +69,31 @@
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
-  function isDark(): boolean {
-    return getThemePreference() === 'dark';
+  // テーマを適用するだけで保存はしない。保存は明示的なトグル操作時のみ行い、
+  // 未操作のユーザーはOSのテーマ変更に追従できるようにする。
+  function applyTheme(): void {
+    const dark = getThemePreference() === 'dark';
+    document.documentElement.classList.toggle('dark', dark);
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
   }
 
-  function updateTheme(): void {
-    const theme = getThemePreference();
-    document.documentElement.classList[isDark() ? 'add' : 'remove']('dark');
-    document.documentElement.style.colorScheme = isDark() ? 'dark' : 'light';
-    safeSetItem('theme', theme);
-  }
+  applyTheme();
 
-  updateTheme();
+  // 明示的な選択がない間はOSのテーマ変更に追従する
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (!safeGetItem('theme')) {
+      applyTheme();
+    }
+  });
 
   document.addEventListener('DOMContentLoaded', () => {
     const button = document.getElementById('theme-toggle');
     if (button) {
       button.addEventListener('click', () => {
-        const currentTheme = getThemePreference();
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        const newTheme = getThemePreference() === 'dark' ? 'light' : 'dark';
         safeSetItem('theme', newTheme);
-        updateTheme();
+        applyTheme();
       });
     }
   });
-
-  document.addEventListener('astro:after-swap', updateTheme);
 </script>
