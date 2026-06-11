@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
 import baseConfig from './astro.config.mjs';
 import fg from 'fast-glob';
 import path from 'path';
@@ -32,7 +33,8 @@ export default defineConfig({
   // 開発時は SSR で dev API を使えるようにする
   output: 'server',
   adapter: undefined, // dev モードでは Cloudflare adapter を使わない
-  integrations: [...(base.integrations ?? []), devPagesIntegration()],
+  // react はエディタ（dev-pages）専用なので dev config でのみ有効化する
+  integrations: [...(base.integrations ?? []), react(), devPagesIntegration()],
   vite: {
     ...(base.vite ?? {}),
     server: {

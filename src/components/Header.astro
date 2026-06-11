@@ -143,8 +143,6 @@ import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
 
 <script>
   function initHeader() {
-    const cleanup: Array<() => void> = [];
-
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
@@ -156,7 +154,6 @@ import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
         mobileMenu.classList.toggle('hidden', !next);
       };
       mobileMenuButton.addEventListener('click', toggleMobileMenu);
-      cleanup.push(() => mobileMenuButton.removeEventListener('click', toggleMobileMenu));
     }
 
     const desktopButton = document.getElementById('desktop-category-button');
@@ -217,24 +214,8 @@ import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
       desktopButton.addEventListener('keydown', handleArrowDown);
       desktopMenu.addEventListener('keydown', handleEscape);
       document.addEventListener('click', handleOutsideClick);
-
-      cleanup.push(() => {
-        desktopButton.removeEventListener('click', toggleMenu);
-        desktopButton.removeEventListener('keydown', handleArrowDown);
-        desktopMenu.removeEventListener('keydown', handleEscape);
-        document.removeEventListener('click', handleOutsideClick);
-      });
     }
-
-    document.addEventListener(
-      'astro:before-swap',
-      () => {
-        cleanup.forEach(fn => fn());
-      },
-      { once: true }
-    );
   }
 
   document.addEventListener('DOMContentLoaded', initHeader);
-  document.addEventListener('astro:after-swap', initHeader);
 </script>

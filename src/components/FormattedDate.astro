@@ -5,32 +5,19 @@ interface Props {
 
 const { date } = Astro.props;
 
-// Safe date parsing
-let validDate: Date;
-try {
-  if (date instanceof Date) {
-    validDate = date;
-  } else if (typeof date === 'string') {
-    validDate = new Date(date);
-    // Check if date is valid
-    if (isNaN(validDate.getTime())) {
-      throw new Error('Invalid date');
-    }
-  } else {
-    throw new Error('Invalid date format');
-  }
-} catch {
-  // Fallback to current date if parsing fails
-  validDate = new Date();
-}
+// 無効な日付を現在日付で代替すると誤った情報を表示してしまうため、その場合は何も表示しない
+const parsed = date instanceof Date ? date : new Date(date);
+const validDate = Number.isNaN(parsed.getTime()) ? null : parsed;
 ---
 
-<time datetime={validDate.toISOString()}>
-  {
-    validDate.toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
-</time>
+{
+  validDate && (
+    <time datetime={validDate.toISOString()}>
+      {validDate.toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })}
+    </time>
+  )
+}

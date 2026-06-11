@@ -14,44 +14,61 @@
 ```
 /
 ├── public/                 # 静的ファイル
+│   ├── _headers           # セキュリティヘッダ・キャッシュ設定（Cloudflare）
 │   ├── favicon.svg
-│   ├── fonts/             # カスタムフォント
+│   ├── fonts/             # カスタムフォント（Noto Sans JP woff）
 │   └── robots.txt
 ├── src/
 │   ├── assets/            # 画像アセット
 │   ├── components/        # 再利用可能なAstroコンポーネント
-│   │   ├── BaseHead.astro      # HTMLヘッダー
+│   │   ├── BaseHead.astro      # HTMLヘッダー（OGP/構造化データ）
 │   │   ├── Header.astro        # サイトヘッダー（カテゴリナビ付き）
 │   │   ├── Footer.astro        # サイトフッター
 │   │   ├── ThemeToggle.astro   # ダーク/ライトモード切替
 │   │   ├── FormattedDate.astro # 日付フォーマット
-│   │   ├── TweetButton.astro   # Twitterシェアボタン
+│   │   ├── PostCard.astro      # 記事カード（一覧系ページ共通）
+│   │   ├── CategoryBadge.astro # カテゴリバッジ
+│   │   ├── RelatedPosts.astro  # 関連記事表示
+│   │   ├── TweetButton.astro   # X (Twitter) シェアボタン
 │   │   ├── CaptionedImage.astro # キャプション付き画像
 │   │   ├── ImageGrid.astro     # 画像グリッド表示
 │   │   ├── TableOfContents.astro # 自動目次生成（レスポンシブ対応）
-│   │   └── HeaderLink.astro    # ナビゲーションリンク
+│   │   ├── Icon.astro          # SVGアイコン集
+│   │   ├── HeaderLink.astro    # ナビゲーションリンク
+│   │   └── editor/             # dev専用MDXエディタ（React）
 │   ├── content/
 │   │   └── blog/          # ブログ記事（MDX形式）
-│   │       └── 2025-07/   # 年月別ディレクトリ構造
+│   │       └── YYYY-MM/YYYY-MM-DD/ # 年月日別ディレクトリ構造
+│   ├── dev-pages/         # 開発時のみ注入されるページ・API（エディタ等）
 │   ├── layouts/
 │   │   ├── Layout.astro        # ベースレイアウト
 │   │   └── BlogPost.astro      # ブログ記事レイアウト
+│   ├── lib/
+│   │   ├── rehype-link-preview.js # 単独リンク段落→リンクカード変換
+│   │   └── mdx-processor.ts    # devエディタのプレビュー用MDX処理
 │   ├── pages/
 │   │   ├── index.astro         # ホームページ
 │   │   ├── about.astro         # プロフィールページ
+│   │   ├── 404.astro           # Not Foundページ
 │   │   ├── blog/
-│   │   │   ├── index.astro     # ブログ一覧（カテゴリフィルタ付き）
+│   │   │   ├── index.astro     # ブログ一覧（1ページ目）
+│   │   │   ├── page/[page].astro # ブログ一覧（2ページ目以降）
 │   │   │   └── [...slug].astro # 動的ブログ記事ページ
 │   │   ├── category/
 │   │   │   └── [category].astro # 動的カテゴリページ
 │   │   ├── og/
-│   │   │   └── [...slug].svg.ts # OGP画像生成
+│   │   │   └── [...slug].png.ts # OGP画像生成（satori + sharp）
 │   │   └── rss.xml.js          # RSS フィード
 │   ├── styles/
 │   │   └── global.css     # グローバルスタイル（Tailwind CSS）
+│   ├── utils/
+│   │   ├── posts.ts            # 記事取得・ページネーション・カテゴリ集計
+│   │   └── relatedPosts.ts     # 関連記事スコアリング
 │   ├── consts.ts          # サイト定数・カテゴリ定義
 │   └── content.config.ts  # コンテンツスキーマ定義
-├── astro.config.mjs       # Astro設定
+├── test/                  # node --test によるユニットテスト
+├── astro.config.mjs       # Astro設定（本番）
+├── astro.dev.config.mjs   # Astro設定（devエディタ用、dev-pagesを注入）
 ├── wrangler.jsonc         # Cloudflare Workers設定
 ├── package.json           # 依存関係とスクリプト
 ├── tsconfig.json          # TypeScript設定
@@ -104,6 +121,9 @@
 # 開発サーバー起動
 npm run dev
 
+# MDXエディタ付き開発サーバー（/editor が使える）
+npm run dev:editor
+
 # プロダクションビルド
 npm run build
 
@@ -112,6 +132,9 @@ npm run preview
 
 # デプロイ
 npm run deploy
+
+# テスト（node --test）
+npm test
 
 # コード品質チェック
 npm run lint          # ESLint自動修正
@@ -125,21 +148,23 @@ npm run typecheck     # TypeScript型チェック
 
 #### フレームワーク・ライブラリ
 
-- **Astro 5.12.5**: 静的サイトジェネレーター
-- **TypeScript 5.8.3**: 型安全性
-- **Tailwind CSS 4.1.11**: ユーティリティファーストCSS
-- **MDX 4.3.0**: Markdown + JSX
+- **Astro 6.x**: 静的サイトジェネレーター（output:
+  'server' + 全ページ prerender）
+- **TypeScript 5.9.x**: 型安全性
+- **Tailwind CSS 4.1.x**: ユーティリティファーストCSS
+- **@astrojs/mdx 6.x**: Markdown + JSX
+- **React 19**: devエディタ専用（本番ビルドには含まれない）
 
 #### デプロイ・インフラ
 
 - **Cloudflare Workers**: ホスティング・CDN
 - **Wrangler**: Workers CLI・ローカルプレビュー
-- **Sharp**: 画像最適化（ビルド時のみ）
+- **Sharp / Satori**: 画像最適化・OGP画像生成（ビルド時のみ）
 
 #### 開発ツール
 
-- **ESLint 9.31.0**: コード品質
-- **Prettier 3.6.2**: コードフォーマット
+- **ESLint 9.x**: コード品質
+- **Prettier 3.x**: コードフォーマット
 - **Astro Check**: 型チェック
 
 ## コンテンツ管理
@@ -224,6 +249,11 @@ export const CATEGORIES = [
 - **画像**: 記事と同じディレクトリに配置
 - **日付形式**: `YYYY-MM-DD` 形式必須
 - **ファイル名**: 記事URLに影響するため適切な命名を
+- **lockfile**: CIと同じ npm 10系で生成する（`npx -y npm@10.9.2 install`）。npm
+  11だとoptional依存の配置が変わりCIの `npm ci` が失敗する
+- **compatibility_date**: `wrangler.jsonc`
+  の値は同梱workerdの対応日付を超えられない。上げるときは `wrangler` /
+  `@astrojs/cloudflare` も同じPRで更新する
 
 ### 🔒 セキュリティ
 
@@ -260,6 +290,12 @@ export const CATEGORIES = [
 - [x] **自動目次生成** - h2-h4見出しから目次を自動生成、スクロール連動ハイライト
 - [x] **レスポンシブTOC** - デスクトップ：サイドバー固定、モバイル：折りたたみ式
 - [x] **サイトマップXML自動生成** - Astro Sitemap統合（`/sitemap-index.xml`）
+- [x] **関連記事表示** - カテゴリ・時系列・タイトル類似度によるスコアリング（`utils/relatedPosts.ts`）
+- [x] **リンクカード** - 単独リンク段落をOGP付きリンクカードへ変換（`lib/rehype-link-preview.js`）
+- [x] **ページネーション** - `/blog/`（1ページ目）+
+      `/blog/page/[page]/`（2ページ目以降）
+- [x] **MDXエディタ（dev専用）** - `npm run dev:editor` で `/editor`
+      から記事作成・画像アップロード
 
 ## 実装待ちの改善リスト
 
@@ -270,12 +306,6 @@ export const CATEGORIES = [
   - 概要: ブログ記事タイトル・本文からのキーワード検索
   - 技術案: Algolia / Lunr.js / Fuse.js
   - 実装箇所: `/search` ページ + ヘッダー検索ボックス
-
-- [ ] **関連記事表示**
-  - 優先度: 中
-  - 概要: 記事下部に同カテゴリ・類似記事を表示
-  - 技術案: カテゴリ・タグベース + 文章類似度
-  - 実装箇所: `BlogPost.astro` 記事フッター
 
 - [ ] **ブレッドクラム強化**
   - 優先度: 低

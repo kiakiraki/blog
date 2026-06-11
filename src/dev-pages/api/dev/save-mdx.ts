@@ -33,7 +33,9 @@ export const POST: APIRoute = async ({ request }) => {
     const dir = path.join(CONTENT_ROOT, yearMonth, `${year}-${month}-${day}`);
     await mkdir(dir, { recursive: true });
     const abs = path.resolve(path.join(dir, filename));
-    if (!abs.startsWith(path.resolve(dir))) return json({ ok: false, error: 'Invalid path' }, 400);
+    const root = path.resolve(dir);
+    // 前方一致だけだと兄弟ディレクトリ（root + '-evil'等）を通すため、セパレータ込みで比較
+    if (!abs.startsWith(root + path.sep)) return json({ ok: false, error: 'Invalid path' }, 400);
 
     // 既存時の扱い
     const data = new TextEncoder().encode(content);
@@ -80,7 +82,7 @@ function sanitizeSlug(input: string) {
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '-')
     .replace(/-+/g, '-')
-    .replace(/^-|-$|/g, '');
+    .replace(/^-|-$/g, '');
   return ascii || 'article';
 }
 

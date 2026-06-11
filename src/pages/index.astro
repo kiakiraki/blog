@@ -1,15 +1,12 @@
 ---
-/* eslint-disable astro/no-set-html-directive */
 import Layout from '@/layouts/Layout.astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import { SITE_TITLE, SITE_DESCRIPTION, POSTS_PER_PAGE } from '../consts';
-import { getCollection } from 'astro:content';
+import { getAllPosts } from '@/utils/posts';
 
 export const prerender = true;
 
-const posts = (await getCollection('blog'))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, POSTS_PER_PAGE);
+const posts = (await getAllPosts()).slice(0, POSTS_PER_PAGE);
 
 const structuredHome = JSON.stringify({
   '@context': 'https://schema.org',
@@ -26,7 +23,6 @@ const structuredHome = JSON.stringify({
 });
 ---
 
-<!-- eslint-disable astro/no-set-html-directive -->
 <Layout description={SITE_DESCRIPTION} ogSlug="home" title={SITE_TITLE}>
   <script is:inline set:html={structuredHome} type="application/ld+json" />
   <!-- Hero Section -->

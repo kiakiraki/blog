@@ -16,17 +16,14 @@ export default [
     },
   },
   {
-    files: ['src/components/MDXEditor.astro'],
-    rules: {
-      // Dev-only editor UI: relax strict ordering/a11y for rapid iteration
-      'astro/sort-attributes': 'off',
-      'astro/jsx-a11y/prefer-tag-over-role': 'off',
-      'astro/jsx-a11y/control-has-associated-label': 'off',
-      'astro/no-unsafe-inline-scripts': 'off',
-    },
-  },
-  {
-    files: ['src/components/BaseHead.astro', 'src/layouts/BlogPost.astro'],
+    files: [
+      'src/components/BaseHead.astro',
+      'src/layouts/BlogPost.astro',
+      'src/pages/index.astro',
+      'src/pages/blog/index.astro',
+      // [category] はglobの文字クラスと解釈されるため * で指定
+      'src/pages/category/*.astro',
+    ],
     rules: {
       // JSON-LD structured data using JSON.stringify is safe from XSS
       'astro/no-set-html-directive': 'off',

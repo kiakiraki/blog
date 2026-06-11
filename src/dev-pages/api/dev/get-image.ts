@@ -22,14 +22,13 @@ export const GET: APIRoute = async ({ url }) => {
   try {
     const [y, m, d] = publishDate.split('-');
     const yearMonth = `${y}-${m}`;
-    const safe = path
-      .normalize(relPath)
-      .replace(/^\/+|^\.<\//, '')
-      .replace(/^\.\//, '');
+    const safe = path.normalize(relPath).replace(/^\/+/, '').replace(/^\.\//, '');
     const baseDir = path.join(CONTENT_ROOT, yearMonth, `${y}-${m}-${d}`);
     const abs = path.resolve(path.join(baseDir, safe));
     const root = path.resolve(baseDir);
-    if (!abs.startsWith(root)) return new Response('Invalid path', { status: 400 });
+    // 前方一致だけだと兄弟ディレクトリ（root + '-evil'等）を通すため、セパレータ込みで比較
+    if (abs !== root && !abs.startsWith(root + path.sep))
+      return new Response('Invalid path', { status: 400 });
 
     const buf = await readFile(abs);
     const ext = path.extname(abs).toLowerCase();

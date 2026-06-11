@@ -20,9 +20,11 @@ if (canonicalURL && !canonicalURL.pathname.endsWith('/')) {
 const pageTitle = title === SITE_TITLE ? title : `${title} | ${SITE_TITLE}`;
 const robotsContent = robots ?? 'index, follow';
 
-// OGP画像のURLとタイプを生成
+// OGP画像のURL・タイプ・サイズを生成
 let ogImageUrl: string;
 let ogImageType: string = 'image/jpeg'; // デフォルト
+let ogImageWidth = 1200;
+let ogImageHeight = 630;
 
 if (image && typeof image === 'string') {
   // 文字列の画像URLが指定されている場合
@@ -35,6 +37,8 @@ if (image && typeof image === 'string') {
 } else if (image && typeof image === 'object' && 'src' in image) {
   // ImageMetadataオブジェクト（heroImage等）が指定されている場合
   ogImageUrl = new URL(image.src, Astro.url).toString();
+  ogImageWidth = image.width;
+  ogImageHeight = image.height;
   ogImageType = image.src.endsWith('.png')
     ? 'image/png'
     : image.src.endsWith('.svg')
@@ -99,8 +103,8 @@ if (image && typeof image === 'string') {
 <meta content={description} property="og:description" />
 <meta content={ogImageUrl} property="og:image" />
 <meta content={ogImageUrl} property="og:image:secure_url" />
-<meta content="1200" property="og:image:width" />
-<meta content="630" property="og:image:height" />
+<meta content={String(ogImageWidth)} property="og:image:width" />
+<meta content={String(ogImageHeight)} property="og:image:height" />
 <meta content={ogImageType} property="og:image:type" />
 <meta content={pageTitle} property="og:image:alt" />
 <meta content="ja_JP" property="og:locale" />

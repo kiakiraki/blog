@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
-import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
@@ -29,7 +28,6 @@ export default defineConfig({
     mdx({
       rehypePlugins: MDX_REHYPE_PLUGINS,
     }),
-    react(),
     sitemap({
       // エディタページをサイトマップから除外
       filter: page => !page.includes('/editor'),
