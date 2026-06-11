@@ -1,5 +1,4 @@
 ---
-/* eslint-disable astro/no-set-html-directive */
 import Layout from '@/layouts/Layout.astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import { SITE_TITLE, SITE_DESCRIPTION, POSTS_PER_PAGE } from '../consts';
@@ -26,7 +25,6 @@ const structuredHome = JSON.stringify({
 });
 ---
 
-<!-- eslint-disable astro/no-set-html-directive -->
 <Layout description={SITE_DESCRIPTION} ogSlug="home" title={SITE_TITLE}>
   <script is:inline set:html={structuredHome} type="application/ld+json" />
   <!-- Hero Section -->

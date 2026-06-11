@@ -100,7 +100,8 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
 <script>
   function initTableOfContents() {
     const tocLinks = document.querySelectorAll('.toc-link');
-    const headings = document.querySelectorAll('h2, h3, h4');
+    // 目次の対象は記事本文の見出しのみ（関連記事などページ内の他の見出しを除外）
+    const headings = document.querySelectorAll('.prose h2, .prose h3, .prose h4');
 
     if (tocLinks.length === 0 || headings.length === 0) return;
 
@@ -138,15 +139,6 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
       }
     });
 
-    // Cleanup observer on View Transitions page swap
-    document.addEventListener(
-      'astro:before-swap',
-      () => {
-        observer.disconnect();
-      },
-      { once: true }
-    );
-
     // Smooth scroll for TOC links
     tocLinks.forEach(link => {
       link.addEventListener('click', e => {
@@ -171,9 +163,5 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
     });
   }
 
-  // Initialize on DOMContentLoaded
   document.addEventListener('DOMContentLoaded', initTableOfContents);
-
-  // Re-initialize after View Transitions page swap
-  document.addEventListener('astro:after-swap', initTableOfContents);
 </script>
