@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { CATEGORIES, type Category } from '../consts';
+import { paginate, countByCategory } from './pagination';
 
 let cachedPosts: CollectionEntry<'blog'>[] | null = null;
 
@@ -28,14 +29,11 @@ export async function getPostsForPage(
   totalPages: number;
 }> {
   const allPosts = await getAllPosts();
-  const totalPosts = allPosts.length;
-  const totalPages = Math.ceil(totalPosts / postsPerPage);
-  const start = (page - 1) * postsPerPage;
-  const end = start + postsPerPage;
+  const { items, totalItems, totalPages } = paginate(allPosts, page, postsPerPage);
 
   return {
-    posts: allPosts.slice(start, end),
-    totalPosts,
+    posts: items,
+    totalPosts: totalItems,
     totalPages,
   };
 }
@@ -53,11 +51,8 @@ export async function getPostsByCategory(category: string): Promise<CollectionEn
  */
 export async function getCategoryCounts(): Promise<Record<Category, number>> {
   const allPosts = await getAllPosts();
-  return CATEGORIES.reduce(
-    (acc, category) => {
-      acc[category] = allPosts.filter(post => post.data.category === category).length;
-      return acc;
-    },
-    {} as Record<Category, number>
+  return countByCategory(
+    CATEGORIES,
+    allPosts.map(post => post.data.category)
   );
 }
