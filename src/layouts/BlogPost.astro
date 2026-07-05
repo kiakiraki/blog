@@ -44,6 +44,9 @@ const relatedPosts = getRelatedPosts(post, allPosts, 3);
 const ogImageUrl = heroImage
   ? new URL(heroImage.src, Astro.url).toString()
   : new URL(`/og/${slug}.png`, Astro.site).toString();
+// heroImageがあれば実寸を、なければ動的生成OGP画像(satoriで1200x630固定)のサイズを使う
+const ogImageWidth = heroImage ? heroImage.width : 1200;
+const ogImageHeight = heroImage ? heroImage.height : 630;
 ---
 
 <Layout description={description} image={heroImage} ogSlug={slug} title={title}>
@@ -73,6 +76,8 @@ const ogImageUrl = heroImage
       image: {
         '@type': 'ImageObject',
         url: ogImageUrl,
+        width: ogImageWidth,
+        height: ogImageHeight,
       },
     })}
     type="application/ld+json"
@@ -86,10 +91,13 @@ const ogImageUrl = heroImage
             class="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
             decoding="async"
             fetchpriority="high"
+            format="webp"
             height={600}
             loading="eager"
+            sizes="100vw"
             src={heroImage}
             width={1200}
+            widths={[640, 960, 1200]}
           />
         </div>
       )

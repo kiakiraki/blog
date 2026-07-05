@@ -31,10 +31,13 @@ const { relatedPosts } = Astro.props;
                   <Image
                     alt={post.data.title}
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    format="webp"
                     height={169}
                     loading="lazy"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 256px"
                     src={post.data.heroImage}
                     width={300}
+                    widths={[320, 480, 640, 800]}
                   />
                 </div>
               )}
