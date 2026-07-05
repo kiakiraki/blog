@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import CategoryBadge from './CategoryBadge.astro';
+import { SITE_TITLE } from '../consts';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -30,15 +31,10 @@ const iso = post.data.pubDate.toISOString().slice(0, 10);
             widths={[400, 600, 800]}
           />
         ) : (
-          <img
-            alt=""
-            class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
-            decoding="async"
-            height="630"
-            loading="lazy"
-            src={`/og/${post.id}.png`}
-            width="1200"
-          />
+          <div aria-hidden="true" class="og-thumb">
+            <span class="og-thumb__title">{post.data.title}</span>
+            <span class="og-thumb__site">{SITE_TITLE}</span>
+          </div>
         )
       }
     </div>
