@@ -2,6 +2,7 @@ import satori from 'satori';
 import sharp from 'sharp';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { CATEGORIES } from '../../consts';
+import { truncateGraphemes } from '../../utils/truncate';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { APIContext } from 'astro';
@@ -158,7 +159,7 @@ export async function GET({ params, props }: APIContext<Props>) {
             whiteSpace: 'pre-wrap',
           },
         },
-        title.length > 50 ? title.substring(0, 50) + '…' : title
+        truncateGraphemes(title, 50)
       ),
       description
         ? h(
@@ -171,7 +172,7 @@ export async function GET({ params, props }: APIContext<Props>) {
                 textAlign: 'center',
               },
             },
-            description.length > 80 ? description.substring(0, 80) + '…' : description
+            truncateGraphemes(description, 80)
           )
         : null,
       h(
