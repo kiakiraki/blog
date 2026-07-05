@@ -13,6 +13,12 @@ export default [
       // Astro's <script> tags (without is:inline) are bundled at build time and safe
       'astro/no-unsafe-inline-scripts': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
+      // eslint-plugin-astro v2 で新規追加されたルール。<head> 直下に子コンポーネント
+      // （例: <BaseHead>）を置くだけで parse5 が「head の暗黙終了」と誤検知する既知の
+      // false positive があり、作者自身がルール自体の非推奨化PRを出している
+      // (ota-meshi/eslint-plugin-astro PR #590, 2026-06-25時点でopen)。
+      // 実際のHTML出力は正しく </head> で閉じているため無効化する。
+      'astro/no-omitted-end-tags': 'off',
     },
   },
   {
