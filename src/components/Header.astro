@@ -140,7 +140,15 @@ import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
 </header>
 
 <script>
+  let headerAbortController: AbortController | undefined;
+
   function initHeader() {
+    // astro:page-load はページ遷移のたびに発火するため、前回登録した
+    // document/windowレベルのリスナーを破棄してから再登録する（冪等化）
+    headerAbortController?.abort();
+    headerAbortController = new AbortController();
+    const { signal } = headerAbortController;
+
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
@@ -151,7 +159,7 @@ import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
         mobileMenuButton.setAttribute('aria-expanded', String(next));
         mobileMenu.classList.toggle('hidden', !next);
       };
-      mobileMenuButton.addEventListener('click', toggleMobileMenu);
+      mobileMenuButton.addEventListener('click', toggleMobileMenu, { signal });
     }
 
     const desktopButton = document.getElementById('desktop-category-button');
@@ -208,12 +216,12 @@ import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
         }
       };
 
-      desktopButton.addEventListener('click', toggleMenu);
-      desktopButton.addEventListener('keydown', handleArrowDown);
-      desktopMenu.addEventListener('keydown', handleEscape);
-      document.addEventListener('click', handleOutsideClick);
+      desktopButton.addEventListener('click', toggleMenu, { signal });
+      desktopButton.addEventListener('keydown', handleArrowDown, { signal });
+      desktopMenu.addEventListener('keydown', handleEscape, { signal });
+      document.addEventListener('click', handleOutsideClick, { signal });
     }
   }
 
-  document.addEventListener('DOMContentLoaded', initHeader);
+  document.addEventListener('astro:page-load', initHeader);
 </script>

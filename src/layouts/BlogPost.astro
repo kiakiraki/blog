@@ -97,6 +97,7 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
             loading="eager"
             sizes="100vw"
             src={heroImage}
+            transition:name={`hero-${slug.replaceAll('/', '-')}`}
             width={1200}
             widths={[640, 960, 1200]}
           />

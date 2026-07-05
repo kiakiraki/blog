@@ -102,18 +102,32 @@
     }
   });
 
-  document.addEventListener('DOMContentLoaded', () => {
+  let themeToggleAbortController: AbortController | undefined;
+
+  function initThemeToggle() {
+    // astro:page-load はページ遷移のたびに発火し、ボタン自体もページスワップで
+    // 新しいDOMノードに置き換わるため、前回のリスナーを破棄してから再登録する
+    themeToggleAbortController?.abort();
+    themeToggleAbortController = new AbortController();
+    const { signal } = themeToggleAbortController;
+
     const button = document.getElementById('theme-toggle');
     if (button) {
-      button.addEventListener('click', () => {
-        const newTheme = getThemePreference() === 'dark' ? 'light' : 'dark';
-        if (window.__theme) {
-          window.__theme.setItem('theme', newTheme);
-        } else {
-          safeSetItem('theme', newTheme);
-        }
-        applyTheme();
-      });
+      button.addEventListener(
+        'click',
+        () => {
+          const newTheme = getThemePreference() === 'dark' ? 'light' : 'dark';
+          if (window.__theme) {
+            window.__theme.setItem('theme', newTheme);
+          } else {
+            safeSetItem('theme', newTheme);
+          }
+          applyTheme();
+        },
+        { signal }
+      );
     }
-  });
+  }
+
+  document.addEventListener('astro:page-load', initThemeToggle);
 </script>

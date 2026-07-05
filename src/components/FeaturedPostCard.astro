@@ -44,6 +44,7 @@ const iso = post.data.pubDate.toISOString().slice(0, 10);
             loading="eager"
             sizes="(max-width: 768px) 100vw, 45vw"
             src={post.data.heroImage}
+            transition:name={`hero-${post.id.replaceAll('/', '-')}`}
             width={640}
             widths={[640, 960]}
           />

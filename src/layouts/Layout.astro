@@ -2,6 +2,7 @@
 import BaseHead from '@/components/BaseHead.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import { ClientRouter } from 'astro:transitions';
 import '@/styles/global.css';
 
 import type { ImageMetadata } from 'astro';
@@ -59,9 +60,14 @@ const { title, description, image, ogSlug, robots } = Astro.props;
           window.__theme = { getPreference, apply, getItem: safeGetItem, setItem: safeSetItem };
 
           apply();
+
+          // ClientRouterのページスワップ後、<html>のdarkクラスが新ページの
+          // サーバーHTML（クラス無し）に置き換わって消えるため再適用する
+          document.addEventListener('astro:after-swap', apply);
         })();
       </script>
     </BaseHead>
+    <ClientRouter />
   </head>
   <body class="min-h-full flex flex-col bg-surface text-ink">
     <!-- Logbook background effects (dot grid + gradient orb) -->
