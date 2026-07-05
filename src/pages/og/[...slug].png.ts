@@ -8,10 +8,13 @@ import type { APIContext } from 'astro';
 
 export const prerender = true;
 
-// Load fonts from public directory at build time
-const fontsDir = path.join(process.cwd(), 'public/fonts');
-const fontRegular = fs.readFileSync(path.join(fontsDir, 'noto-sans-jp-400.woff'));
-const fontBold = fs.readFileSync(path.join(fontsDir, 'noto-sans-jp-700.woff'));
+// Load fonts at build time. These are full-repertoire WOFF files generated
+// by scripts/generate-noto-subsets.mjs, kept outside `public/` so they are
+// never fetched by visitors' browsers (Satori needs one complete font per
+// weight to render arbitrary post titles, and only supports TTF/OTF/WOFF).
+const fontsDir = path.join(process.cwd(), 'src/assets/fonts');
+const fontRegular = fs.readFileSync(path.join(fontsDir, 'noto-sans-jp-og-400.woff'));
+const fontBold = fs.readFileSync(path.join(fontsDir, 'noto-sans-jp-og-700.woff'));
 
 type Props = {
   post?: CollectionEntry<'blog'>;

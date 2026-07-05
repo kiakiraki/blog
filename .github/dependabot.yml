@@ -21,7 +21,6 @@ updates:
         patterns:
           - 'tailwindcss'
           - '@tailwindcss/*'
-          - 'tailwind-merge'
       codemirror:
         patterns:
           - '@codemirror/*'

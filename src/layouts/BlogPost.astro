@@ -9,6 +9,7 @@ import { getRelatedPosts } from '@/utils/relatedPosts';
 import { getAllPosts } from '@/utils/posts';
 import Icon from '@/components/Icon.astro';
 import { AUTHOR_NAME, SITE_TITLE, CATEGORY_COLORS } from '../consts';
+import { jsonLdStringify } from '@/utils/jsonld';
 import TweetButton from '../components/TweetButton.astro';
 
 interface Props {
@@ -49,7 +50,7 @@ const ogImageUrl = heroImage
   <!-- BlogPosting Structured Data -->
   <script
     is:inline
-    set:html={JSON.stringify({
+    set:html={jsonLdStringify({
       '@context': 'https://schema.org',
       '@type': 'BlogPosting',
       headline: title,

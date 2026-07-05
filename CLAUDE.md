@@ -148,11 +148,11 @@ npm run typecheck     # TypeScript型チェック
 
 #### フレームワーク・ライブラリ
 
-- **Astro 6.x**: 静的サイトジェネレーター（output:
+- **Astro 7.x**: 静的サイトジェネレーター（output:
   'server' + 全ページ prerender）
-- **TypeScript 5.9.x**: 型安全性
-- **Tailwind CSS 4.1.x**: ユーティリティファーストCSS
-- **@astrojs/mdx 6.x**: Markdown + JSX
+- **TypeScript 6.x**: 型安全性
+- **Tailwind CSS 4.x**: ユーティリティファーストCSS
+- **@astrojs/mdx 7.x**: Markdown + JSX
 - **React 19**: devエディタ専用（本番ビルドには含まれない）
 
 #### デプロイ・インフラ
