@@ -256,6 +256,14 @@ export const CATEGORIES = [
 - **compatibility_date**: `wrangler.jsonc`
   の値は同梱workerdの対応日付を超えられない。上げるときは `wrangler` /
   `@astrojs/cloudflare` も同じPRで更新する
+- **ビルド時画像最適化**: `astro.config.mjs` の `image.service` は
+  `src/lib/build-image-service.mjs`（sharpの再エクスポート）を指定している。
+  `imageService: 'compile'` + `prerenderEnvironment: 'node'`
+  の組み合わせではアダプタがno-opサービスへ強制差し替えし、srcset候補が未縮小の元画像コピーになる（.webp拡張子で中身JPEG）ための回避策。
+  `@astrojs/cloudflare`
+  更新時はビルド後にsrcset候補が実際に縮小されているか確認すること
+- **CSP追随**: 記事に新しい種類の外部埋め込み（現状はYouTube /
+  Twitterのみ許可）を追加したら `public/_headers` のCSPにドメインを追加する
 
 ### 🔒 セキュリティ
 
@@ -311,10 +319,14 @@ export const CATEGORIES = [
   - 優先度: 低（`jsonLdStringify` によるJSON-LDエスケープ済みで実リスクは低い）
   - 概要: `public/_headers`
     は静的ファイルでnonceを埋め込めないため、ミドルウェアでのCSPヘッダ動的生成への移行が必要（工数大）
-- [ ] **CSPから `fonts.googleapis.com` / `fonts.gstatic.com` を削除**
-  - 優先度: 低
-  - 概要: Source Sans
-    3セルフホスト化済みでコード参照はゼロ。CSP変更は本番でのフォント・AdSense動作確認とセットで実施すること
+- [x] **CSPから `fonts.googleapis.com` / `fonts.gstatic.com` を削除**（対応済み:
+      2026-07-05, PR #324）
+  - あわせてPR #327で記事内埋め込み用のCSP許可を追加（`script-src` に
+    `data:`（AstroのClientRouterがインラインmoduleスクリプトの実行完了待ちに空の
+    `data:` スクリプトを挿入するため）と `platform.twitter.com`、`frame-src` に
+    `www.youtube.com` / `platform.twitter.com` / `syndication.twitter.com`）
+  - 教訓: 記事に新しい種類の外部埋め込みを追加したら `public/_headers`
+    のCSPも追随すること
 - [x] **ESLint 10へのメジャー更新**（対応済み）
   - 概要: `eslint` ^10.6.0 / `eslint-plugin-astro` ^2.1.1 /
     `typescript-eslint`系 ^8.62.1 に更新し、`eslint-plugin-jsx-a11y` （ESLint
@@ -322,19 +334,24 @@ export const CATEGORIES = [
     v2で`jsx-a11y-recommended`/`jsx-a11y-strict`という別configに切り出された形になり、jsx-a11y未インストールでも`configs.all`はエラーなく動作するため設定変更は最小限で済んだ。
   - 残タスク: a11yルールは一時的に削除した状態。`eslint-plugin-jsx-a11y`
     が公式にESLint 10対応したら`jsx-a11y-recommended`/`jsx-a11y-strict`
-    configの追加で復帰、もしくはコミュニティフォーク`eslint-plugin-jsx-a11y-x`（es-tooling）が成熟したらnpmエイリアスで移行を検討する。
+    configの追加で復帰する。2026-07-05に再調査した結果は「引き続き待ち」: 本家はESLint
+    10対応PRがblockedのまま（issue #1075）、フォーク `eslint-plugin-jsx-a11y-x`
+    はnpmエイリアスでの差し替えがeslint-plugin-astroのローダーと非互換（CJS
+    interop + ルール名prefix不一致）と実機検証で確認済み。再チェック目安は2026年9〜10月（`npm view eslint-plugin-jsx-a11y peerDependencies`
+    を確認）。
   - 副作用:
     v2で新規追加された`astro/no-omitted-end-tags`ルールは、`<head>`直下にカスタムコンポーネント（例:
     `<BaseHead>`）を置くだけで誤検知するバグがあり、作者自身がルール非推奨化PRを出している（ota-meshi/eslint-plugin-astro
     PR #590）ため `eslint.config.js`でoffにした。
-- [ ] **内部リンクの末尾スラッシュ統一**
-  - 優先度: 低
-  - 概要: `/blog` と `/category/写真/`
-    が混在。canonicalは末尾スラッシュ付きに正規化済み。Cloudflare側のリダイレクト挙動確認とセットで
-- [ ] **OGP画像タイトル切り詰めのサロゲートペア対応**
-  - 優先度: 低
-  - 概要: `og/[...slug].png.ts` の `substring`
-    ベース切り詰めは絵文字入りタイトルで文字を破壊し得る（日本語主体のため発現しにくい）
+- [x] **内部リンクの末尾スラッシュ統一**（対応済み: 2026-07-05, PR #325）
+  - `trailingSlash: 'always'` は `/og/*.png`
+    のprerenderが壊れるため設定しない（理由は `astro.config.mjs`
+    のコメント参照）。Workers assetsのauto-trailing-slashが `/blog` → `/blog/`
+    へ307するのはwrangler devで検証済み
+- [x] **OGP画像タイトル切り詰めのサロゲートペア対応**（対応済み: 2026-07-05, PR
+      #323）
+  - `Intl.Segmenter` による書記素クラスタ単位の `truncateGraphemes`
+    （`src/utils/truncate.ts`）に置換。説明文（80文字）側も同時修正
 
 ### 🔍 検索・ナビゲーション機能
 
