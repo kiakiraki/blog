@@ -110,7 +110,8 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
       entries => {
         entries.forEach(entry => {
           const id = entry.target.id;
-          const tocLink = document.querySelector(`[data-heading-id="${id}"]`);
+          // モバイル版・デスクトップ版で同じ見出しへのリンクが複数あるため全件に適用する
+          const matchedLinks = document.querySelectorAll(`[data-heading-id="${id}"]`);
 
           if (entry.isIntersecting) {
             // Remove active class from all links
@@ -118,11 +119,11 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
               link.classList.remove('active');
               link.removeAttribute('aria-current');
             });
-            // Add active class to current link
-            if (tocLink) {
-              tocLink.classList.add('active');
-              tocLink.setAttribute('aria-current', 'true');
-            }
+            // Add active class to current links
+            matchedLinks.forEach(link => {
+              link.classList.add('active');
+              link.setAttribute('aria-current', 'true');
+            });
           }
         });
       },

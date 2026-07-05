@@ -3,13 +3,14 @@ import Layout from '@/layouts/Layout.astro';
 import PostCard from '@/components/PostCard.astro';
 import { CATEGORIES, CATEGORY_COLORS, POSTS_PER_PAGE } from '@/consts';
 import { getPostsForPage, getCategoryCounts } from '@/utils/posts';
+import { jsonLdStringify } from '@/utils/jsonld';
 
 export const prerender = true;
 
 // Page 1 shows first POSTS_PER_PAGE posts
 const { posts, totalPosts, totalPages } = await getPostsForPage(1, POSTS_PER_PAGE);
 const categoryCounts = await getCategoryCounts();
-const structuredBlogList = JSON.stringify({
+const structuredBlogList = jsonLdStringify({
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
   name: 'ブログ記事一覧',

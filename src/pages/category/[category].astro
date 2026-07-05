@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import PostCard from '@/components/PostCard.astro';
 import { CATEGORIES, CATEGORY_COLORS } from '@/consts';
 import { getAllPosts, getPostsByCategory, getCategoryCounts } from '@/utils/posts';
+import { jsonLdStringify } from '@/utils/jsonld';
 
 export const prerender = true;
 
@@ -18,7 +19,7 @@ const { category } = Astro.props;
 const allPosts = await getAllPosts();
 const posts = await getPostsByCategory(category);
 const categoryCounts = await getCategoryCounts();
-const structuredCategoryList = JSON.stringify({
+const structuredCategoryList = jsonLdStringify({
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
   name: `${category}の記事`,
