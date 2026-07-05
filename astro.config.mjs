@@ -29,6 +29,8 @@ export default defineConfig({
     // アダプタのsharp差し替えが働かず、no-opサービスが元画像を複製するだけになる。
     // 詳細は src/lib/build-image-service.mjs のコメントを参照。
     service: { entrypoint: './src/lib/build-image-service.mjs' },
+    // Markdown ![]() 記法の画像にも自動でsrcset/sizesを付与する(Astro 5.10〜安定化)。
+    layout: 'constrained',
   },
   markdown: {
     rehypePlugins: MARKDOWN_REHYPE_PLUGINS,
