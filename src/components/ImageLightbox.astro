@@ -1,0 +1,90 @@
+---
+import 'photoswipe/style.css';
+---
+
+<style>
+  @reference "tailwindcss";
+
+  :global(.prose img.lightbox-target) {
+    cursor: zoom-in;
+  }
+</style>
+
+<script>
+  import PhotoSwipeLightbox from 'photoswipe/lightbox';
+  import type { SlideData } from 'photoswipe';
+  import { buildLightboxItemData } from '@/utils/lightbox';
+
+  let lightbox: PhotoSwipeLightbox | undefined;
+  let lightboxAbortController: AbortController | undefined;
+
+  function initImageLightbox() {
+    // astro:page-load はページ遷移のたびに発火するため、前回のPhotoSwipeインスタンス
+    // とイベントリスナーを破棄してから再登録する（冪等化）
+    lightbox?.destroy();
+    lightboxAbortController?.abort();
+    lightboxAbortController = new AbortController();
+    const { signal } = lightboxAbortController;
+
+    const candidates = Array.from(document.querySelectorAll<HTMLImageElement>('.prose img')).filter(
+      img => !img.closest('a')
+    );
+
+    if (candidates.length === 0) return;
+
+    candidates.forEach(img => {
+      img.classList.add('lightbox-target');
+      // キーボード操作で拡大表示を開けるようにする（クリック相当）
+      img.setAttribute('role', 'button');
+      img.tabIndex = 0;
+      img.setAttribute('aria-label', img.alt ? `${img.alt}（拡大表示）` : '画像を拡大表示');
+    });
+
+    const dataSource: SlideData[] = candidates.map(img => {
+      const srcset = img.getAttribute('srcset');
+      const src = img.currentSrc || img.getAttribute('src') || img.src;
+      const widthAttr = img.getAttribute('width');
+      const heightAttr = img.getAttribute('height');
+
+      const built = buildLightboxItemData(srcset, src, widthAttr, heightAttr);
+
+      let { width, height } = built;
+      if (width === undefined || height === undefined) {
+        if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+          width = img.naturalWidth;
+          height = img.naturalHeight;
+        }
+      }
+
+      return {
+        src: built.src,
+        width,
+        height,
+        msrc: img.currentSrc || img.src,
+        element: img,
+      };
+    });
+
+    const instance = (lightbox = new PhotoSwipeLightbox({
+      pswpModule: () => import('photoswipe'),
+    }));
+    instance.init();
+
+    candidates.forEach((img, index) => {
+      const open = (event: Event) => {
+        event.preventDefault();
+        instance.loadAndOpen(index, dataSource);
+      };
+      img.addEventListener('click', open, { signal });
+      img.addEventListener(
+        'keydown',
+        event => {
+          if (event.key === 'Enter' || event.key === ' ') open(event);
+        },
+        { signal }
+      );
+    });
+  }
+
+  document.addEventListener('astro:page-load', initImageLightbox);
+</script>

@@ -4,6 +4,7 @@ import Layout from './Layout.astro';
 import FormattedDate from '@/components/FormattedDate.astro';
 import { Image } from 'astro:assets';
 import TableOfContents from '@/components/TableOfContents.astro';
+import ImageLightbox from '@/components/ImageLightbox.astro';
 import RelatedPosts from '@/components/RelatedPosts.astro';
 import { getRelatedPosts } from '@/utils/relatedPosts';
 import { getAllPosts } from '@/utils/posts';
@@ -152,6 +153,7 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
               <div class="prose prose-lg dark:prose-invert max-w-[42rem]">
                 <slot />
               </div>
+              <ImageLightbox />
             </div>
 
             <!-- ここにTweetButtonを配置 -->
