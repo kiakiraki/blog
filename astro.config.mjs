@@ -16,6 +16,9 @@ const MDX_REHYPE_PLUGINS = [[rehypeLinkPreview, { site: SITE }]];
 // https://astro.build/config
 export default defineConfig({
   site: SITE,
+  // NOTE: trailingSlash: 'always' は /og/[...slug].png.ts のprerenderで
+  // `/og/...png/` が要求されてNoMatchingStaticPathFoundになるため設定しない。
+  // 内部リンク側を末尾スラッシュ付きに統一して対応している。
   output: 'server',
   adapter: cloudflare({
     imageService: 'compile',
