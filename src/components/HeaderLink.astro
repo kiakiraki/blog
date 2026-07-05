@@ -6,7 +6,12 @@ type Props = HTMLAttributes<'a'>;
 const { href, class: className, ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
 const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+// 内部リンクは末尾スラッシュ付きに統一しているため、比較前に正規化する
+const normalize = (path: string) => (path.endsWith('/') ? path : `${path}/`);
+const isActive =
+  typeof href === 'string' &&
+  (normalize(href) === normalize(`/${pathname.replace(/^\/+/, '')}`) ||
+    normalize(href) === '/' + (subpath?.[0] ? `${subpath[0]}/` : ''));
 ---
 
 <a
