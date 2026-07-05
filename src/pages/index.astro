@@ -1,13 +1,17 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import PostCard from '@/components/PostCard.astro';
-import { SITE_TITLE, SITE_DESCRIPTION, POSTS_PER_PAGE } from '../consts';
+import FeaturedPostCard from '@/components/FeaturedPostCard.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getAllPosts } from '@/utils/posts';
 import { jsonLdStringify } from '@/utils/jsonld';
 
 export const prerender = true;
 
-const posts = (await getAllPosts()).slice(0, POSTS_PER_PAGE);
+const posts = (await getAllPosts()).slice(0, 9);
+const featured = posts[0];
+const side = posts.slice(1, 3);
+const log = posts.slice(3, 9);
 
 const structuredHome = jsonLdStringify({
   '@context': 'https://schema.org',
@@ -26,51 +30,63 @@ const structuredHome = jsonLdStringify({
 
 <Layout description={SITE_DESCRIPTION} ogSlug="home" title={SITE_TITLE}>
   <script is:inline set:html={structuredHome} type="application/ld+json" />
-  <!-- Hero Section -->
-  <section
-    class="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-950 dark:to-primary-900 py-16 md:py-24 animate-fade-in"
-  >
-    <div class="container mx-auto px-4">
-      <div class="max-w-4xl mx-auto text-center">
-        <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 text-pretty">
-          {SITE_TITLE}
-        </h1>
-        <p
-          class="text-lg md:text-xl text-gray-600 dark:text-gray-200 mb-8 max-w-2xl mx-auto text-pretty"
+
+  <div class="container mx-auto px-4 pb-16">
+    <div class="max-w-6xl mx-auto">
+      <!-- Intro -->
+      <div
+        class="animate-fade-in flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pt-11 pb-7"
+      >
+        <h1 class="text-2xl md:text-3xl font-bold">{SITE_TITLE}</h1>
+        <p class="text-ink-muted text-[0.95rem]">{SITE_DESCRIPTION}</p>
+      </div>
+
+      {
+        featured && (
+          <>
+            <div class="section-label mb-4">
+              <span>Latest</span>
+            </div>
+
+            <div class="animate-fade-in-delay-1 grid gap-4 lg:grid-cols-[1.6fr_1fr]">
+              <FeaturedPostCard post={featured} />
+              {side.length > 0 && (
+                <div class="flex flex-col gap-4">
+                  {side.map(post => (
+                    <PostCard compact post={post} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )
+      }
+
+      {
+        log.length > 0 && (
+          <>
+            <div class="section-label mt-10 mb-4">
+              <span>Log</span>
+            </div>
+
+            <div class="animate-fade-in-delay-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {log.map(post => (
+                <PostCard compact post={post} />
+              ))}
+            </div>
+          </>
+        )
+      }
+
+      <div class="flex justify-center mt-10">
+        <a
+          aria-label="すべての記事を見る"
+          class="font-mono text-[13px] tracking-[0.1em] text-ink-muted border border-line rounded-full px-6 py-2 hover:text-primary-600 dark:hover:text-primary-400 hover:border-line-strong transition-colors"
+          href="/blog/"
         >
-          {SITE_DESCRIPTION}
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a class="btn-primary" href="/blog"> ブログを読む </a>
-          <a class="btn-secondary" href="/about"> プロフィール </a>
-        </div>
+          ALL POSTS →
+        </a>
       </div>
     </div>
-  </section>
-
-  <!-- Featured Posts -->
-  <section class="py-16 md:py-20 animate-fade-in-delay-1">
-    <div class="container mx-auto px-4">
-      <div class="max-w-6xl mx-auto">
-        <div class="mb-8">
-          <div class="section-label mb-4">
-            <span>Latest Posts</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">最新記事</h2>
-            <a
-              class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
-              href="/blog"
-            >
-              すべての記事を見る →
-            </a>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map(post => <PostCard post={post} />)}
-        </div>
-      </div>
-    </div>
-  </section>
+  </div>
 </Layout>

@@ -26,7 +26,8 @@
 │   │   ├── Footer.astro        # サイトフッター
 │   │   ├── ThemeToggle.astro   # ダーク/ライトモード切替
 │   │   ├── FormattedDate.astro # 日付フォーマット
-│   │   ├── PostCard.astro      # 記事カード（一覧系ページ共通）
+│   │   ├── PostCard.astro      # 記事カード（heroImage無し時はOGP画像をサムネイルに流用）
+│   │   ├── FeaturedPostCard.astro # トップページの最新記事フィーチャーカード
 │   │   ├── CategoryBadge.astro # カテゴリバッジ
 │   │   ├── RelatedPosts.astro  # 関連記事表示
 │   │   ├── TweetButton.astro   # X (Twitter) シェアボタン
