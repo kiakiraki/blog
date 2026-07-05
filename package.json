@@ -2,6 +2,10 @@
   "name": "blog",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "npm@10.9.2",
   "scripts": {
     "dev": "astro dev",
     "dev:editor": "ASTRO_TELEMETRY_DISABLED=1 astro dev --config astro.dev.config.mjs",
@@ -59,7 +63,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "subset-font": "^2.5.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "typescript-eslint": "^8.55.0",
     "unified": "^11.0.5",
     "wrangler": "^4.107.0"
