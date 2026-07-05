@@ -299,6 +299,29 @@ export const CATEGORIES = [
 
 ## 実装待ちの改善リスト
 
+### 🧹 コードレビュー由来の残課題（2026-07 包括レビュー、PR #314 / #316 対応後の見送り分）
+
+- [ ] **CSPの `unsafe-inline` 排除（nonce化）**
+  - 優先度: 低（`jsonLdStringify` によるJSON-LDエスケープ済みで実リスクは低い）
+  - 概要: `public/_headers`
+    は静的ファイルでnonceを埋め込めないため、ミドルウェアでのCSPヘッダ動的生成への移行が必要（工数大）
+- [ ] **CSPから `fonts.googleapis.com` / `fonts.gstatic.com` を削除**
+  - 優先度: 低
+  - 概要: Source Sans
+    3セルフホスト化済みでコード参照はゼロ。CSP変更は本番でのフォント・AdSense動作確認とセットで実施すること
+- [ ] **ESLint 10へのメジャー更新**
+  - 優先度: 低（ブロック中）
+  - 概要: `eslint-plugin-jsx-a11y` がESLint
+    ^9までしか対応していないため保留。対応版リリース後にdependabotのlint-and-formatグループで更新可
+- [ ] **内部リンクの末尾スラッシュ統一**
+  - 優先度: 低
+  - 概要: `/blog` と `/category/写真/`
+    が混在。canonicalは末尾スラッシュ付きに正規化済み。Cloudflare側のリダイレクト挙動確認とセットで
+- [ ] **OGP画像タイトル切り詰めのサロゲートペア対応**
+  - 優先度: 低
+  - 概要: `og/[...slug].png.ts` の `substring`
+    ベース切り詰めは絵文字入りタイトルで文字を破壊し得る（日本語主体のため発現しにくい）
+
 ### 🔍 検索・ナビゲーション機能
 
 - [ ] **全文検索機能**
