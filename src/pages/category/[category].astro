@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import PostCard from '@/components/PostCard.astro';
-import { CATEGORIES, CATEGORY_COLORS } from '@/consts';
+import { CATEGORIES } from '@/consts';
 import { getAllPosts, getPostsByCategory, getCategoryCounts } from '@/utils/posts';
 import { jsonLdStringify } from '@/utils/jsonld';
 
@@ -90,16 +90,15 @@ const structuredCategoryList = jsonLdStringify({
           </a>
           {
             CATEGORIES.map(cat => {
-              const colors = CATEGORY_COLORS[cat];
               const isActive = category === cat;
               return (
                 <a
                   class:list={[
-                    'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:opacity-80',
-                    { 'ring-2 ring-offset-2 dark:ring-offset-[#0c0f14]': isActive },
+                    'category-chip px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:opacity-80',
+                    { 'ring-2 ring-offset-2 ring-offset-surface': isActive },
                   ]}
+                  data-category={cat}
                   href={`/category/${cat}/`}
-                  style={`color: ${colors.fg}; background: ${colors.bg}; ${isActive ? `--tw-ring-color: ${colors.fg};` : ''}`}
                 >
                   {cat} ({categoryCounts[cat]})
                 </a>

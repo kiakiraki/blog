@@ -2,7 +2,7 @@
 /**
  * Generates Google-Fonts-style unicode-range-sliced, self-hosted woff2
  * subsets of Noto Sans JP (weights 400 and 700) and rewrites the
- * @font-face declarations in src/styles/global.css to reference them.
+ * @font-face declarations in src/styles/fonts.css to reference them.
  *
  * Usage:
  *   node scripts/generate-noto-subsets.mjs [path/to/NotoSansJP.ttf]
@@ -23,7 +23,7 @@ const DEFAULT_SOURCE_TTF =
 const WEIGHTS = [400, 700];
 const OUTPUT_DIR = path.join(REPO_ROOT, 'public/fonts/noto-sans-jp/v1');
 const OUTPUT_URL_PREFIX = '/fonts/noto-sans-jp/v1';
-const GLOBAL_CSS_PATH = path.join(REPO_ROOT, 'src/styles/global.css');
+const FONTS_CSS_PATH = path.join(REPO_ROOT, 'src/styles/fonts.css');
 
 // The OG-image generator (src/pages/og/[...slug].png.ts) uses Satori, which
 // needs one complete font per weight to render arbitrary post titles/
@@ -268,7 +268,7 @@ async function main() {
 
   const generatedCss = [START_MARKER, ...cssBlocks, END_MARKER].join('\n\n');
 
-  const existingCss = await readFile(GLOBAL_CSS_PATH, 'utf8');
+  const existingCss = await readFile(FONTS_CSS_PATH, 'utf8');
 
   let newCss;
   if (existingCss.includes(START_MARKER) && existingCss.includes(END_MARKER)) {
@@ -281,13 +281,13 @@ async function main() {
     const fontFaceBlockRegex = /^(@font-face\s*\{[^}]*\}\s*\n\s*\n\s*@font-face\s*\{[^}]*\}\s*\n)/;
     if (!fontFaceBlockRegex.test(existingCss)) {
       throw new Error(
-        'Could not locate the two legacy @font-face blocks at the top of global.css to replace.'
+        'Could not locate the two legacy @font-face blocks at the top of fonts.css to replace.'
       );
     }
     newCss = existingCss.replace(fontFaceBlockRegex, `${generatedCss}\n\n`);
   }
 
-  await writeFile(GLOBAL_CSS_PATH, newCss);
+  await writeFile(FONTS_CSS_PATH, newCss);
 
   const ogStats = await generateOgFonts(ttfBuffer);
 
@@ -307,7 +307,7 @@ async function main() {
       1
     )} KB, 700=${(ogStats[700] / 1024).toFixed(1)} KB`
   );
-  console.log(`\nUpdated: ${GLOBAL_CSS_PATH}`);
+  console.log(`\nUpdated: ${FONTS_CSS_PATH}`);
 }
 
 main().catch(err => {

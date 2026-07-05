@@ -1,5 +1,4 @@
 ---
-import { CATEGORY_COLORS } from '../consts';
 import type { Category } from '../consts';
 
 interface Props {
@@ -9,14 +8,13 @@ interface Props {
 }
 
 const { category, size = 'sm', class: className } = Astro.props;
-const colors = CATEGORY_COLORS[category] ?? CATEGORY_COLORS['その他'];
 
 const sizeClasses = size === 'md' ? 'px-3 py-1 text-sm' : 'px-2 py-0.5 text-xs';
 ---
 
 <span
-  class:list={['inline-block rounded-full font-medium', sizeClasses, className]}
-  style={`color: ${colors.fg}; background: ${colors.bg};`}
+  class:list={['category-chip inline-block rounded-full font-medium', sizeClasses, className]}
+  data-category={category}
 >
   {category}
 </span>

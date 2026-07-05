@@ -5,9 +5,7 @@ import Icon from './Icon.astro';
 import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
 ---
 
-<header
-  class="sticky top-0 z-50 bg-white/80 dark:bg-[#0c0f14]/80 backdrop-blur-md border-b border-gray-200 dark:border-[rgba(51,65,85,0.3)]"
->
+<header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-line">
   <div class="container mx-auto px-4">
     <nav class="flex items-center justify-between h-16">
       <div class="flex items-center space-x-8">
@@ -34,7 +32,7 @@ import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
               <Icon class="w-4 h-4 transition-transform duration-200" name="chevron-down" />
             </button>
             <div
-              class="absolute left-0 mt-2 w-48 bg-white dark:bg-[#151a22] rounded-lg shadow-lg border border-gray-200 dark:border-[rgba(51,65,85,0.3)] z-10 hidden"
+              class="absolute left-0 mt-2 w-48 bg-surface-raised rounded-lg shadow-lg border border-line z-10 hidden"
               id="desktop-category-menu"
               role="menu"
             >
