@@ -98,7 +98,17 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
 </style>
 
 <script>
+  let tocObserver: IntersectionObserver | undefined;
+  let tocAbortController: AbortController | undefined;
+
   function initTableOfContents() {
+    // astro:page-load はページ遷移のたびに発火するため、前回のIntersectionObserver
+    // とイベントリスナーを破棄してから再登録する（冪等化）
+    tocObserver?.disconnect();
+    tocAbortController?.abort();
+    tocAbortController = new AbortController();
+    const { signal } = tocAbortController;
+
     const tocLinks = document.querySelectorAll('.toc-link');
     // 目次の対象は記事本文の見出しのみ（関連記事などページ内の他の見出しを除外）
     const headings = document.querySelectorAll('.prose h2, .prose h3, .prose h4');
@@ -106,7 +116,7 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
     if (tocLinks.length === 0 || headings.length === 0) return;
 
     // Create intersection observer for scroll-linked highlighting
-    const observer = new IntersectionObserver(
+    const observer = (tocObserver = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
           const id = entry.target.id;
@@ -131,7 +141,7 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
         rootMargin: '-20% 0% -35% 0%',
         threshold: 0,
       }
-    );
+    ));
 
     // Observe all headings
     headings.forEach(heading => {
@@ -142,27 +152,31 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
 
     // Smooth scroll for TOC links
     tocLinks.forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const targetId = link.getAttribute('data-heading-id');
+      link.addEventListener(
+        'click',
+        e => {
+          e.preventDefault();
+          const targetId = link.getAttribute('data-heading-id');
 
-        if (targetId) {
-          const targetElement = document.getElementById(targetId);
+          if (targetId) {
+            const targetElement = document.getElementById(targetId);
 
-          if (targetElement) {
-            const headerOffset = 80; // Account for sticky header
-            const elementPosition = targetElement.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            if (targetElement) {
+              const headerOffset = 80; // Account for sticky header
+              const elementPosition = targetElement.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth',
-            });
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth',
+              });
+            }
           }
-        }
-      });
+        },
+        { signal }
+      );
     });
   }
 
-  document.addEventListener('DOMContentLoaded', initTableOfContents);
+  document.addEventListener('astro:page-load', initTableOfContents);
 </script>

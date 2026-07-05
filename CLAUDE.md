@@ -298,6 +298,10 @@ export const CATEGORIES = [
       `/blog/page/[page]/`（2ページ目以降）
 - [x] **MDXエディタ（dev専用）** - `npm run dev:editor` で `/editor`
       から記事作成・画像アップロード
+- [x] **View Transitions** -
+      ClientRouterによるクライアントサイド遷移。カードのヒーロー画像が記事ヒーローへモーフ（`transition:name="hero-{id}"`）。動的スクリプトは
+      `astro:page-load` + AbortControllerで冪等化、テーマは `astro:after-swap`
+      で再適用
 
 ## 実装待ちの改善リスト
 

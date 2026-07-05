@@ -68,6 +68,16 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  /* 上の `*` セレクタは view transition 疑似要素には届かないため個別に無効化する。
+     AstroのClientRouter（astro/components/ClientRouter.astro が読み込む
+     viewtransitions.css）は `@media (prefers-reduced-motion)` で同等のブロックを
+     自動注入済みだが、保険として明示しておく。 */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
 
 @layer base {
