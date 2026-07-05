@@ -39,29 +39,42 @@
 </button>
 
 <script>
-  // Safe localStorage access (handles private browsing mode errors)
+  // テーマ判定・適用ロジックの本体は Layout.astro のインラインスクリプトが
+  // window.__theme として公開しているものを再利用し、重複実装を避ける
+  // （FOUC防止のため、そちらは head の最上部で同期的に実行される）。
+  declare global {
+    interface Window {
+      __theme?: {
+        getPreference: () => string;
+        apply: () => void;
+        getItem: (key: string) => string | null;
+        setItem: (key: string, value: string) => void;
+      };
+    }
+  }
+
+  // window.__theme が何らかの理由で存在しない場合のフォールバック
   function safeGetItem(key: string): string | null {
     try {
-      if (typeof localStorage !== 'undefined') {
-        return localStorage.getItem(key);
-      }
+      return localStorage.getItem(key);
     } catch {
       // localStorage may throw in private browsing mode
+      return null;
     }
-    return null;
   }
 
   function safeSetItem(key: string, value: string): void {
     try {
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(key, value);
-      }
+      localStorage.setItem(key, value);
     } catch {
       // localStorage may throw in private browsing mode
     }
   }
 
   function getThemePreference(): string {
+    if (window.__theme) {
+      return window.__theme.getPreference();
+    }
     const theme = safeGetItem('theme');
     if (theme) {
       return theme;
@@ -72,16 +85,19 @@
   // テーマを適用するだけで保存はしない。保存は明示的なトグル操作時のみ行い、
   // 未操作のユーザーはOSのテーマ変更に追従できるようにする。
   function applyTheme(): void {
+    if (window.__theme) {
+      window.__theme.apply();
+      return;
+    }
     const dark = getThemePreference() === 'dark';
     document.documentElement.classList.toggle('dark', dark);
     document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
   }
 
-  applyTheme();
-
   // 明示的な選択がない間はOSのテーマ変更に追従する
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (!safeGetItem('theme')) {
+    const stored = window.__theme ? window.__theme.getItem('theme') : safeGetItem('theme');
+    if (!stored) {
       applyTheme();
     }
   });
@@ -91,7 +107,11 @@
     if (button) {
       button.addEventListener('click', () => {
         const newTheme = getThemePreference() === 'dark' ? 'light' : 'dark';
-        safeSetItem('theme', newTheme);
+        if (window.__theme) {
+          window.__theme.setItem('theme', newTheme);
+        } else {
+          safeSetItem('theme', newTheme);
+        }
         applyTheme();
       });
     }

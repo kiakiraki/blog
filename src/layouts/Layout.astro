@@ -20,27 +20,48 @@ const { title, description, image, ogSlug, robots } = Astro.props;
 <!doctype html>
 <html class="h-full" lang="ja">
   <head>
-    <script is:inline>
-      // 初期描画前にテーマを適用してFOUCを防ぐ
-      (() => {
-        try {
-          const stored = localStorage.getItem('theme');
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          const useDark = stored ? stored === 'dark' : prefersDark;
-          document.documentElement.classList.toggle('dark', useDark);
-          document.documentElement.style.colorScheme = useDark ? 'dark' : 'light';
-        } catch {
-          // localStorage が使えない環境では何もしない
-        }
-      })();
-    </script>
-    <BaseHead
-      description={description}
-      image={image}
-      ogSlug={ogSlug}
-      robots={robots}
-      title={title}
-    />
+    <BaseHead description={description} image={image} ogSlug={ogSlug} robots={robots} title={title}>
+      <script is:inline slot="early-scripts">
+        // 初期描画前にテーマを適用してFOUCを防ぐ。
+        // ThemeToggle からも window.__theme 経由で同じロジックを再利用する。
+        (() => {
+          function safeGetItem(key) {
+            try {
+              return localStorage.getItem(key);
+            } catch {
+              // localStorage が使えない環境（プライベートブラウジング等）では何もしない
+              return null;
+            }
+          }
+
+          function safeSetItem(key, value) {
+            try {
+              localStorage.setItem(key, value);
+            } catch {
+              // localStorage が使えない環境では何もしない
+            }
+          }
+
+          function getPreference() {
+            const stored = safeGetItem('theme');
+            if (stored) {
+              return stored;
+            }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+
+          function apply() {
+            const dark = getPreference() === 'dark';
+            document.documentElement.classList.toggle('dark', dark);
+            document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          }
+
+          window.__theme = { getPreference, apply, getItem: safeGetItem, setItem: safeSetItem };
+
+          apply();
+        })();
+      </script>
+    </BaseHead>
   </head>
   <body
     class="min-h-full flex flex-col bg-white dark:bg-[#0c0f14] text-gray-900 dark:text-[#e2e8f0]"

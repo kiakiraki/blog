@@ -29,8 +29,8 @@ export default defineConfig({
       rehypePlugins: MDX_REHYPE_PLUGINS,
     }),
     sitemap({
-      // エディタページをサイトマップから除外
-      filter: page => !page.includes('/editor'),
+      // エディタページ・2ページ目以降のブログ一覧（noindex）をサイトマップから除外
+      filter: page => !page.includes('/editor') && !page.includes('/blog/page/'),
     }),
   ],
   vite: {
