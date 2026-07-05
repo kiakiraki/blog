@@ -6,12 +6,14 @@
 
 :root {
   color-scheme: light;
-  --surface: #ffffff;
+  --surface: oklch(0.98 0.005 250);
   --surface-raised: #ffffff;
   --ink: #111827;
   --ink-muted: #4b5563;
   --line: #e5e7eb;
   --line-strong: #d1d5db;
+  --dots: rgb(27 33 44 / 0.035);
+  --orb: transparent;
 }
 
 .dark {
@@ -22,6 +24,8 @@
   --ink-muted: #94a3b8;
   --line: rgb(51 65 85 / 0.3);
   --line-strong: rgb(71 85 105 / 0.5);
+  --dots: rgb(255 255 255 / 0.045);
+  --orb: color-mix(in oklab, var(--color-primary) 7%, transparent);
 }
 
 @theme inline {
@@ -76,37 +80,28 @@
     @apply transition-colors duration-200;
   }
 
-  /* Portfolio-inspired background effects (dark mode only) */
-  .dark-bg-effects {
+  /* Logbook-inspired background effects (dot grid + gradient orb, both themes) */
+  .bg-effects {
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    display: none;
   }
 
-  .dark .dark-bg-effects {
-    display: block;
-  }
-
-  .dark-bg-effects__dots {
+  .bg-effects__dots {
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.6' fill='white' fill-opacity='0.04'/%3E%3C/svg%3E");
-    background-repeat: repeat;
+    background-image: radial-gradient(var(--dots) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 
-  .dark-bg-effects__orb {
+  .bg-effects__orb {
     position: absolute;
     top: -100px;
     left: -200px;
     width: 600px;
     height: 600px;
-    background: radial-gradient(
-      circle,
-      color-mix(in oklab, var(--color-primary) 6%, transparent) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle, var(--orb) 0%, transparent 70%);
     filter: blur(60px);
   }
 
@@ -216,6 +211,30 @@
     background: rgba(30, 41, 59, 0.8);
     border-color: var(--line-strong);
     box-shadow: none;
+  }
+
+  .post-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .post-card:hover {
+    border-color: var(--line-strong);
+  }
+
+  .dark .post-card {
+    background: rgb(15 23 42 / 0.45);
+    box-shadow: none;
+  }
+
+  .dark .post-card:hover {
+    background: rgb(30 41 59 / 0.6);
   }
 
   .link-preview {
