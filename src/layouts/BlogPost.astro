@@ -24,6 +24,8 @@ interface Props {
 const { post, headings } = Astro.props;
 const { title, description, pubDate, updatedDate, heroImage, category } = post.data;
 const slug = post.id;
+const pubIso = pubDate.toISOString().slice(0, 10);
+const updatedIso = updatedDate ? updatedDate.toISOString().slice(0, 10) : null;
 
 // 記事のURLを取得
 const articleUrl = Astro.url.href;
@@ -106,60 +108,49 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
       <div class="max-w-6xl mx-auto">
         <div class="lg:grid lg:grid-cols-12 lg:gap-8">
           <!-- Main Content -->
-          <div class="lg:col-span-8">
-            <!-- Article Header -->
-            <header class="mb-8 text-center animate-fade-in">
-              <h1
-                class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 text-pretty"
-              >
-                {title}
-              </h1>
-
-              <div
-                class="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-600 dark:text-gray-300"
-              >
-                <div class="flex items-center gap-2">
-                  <Icon class="w-4 h-4" name="calendar" />
-                  <span>公開日: <FormattedDate date={pubDate} /></span>
+          <div class="lg:col-span-9">
+            <div class="max-w-[42rem]">
+              <!-- Article Header -->
+              <header class="mb-8 animate-fade-in">
+                <div class="section-label mb-4">
+                  <span>Article</span>
                 </div>
 
-                {
-                  updatedDate && (
-                    <div class="flex items-center gap-2">
-                      <Icon class="w-4 h-4" name="refresh" />
-                      <span>
-                        更新日: <FormattedDate date={updatedDate} />
+                <div class="flex flex-wrap items-center gap-3">
+                  <time class="font-mono text-sm tracking-wider text-ink-muted" datetime={pubIso}>
+                    {pubIso}
+                  </time>
+
+                  {
+                    updatedDate && updatedIso && (
+                      <span class="font-mono text-sm tracking-wider text-ink-muted">
+                        (更新: <time datetime={updatedIso}>{updatedIso}</time>)
                       </span>
-                    </div>
-                  )
-                }
+                    )
+                  }
+
+                  <a
+                    class="category-chip inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all hover:opacity-80"
+                    data-category={category}
+                    href={`/category/${category}/`}
+                  >
+                    <Icon class="w-4 h-4" name="tag" />
+                    {category}
+                  </a>
+                </div>
+
+                <h1 class="mt-4 text-3xl md:text-4xl font-bold text-pretty">{title}</h1>
+              </header>
+
+              <!-- Mobile TOC -->
+              <div class="lg:hidden">
+                {headings && headings.length > 0 && <TableOfContents headings={headings} />}
               </div>
 
-              <!-- Category Badge -->
-              <div class="mt-4">
-                <a
-                  class="category-chip inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all hover:opacity-80"
-                  data-category={category}
-                  href={`/category/${category}/`}
-                >
-                  <Icon class="w-4 h-4" name="tag" />
-                  {category}
-                </a>
+              <!-- Article Content -->
+              <div class="prose prose-lg dark:prose-invert max-w-[42rem]">
+                <slot />
               </div>
-
-              <div class="section-label justify-center mt-6 max-w-xs mx-auto">
-                <span>Article</span>
-              </div>
-            </header>
-
-            <!-- Mobile TOC -->
-            <div class="lg:hidden">
-              {headings && headings.length > 0 && <TableOfContents headings={headings} />}
-            </div>
-
-            <!-- Article Content -->
-            <div class="prose prose-lg dark:prose-invert max-w-none">
-              <slot />
             </div>
 
             <!-- ここにTweetButtonを配置 -->
@@ -180,7 +171,7 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
                         <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">前の記事</p>
                         <a
                           aria-label={prevPost.data.title}
-                          class="group block card hover:shadow-lg transition-all duration-200"
+                          class="group block post-card p-5 transition-all duration-200"
                           href={`/blog/${prevPost.id}/`}
                         >
                           <div class="flex items-center gap-3">
@@ -206,7 +197,7 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
                         <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">次の記事</p>
                         <a
                           aria-label={nextPost.data.title}
-                          class="group block card hover:shadow-lg transition-all duration-200"
+                          class="group block post-card p-5 transition-all duration-200"
                           href={`/blog/${nextPost.id}/`}
                         >
                           <div class="flex items-center gap-3">
@@ -247,7 +238,7 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
           </div>
 
           <!-- Table of Contents Sidebar -->
-          <aside class="hidden lg:block lg:col-span-4">
+          <aside class="hidden lg:block lg:col-span-3">
             <div class="lg:sticky lg:top-8">
               {headings && headings.length > 0 && <TableOfContents headings={headings} />}
             </div>
