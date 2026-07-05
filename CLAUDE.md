@@ -33,6 +33,7 @@
 │   │   ├── TweetButton.astro   # X (Twitter) シェアボタン
 │   │   ├── CaptionedImage.astro # キャプション付き画像
 │   │   ├── ImageGrid.astro     # 画像グリッド表示
+│   │   ├── ImageLightbox.astro # 記事内画像の拡大表示（PhotoSwipe）
 │   │   ├── TableOfContents.astro # 自動目次生成（レスポンシブ対応）
 │   │   ├── Icon.astro          # SVGアイコン集
 │   │   ├── HeaderLink.astro    # ナビゲーションリンク
@@ -65,7 +66,8 @@
 │   │   └── fonts.css      # 自己ホストフォントの@font-face定義（自動生成部分含む）
 │   ├── utils/
 │   │   ├── posts.ts            # 記事取得・ページネーション・カテゴリ集計
-│   │   └── relatedPosts.ts     # 関連記事スコアリング
+│   │   ├── relatedPosts.ts     # 関連記事スコアリング
+│   │   └── lightbox.ts         # ライトボックス用srcsetパース・寸法計算
 │   ├── consts.ts          # サイト定数・カテゴリ定義
 │   └── content.config.ts  # コンテンツスキーマ定義
 ├── test/                  # node --test によるユニットテスト
@@ -262,6 +264,12 @@ export const CATEGORIES = [
   の組み合わせではアダプタがno-opサービスへ強制差し替えし、srcset候補が未縮小の元画像コピーになる（.webp拡張子で中身JPEG）ための回避策。
   `@astrojs/cloudflare`
   更新時はビルド後にsrcset候補が実際に縮小されているか確認すること
+- **画像のwidth+height両指定は実クロップになる**: `astro.config.mjs` で
+  `image.layout: 'constrained'` を設定している（Markdown `![]()`
+  画像にも自動でsrcset/sizesが付く）ため、`<Image>`
+  に width と height を両方渡すと `fit`（デフォルト
+  `cover`）でその縦横比に実際に切り抜かれる。従来のような「HTML属性に出るだけ」ではない。コンポーネント内部で寸法をハードコードしない（ImageGridの縦長画像クロップ退行の教訓、PR
+  #331で修正）。画像パイプライン変更時は「srcset候補の宣言幅と実寸の一致」に加えて「元画像との縦横比の一致」まで確認すること
 - **CSP追随**: 記事に新しい種類の外部埋め込み（現状はYouTube /
   Twitterのみ許可）を追加したら `public/_headers` のCSPにドメインを追加する
 
@@ -310,6 +318,11 @@ export const CATEGORIES = [
       ClientRouterによるクライアントサイド遷移。カードのヒーロー画像が記事ヒーローへモーフ（`transition:name="hero-{id}"`）。動的スクリプトは
       `astro:page-load` + AbortControllerで冪等化、テーマは `astro:after-swap`
       で再適用
+- [x] **画像ライトボックス** - PhotoSwipe
+      v5による記事内画像の拡大表示（`ImageLightbox.astro` +
+      `utils/lightbox.ts`）。本文（`.prose`）内の画像を1ギャラリーとしてスワイプ・矢印キーで前後移動。srcset最大幅候補を拡大表示に使用、PhotoSwipe本体は遅延ロード（npmバンドルのためCSP変更不要）。`<a>`
+      内の画像とヒーロー画像は対象外。Enter/Spaceでも開ける（`role="button"` +
+      `tabindex="0"` 付与）
 
 ## 実装待ちの改善リスト
 
@@ -393,11 +406,11 @@ export const CATEGORIES = [
   - 技術案: Service Worker + Web App Manifest
   - 実装箇所: `/public/manifest.json` + SW登録
 
-- [ ] **画像ギャラリー強化**
-  - 優先度: 中
-  - 概要: Lightbox・スワイプ対応・拡大表示
-  - 技術案: PhotoSwipe / Swiper.js
-  - 実装箇所: `ImageGrid.astro` 拡張
+- [x] **画像ギャラリー強化**（対応済み: 2026-07-05, PR #330 / #331）
+  - PhotoSwipe
+    v5によるライトボックスを実装（`ImageLightbox.astro`）。詳細は「実装済み機能」参照
+  - あわせて `image.layout: 'constrained'` でMarkdown `![]()`
+    画像もレスポンシブ化（PR #331）
 
 - [ ] **記事シェア機能拡張**
   - 優先度: 低
