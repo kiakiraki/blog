@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import PostCard from '@/components/PostCard.astro';
-import { CATEGORIES, CATEGORY_COLORS, POSTS_PER_PAGE } from '@/consts';
+import { CATEGORIES, POSTS_PER_PAGE } from '@/consts';
 import { getPostsForPage, getCategoryCounts } from '@/utils/posts';
 import { jsonLdStringify } from '@/utils/jsonld';
 
@@ -72,18 +72,15 @@ const structuredBlogList = jsonLdStringify({
             すべて ({totalPosts})
           </a>
           {
-            CATEGORIES.map(category => {
-              const colors = CATEGORY_COLORS[category];
-              return (
-                <a
-                  class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:opacity-80"
-                  href={`/category/${category}/`}
-                  style={`color: ${colors.fg}; background: ${colors.bg};`}
-                >
-                  {category} ({categoryCounts[category]})
-                </a>
-              );
-            })
+            CATEGORIES.map(category => (
+              <a
+                class="category-chip px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:opacity-80"
+                data-category={category}
+                href={`/category/${category}/`}
+              >
+                {category} ({categoryCounts[category]})
+              </a>
+            ))
           }
         </div>
       </div>

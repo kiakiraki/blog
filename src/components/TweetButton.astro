@@ -54,9 +54,9 @@ const twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=
   }
 
   .tweet-button:focus-visible {
-    outline: 2px solid #0ea5e9;
+    outline: 2px solid var(--color-primary);
     outline-offset: 4px;
-    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary) 20%, transparent);
   }
 
   .tweet-button svg {

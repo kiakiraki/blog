@@ -60,7 +60,8 @@
 │   │   │   └── [...slug].png.ts # OGP画像生成（satori + sharp）
 │   │   └── rss.xml.js          # RSS フィード
 │   ├── styles/
-│   │   └── global.css     # グローバルスタイル（Tailwind CSS）
+│   │   ├── global.css     # グローバルスタイル（セマンティックトークン・Tailwind CSS）
+│   │   └── fonts.css      # 自己ホストフォントの@font-face定義（自動生成部分含む）
 │   ├── utils/
 │   │   ├── posts.ts            # 記事取得・ページネーション・カテゴリ集計
 │   │   └── relatedPosts.ts     # 関連記事スコアリング

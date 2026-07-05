@@ -76,6 +76,10 @@ export async function GET({ params, props }: APIContext<Props>) {
     type = 'プロフィール';
   }
 
+  // Satori can't consume CSS custom properties, so the colors below are
+  // static sRGB equivalents of --color-primary / --color-primary-700
+  // (oklch(0.58 0.09 195) family from src/styles/global.css). Keep in sync
+  // if the primary accent changes.
   const element = h(
     'div',
     {
@@ -83,7 +87,7 @@ export async function GET({ params, props }: APIContext<Props>) {
         width: '1200px',
         height: '630px',
         display: 'flex',
-        background: 'linear-gradient(135deg,#0ea5e9 0%,#0284c7 100%)',
+        background: 'linear-gradient(135deg,#238b8b 0%,#176666 100%)',
         position: 'relative',
         fontFamily: 'Noto Sans JP',
       },
@@ -113,7 +117,7 @@ export async function GET({ params, props }: APIContext<Props>) {
             position: 'absolute',
             top: '50px',
             left: '50px',
-            background: '#0ea5e9',
+            background: '#238b8b',
             borderRadius: '20px',
             padding: '8px 16px',
             color: '#ffffff',
@@ -179,7 +183,7 @@ export async function GET({ params, props }: APIContext<Props>) {
             right: '50px',
             fontSize: '20px',
             fontWeight: 600,
-            color: '#0ea5e9',
+            color: '#238b8b',
           },
         },
         '趣味の記録'

@@ -8,7 +8,7 @@ import RelatedPosts from '@/components/RelatedPosts.astro';
 import { getRelatedPosts } from '@/utils/relatedPosts';
 import { getAllPosts } from '@/utils/posts';
 import Icon from '@/components/Icon.astro';
-import { AUTHOR_NAME, SITE_TITLE, CATEGORY_COLORS } from '../consts';
+import { AUTHOR_NAME, SITE_TITLE } from '../consts';
 import { jsonLdStringify } from '@/utils/jsonld';
 import TweetButton from '../components/TweetButton.astro';
 
@@ -139,9 +139,9 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
               <!-- Category Badge -->
               <div class="mt-4">
                 <a
-                  class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all hover:opacity-80"
+                  class="category-chip inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all hover:opacity-80"
+                  data-category={category}
                   href={`/category/${category}/`}
-                  style={`color: ${CATEGORY_COLORS[category].fg}; background: ${CATEGORY_COLORS[category].bg};`}
                 >
                   <Icon class="w-4 h-4" name="tag" />
                   {category}
@@ -164,7 +164,7 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
             </div>
 
             <!-- ここにTweetButtonを配置 -->
-            <div class="tweet-button-container" style="text-align: center; margin-top: 3em;">
+            <div class="tweet-button-container mt-12 text-center">
               <TweetButton title={title} url={articleUrl} />
             </div>
 
@@ -174,7 +174,7 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
             <!-- Article Navigation -->
             {
               (prevPost || nextPost) && (
-                <nav class="mt-12 pt-8 border-t border-gray-200 dark:border-[rgba(51,65,85,0.3)]">
+                <nav class="mt-12 pt-8 border-t border-line">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {prevPost && (
                       <div class="text-left">
@@ -233,7 +233,7 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
             }
 
             <!-- Article Footer -->
-            <footer class="mt-8 pt-8 border-t border-gray-200 dark:border-[rgba(51,65,85,0.3)]">
+            <footer class="mt-8 pt-8 border-t border-line">
               <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
                   <a
