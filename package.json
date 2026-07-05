@@ -17,7 +17,6 @@
     "typecheck": "astro check"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^14.0.2",
     "@astrojs/mdx": "^7.0.0",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
@@ -30,10 +29,11 @@
   },
   "overrides": {
     "lodash": "^4.17.23",
-    "wrangler": "^4.98.0"
+    "wrangler": "^4.107.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@astrojs/cloudflare": "^14.1.1",
     "@astrojs/react": "^6.0.0",
     "@codemirror/lang-markdown": "^6.5.0",
     "@codemirror/language-data": "^6.5.2",
@@ -60,6 +60,6 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.55.0",
     "unified": "^11.0.5",
-    "wrangler": "^4.98.0"
+    "wrangler": "^4.107.0"
   }
 }
