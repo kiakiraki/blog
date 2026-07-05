@@ -14,7 +14,8 @@
     "lint:check": "eslint . --ext .js,.ts,.astro",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "astro check"
+    "typecheck": "astro check",
+    "fonts:generate": "node scripts/generate-noto-subsets.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.0",
@@ -57,6 +58,7 @@
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
+    "subset-font": "^2.5.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.55.0",
     "unified": "^11.0.5",
