@@ -21,6 +21,12 @@ export default defineConfig({
     imageService: 'compile',
     prerenderEnvironment: 'node',
   }),
+  image: {
+    // imageService: 'compile' + prerenderEnvironment: 'node' の組み合わせでは
+    // アダプタのsharp差し替えが働かず、no-opサービスが元画像を複製するだけになる。
+    // 詳細は src/lib/build-image-service.mjs のコメントを参照。
+    service: { entrypoint: './src/lib/build-image-service.mjs' },
+  },
   markdown: {
     rehypePlugins: MARKDOWN_REHYPE_PLUGINS,
   },
