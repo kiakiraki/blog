@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { guardMutatingRequest } from './_guard.mts';
 
 const PROJECT_ROOT = process.cwd();
 const CONTENT_ROOT = path.join(PROJECT_ROOT, 'src', 'content', 'blog');
@@ -10,6 +11,10 @@ const CONTENT_ROOT = path.join(PROJECT_ROOT, 'src', 'content', 'blog');
 export const POST: APIRoute = async ({ request }) => {
   // 開発環境のみ許可
   if (import.meta.env.PROD) return new Response(null, { status: 404 });
+
+  // CSRF対策（Origin検証）とボディサイズの簡易上限チェック
+  const guardResponse = guardMutatingRequest(request);
+  if (guardResponse) return guardResponse;
 
   try {
     const isJSON = (request.headers.get('content-type') || '').includes('application/json');

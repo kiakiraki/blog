@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { writeFile, mkdir, access } from 'node:fs/promises';
 import path from 'node:path';
+import { guardMutatingRequest } from './_guard.mts';
 
 const PROJECT_ROOT = process.cwd();
 
@@ -11,6 +12,10 @@ export const POST: APIRoute = async ({ request }) => {
   if (import.meta.env.PROD) {
     return new Response(null, { status: 404 });
   }
+
+  // CSRF対策（Origin検証）とボディサイズの簡易上限チェック
+  const guardResponse = guardMutatingRequest(request);
+  if (guardResponse) return guardResponse;
 
   try {
     const form = await request.formData();

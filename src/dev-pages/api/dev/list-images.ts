@@ -3,13 +3,17 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
+import { checkOrigin } from './_guard.mts';
 
 const PROJECT_ROOT = process.cwd();
 const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg']);
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ request, url }) => {
   // 開発環境のみ
   if (import.meta.env.PROD) return json({ ok: false, error: 'not found' }, 404);
+
+  const originResponse = checkOrigin(request);
+  if (originResponse) return originResponse;
 
   const publishDate = String(url.searchParams.get('publishDate') || '').trim();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(publishDate)) {
