@@ -15,15 +15,18 @@ const { post } = Astro.props;
   <a class="block" href={`/blog/${post.id}/`}>
     {
       post.data.heroImage && (
-        <div class="mb-4 overflow-hidden rounded-lg">
+        <div class="mb-4 overflow-hidden rounded-lg aspect-video">
           <Image
             alt={post.data.title}
-            class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             decoding="async"
+            format="webp"
             height={225}
             loading="lazy"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 384px"
             src={post.data.heroImage}
             width={400}
+            widths={[400, 600, 800]}
           />
         </div>
       )

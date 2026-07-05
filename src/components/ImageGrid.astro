@@ -15,6 +15,9 @@ interface Props {
 }
 
 const { images, columns = 2, class: className } = Astro.props;
+// 記事本文(prose)コンテナの実質最大幅(約768px)を列数で割った値を、デスクトップでの
+// 画像表示上限幅として sizes に反映する(モバイルは1カラムに、768-1024pxは2カラムに畳まれる)
+const sizes = `(max-width: 768px) 100vw, (max-width: 1024px) 50vw, ${Math.round(768 / columns)}px`;
 ---
 
 <div class:list={[`image-grid columns-${columns}`, `${className || ''}`]}>
@@ -24,10 +27,13 @@ const { images, columns = 2, class: className } = Astro.props;
         <Image
           alt={image.alt}
           class="grid-image"
+          format="webp"
           height={400}
           inferSize={false}
+          sizes={sizes}
           src={image.src as ImageMetadata}
           width={600}
+          widths={[320, 480, 640, 960, 1280]}
         />
         {image.caption && <figcaption class="image-caption">{image.caption}</figcaption>}
       </figure>

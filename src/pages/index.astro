@@ -1,6 +1,6 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import FormattedDate from '@/components/FormattedDate.astro';
+import PostCard from '@/components/PostCard.astro';
 import { SITE_TITLE, SITE_DESCRIPTION, POSTS_PER_PAGE } from '../consts';
 import { getAllPosts } from '@/utils/posts';
 import { jsonLdStringify } from '@/utils/jsonld';
@@ -68,25 +68,7 @@ const structuredHome = jsonLdStringify({
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {
-            posts.map(post => (
-              <article class="card group hover:shadow-lg transition-all duration-200">
-                <div class="mb-4">
-                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                    <a class="hover:underline" href={`/blog/${post.id}/`}>
-                      {post.data.title}
-                    </a>
-                  </h3>
-                  <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">
-                    {post.data.description}
-                  </p>
-                  <div class="flex items-center text-sm text-gray-500 dark:text-gray-300">
-                    <FormattedDate date={post.data.pubDate} />
-                  </div>
-                </div>
-              </article>
-            ))
-          }
+          {posts.map(post => <PostCard post={post} />)}
         </div>
       </div>
     </div>

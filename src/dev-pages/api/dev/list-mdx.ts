@@ -3,12 +3,17 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { checkOrigin } from './_guard.mts';
 
 const PROJECT_ROOT = process.cwd();
 const CONTENT_ROOT = path.join(PROJECT_ROOT, 'src', 'content', 'blog');
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ request }) => {
   if (import.meta.env.PROD) return new Response(null, { status: 404 });
+
+  const originResponse = checkOrigin(request);
+  if (originResponse) return originResponse;
+
   try {
     const files = await walkMdx(CONTENT_ROOT);
     const enriched = await Promise.all(

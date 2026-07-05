@@ -3,13 +3,17 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { checkOrigin } from './_guard.mts';
 
 const PROJECT_ROOT = process.cwd();
 const CONTENT_ROOT = path.join(PROJECT_ROOT, 'src', 'content', 'blog');
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ request, url }) => {
   // 開発環境のみ
   if (import.meta.env.PROD) return new Response(null, { status: 404 });
+
+  const originResponse = checkOrigin(request);
+  if (originResponse) return originResponse;
 
   const publishDate = String(url.searchParams.get('publishDate') || '').trim();
   const relPath = String(url.searchParams.get('path') || '').trim();

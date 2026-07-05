@@ -12,16 +12,22 @@ interface Props {
 }
 
 const { src, alt, caption, width, height, class: className } = Astro.props;
+// 記事本文(prose)コンテナの実質最大幅(lg:col-span-8 / max-w-6xl換算で約768px)を
+// 上限としたレスポンシブ配信用の width。呼び出し側で width が指定された場合はそちらを優先する。
+const resolvedWidth = width ?? 1280;
 ---
 
 <figure class:list={[`captioned-image`, `${className || ''}`]}>
   <Image
     alt={alt}
     src={src as ImageMetadata}
-    {...width && { width }}
+    width={resolvedWidth}
     {...height && { height }}
     class="image"
+    format="webp"
     inferSize={false}
+    sizes="(max-width: 1024px) 100vw, 768px"
+    widths={[480, 720, 960, 1280]}
   />
   {caption && <figcaption class="caption">{caption}</figcaption>}
 </figure>
