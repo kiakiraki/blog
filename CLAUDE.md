@@ -309,10 +309,21 @@ export const CATEGORIES = [
   - 優先度: 低
   - 概要: Source Sans
     3セルフホスト化済みでコード参照はゼロ。CSP変更は本番でのフォント・AdSense動作確認とセットで実施すること
-- [ ] **ESLint 10へのメジャー更新**
-  - 優先度: 低（ブロック中）
-  - 概要: `eslint-plugin-jsx-a11y` がESLint
-    ^9までしか対応していないため保留。対応版リリース後にdependabotのlint-and-formatグループで更新可
+- [x] **ESLint 10へのメジャー更新**（対応済み）
+  - 概要: `eslint` ^10.6.0 / `eslint-plugin-astro` ^2.1.1 /
+    `typescript-eslint`系 ^8.62.1 に更新し、`eslint-plugin-jsx-a11y`
+    （ESLint 9までしか対応せず10と共存不可）は削除。a11yルール（`astro/jsx-a11y/*`）は
+    eslint-plugin-astro v2で`jsx-a11y-recommended`/`jsx-a11y-strict`という別configに
+    切り出された形になり、jsx-a11y未インストールでも`configs.all`はエラーなく動作するため
+    設定変更は最小限で済んだ。
+  - 残タスク: a11yルールは一時的に削除した状態。`eslint-plugin-jsx-a11y`
+    が公式にESLint 10対応したら`jsx-a11y-recommended`/`jsx-a11y-strict`
+    configの追加で復帰、もしくはコミュニティフォーク`eslint-plugin-jsx-a11y-x`（es-tooling）が
+    成熟したらnpmエイリアスで移行を検討する。
+  - 副作用: v2で新規追加された`astro/no-omitted-end-tags`ルールは、`<head>`直下に
+    カスタムコンポーネント（例: `<BaseHead>`）を置くだけで誤検知するバグがあり、
+    作者自身がルール非推奨化PRを出している（ota-meshi/eslint-plugin-astro PR #590）ため
+    `eslint.config.js`でoffにした。
 - [ ] **内部リンクの末尾スラッシュ統一**
   - 優先度: 低
   - 概要: `/blog` と `/category/写真/`
