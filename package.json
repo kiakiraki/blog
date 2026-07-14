@@ -62,7 +62,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "subset-font": "^2.5.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.63.0",
     "unified": "^11.0.5",
     "wrangler": "^4.107.0"
