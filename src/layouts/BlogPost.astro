@@ -86,25 +86,23 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
     type="application/ld+json"
   />
   <article class="py-8">
-    {
-      heroImage && (
-        <div class="mb-8">
-          <Image
-            alt={title}
-            class="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
-            decoding="async"
-            fetchpriority="high"
-            format="webp"
-            loading="eager"
-            sizes="100vw"
-            src={heroImage}
-            transition:name={`hero-${slug.replaceAll('/', '-')}`}
-            width={1200}
-            widths={[640, 960, 1200]}
-          />
-        </div>
-      )
-    }
+    {heroImage && (
+      <div class="mb-8">
+        <Image
+          alt={title}
+          class="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+          decoding="async"
+          fetchpriority="high"
+          format="webp"
+          loading="eager"
+          sizes="100vw"
+          src={heroImage}
+          transition:name={`hero-${slug.replaceAll('/', '-')}`}
+          width={1200}
+          widths={[640, 960, 1200]}
+        />
+      </div>
+    )}
 
     <div class="container mx-auto px-4">
       <div class="max-w-6xl mx-auto">
@@ -123,13 +121,11 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
                     {pubIso}
                   </time>
 
-                  {
-                    updatedDate && updatedIso && (
-                      <span class="font-mono text-sm tracking-wider text-ink-muted">
-                        (更新: <time datetime={updatedIso}>{updatedIso}</time>)
-                      </span>
-                    )
-                  }
+                  {updatedDate && updatedIso && (
+                    <span class="font-mono text-sm tracking-wider text-ink-muted">
+                      (更新: <time datetime={updatedIso}>{updatedIso}</time>)
+                    </span>
+                  )}
 
                   <a
                     class="category-chip inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all hover:opacity-80"
@@ -165,65 +161,63 @@ const ogImageHeight = heroImage ? heroImage.height : 630;
             <RelatedPosts relatedPosts={relatedPosts} />
 
             <!-- Article Navigation -->
-            {
-              (prevPost || nextPost) && (
-                <nav class="mt-12 pt-8 border-t border-line">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {prevPost && (
-                      <div class="text-left">
-                        <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">前の記事</p>
-                        <a
-                          aria-label={prevPost.data.title}
-                          class="group block post-card p-5 transition-all duration-200"
-                          href={`/blog/${prevPost.id}/`}
-                        >
-                          <div class="flex items-center gap-3">
-                            <Icon
-                              class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
-                              name="chevron-left"
-                            />
-                            <div class="flex-1 min-w-0">
-                              <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
-                                {prevPost.data.title}
-                              </h3>
-                              <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                                <FormattedDate date={prevPost.data.pubDate} />
-                              </p>
-                            </div>
+            {(prevPost || nextPost) && (
+              <nav class="mt-12 pt-8 border-t border-line">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {prevPost && (
+                    <div class="text-left">
+                      <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">前の記事</p>
+                      <a
+                        aria-label={prevPost.data.title}
+                        class="group block post-card p-5 transition-all duration-200"
+                        href={`/blog/${prevPost.id}/`}
+                      >
+                        <div class="flex items-center gap-3">
+                          <Icon
+                            class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+                            name="chevron-left"
+                          />
+                          <div class="flex-1 min-w-0">
+                            <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+                              {prevPost.data.title}
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                              <FormattedDate date={prevPost.data.pubDate} />
+                            </p>
                           </div>
-                        </a>
-                      </div>
-                    )}
+                        </div>
+                      </a>
+                    </div>
+                  )}
 
-                    {nextPost && (
-                      <div class="text-right md:col-start-2">
-                        <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">次の記事</p>
-                        <a
-                          aria-label={nextPost.data.title}
-                          class="group block post-card p-5 transition-all duration-200"
-                          href={`/blog/${nextPost.id}/`}
-                        >
-                          <div class="flex items-center gap-3">
-                            <div class="flex-1 min-w-0">
-                              <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
-                                {nextPost.data.title}
-                              </h3>
-                              <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                                <FormattedDate date={nextPost.data.pubDate} />
-                              </p>
-                            </div>
-                            <Icon
-                              class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
-                              name="chevron-right"
-                            />
+                  {nextPost && (
+                    <div class="text-right md:col-start-2">
+                      <p class="text-sm text-gray-500 dark:text-gray-300 mb-2">次の記事</p>
+                      <a
+                        aria-label={nextPost.data.title}
+                        class="group block post-card p-5 transition-all duration-200"
+                        href={`/blog/${nextPost.id}/`}
+                      >
+                        <div class="flex items-center gap-3">
+                          <div class="flex-1 min-w-0">
+                            <h3 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+                              {nextPost.data.title}
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                              <FormattedDate date={nextPost.data.pubDate} />
+                            </p>
                           </div>
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </nav>
-              )
-            }
+                          <Icon
+                            class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors"
+                            name="chevron-right"
+                          />
+                        </div>
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </nav>
+            )}
 
             <!-- Article Footer -->
             <footer class="mt-8 pt-8 border-t border-line">

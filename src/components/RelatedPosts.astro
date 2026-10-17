@@ -9,22 +9,20 @@ interface Props {
 const { relatedPosts } = Astro.props;
 ---
 
-{
-  relatedPosts.length > 0 && (
-    <section class="mt-12 pt-8 border-t border-line">
-      <div class="mb-6">
-        <div class="section-label mb-4">
-          <span>Related</span>
-        </div>
-        <h2 class="text-xl font-bold mb-2">関連記事</h2>
-        <p class="text-ink-muted text-sm">この記事に関連する記事をピックアップしました</p>
+{relatedPosts.length > 0 && (
+  <section class="mt-12 pt-8 border-t border-line">
+    <div class="mb-6">
+      <div class="section-label mb-4">
+        <span>Related</span>
       </div>
+      <h2 class="text-xl font-bold mb-2">関連記事</h2>
+      <p class="text-ink-muted text-sm">この記事に関連する記事をピックアップしました</p>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {relatedPosts.map(post => (
-          <PostCard compact post={post} />
-        ))}
-      </div>
-    </section>
-  )
-}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {relatedPosts.map(post => (
+        <PostCard compact post={post} />
+      ))}
+    </div>
+  </section>
+)}

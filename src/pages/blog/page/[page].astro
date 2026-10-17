@@ -48,59 +48,54 @@ const { posts, currentPage, totalPages, totalPosts } = Astro.props;
           ブログ記事一覧
         </h1>
         <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          全{totalPosts}件中 {(currentPage - 1) * POSTS_PER_PAGE + 1}〜{
-            Math.min(currentPage * POSTS_PER_PAGE, totalPosts)
-          }件を表示
+          全{totalPosts}件中 {(currentPage - 1) * POSTS_PER_PAGE + 1}〜
+          {Math.min(currentPage * POSTS_PER_PAGE, totalPosts)}件を表示
         </p>
         <div class="w-24 h-1 bg-primary-600 mx-auto mt-6"></div>
       </div>
 
       <!-- Posts Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map(post => <PostCard post={post} />)}
+        {posts.map(post => (
+          <PostCard post={post} />
+        ))}
       </div>
 
       <!-- Pagination -->
       <nav aria-label="ページネーション" class="mt-16 flex justify-center items-center gap-2">
-        {
-          currentPage > 1 && (
-            <a
-              class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              href={currentPage === 2 ? '/blog/' : `/blog/page/${currentPage - 1}/`}
-            >
-              ← 前へ
-            </a>
-          )
-        }
+        {currentPage > 1 && (
+          <a
+            class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            href={currentPage === 2 ? '/blog/' : `/blog/page/${currentPage - 1}/`}
+          >
+            ← 前へ
+          </a>
+        )}
 
-        {
-          Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-            <a
-              class:list={[
-                'px-4 py-2 rounded-lg transition-colors',
-                {
-                  'bg-primary-600 text-white': page === currentPage,
-                  'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700':
-                    page !== currentPage,
-                },
-              ]}
-              href={page === 1 ? '/blog/' : `/blog/page/${page}/`}
-            >
-              {page}
-            </a>
-          ))
-        }
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <a
+            class:list={[
+              'px-4 py-2 rounded-lg transition-colors',
+              {
+                'bg-primary-600 text-white': page === currentPage,
+                'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700':
+                  page !== currentPage,
+              },
+            ]}
+            href={page === 1 ? '/blog/' : `/blog/page/${page}/`}
+          >
+            {page}
+          </a>
+        ))}
 
-        {
-          currentPage < totalPages && (
-            <a
-              class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              href={`/blog/page/${currentPage + 1}/`}
-            >
-              次へ →
-            </a>
-          )
-        }
+        {currentPage < totalPages && (
+          <a
+            class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            href={`/blog/page/${currentPage + 1}/`}
+          >
+            次へ →
+          </a>
+        )}
       </nav>
     </div>
   </div>
