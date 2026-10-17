@@ -113,19 +113,17 @@ const icons: Record<Props['name'], IconDefinition> = {
 const icon = icons[name];
 ---
 
-{
-  icon.type === 'fill' ? (
-    <svg class:list={[className]} fill="currentColor" viewBox={icon.viewBox}>
-      <path d={icon.path} />
-    </svg>
-  ) : (
-    <svg class:list={[className]} fill="none" stroke="currentColor" viewBox={icon.viewBox}>
-      <path
-        d={icon.path}
-        stroke-linecap={icon.strokeLinecap}
-        stroke-linejoin={icon.strokeLinejoin}
-        stroke-width={icon.strokeWidth}
-      />
-    </svg>
-  )
-}
+{icon.type === 'fill' ? (
+  <svg class:list={[className]} fill="currentColor" viewBox={icon.viewBox}>
+    <path d={icon.path} />
+  </svg>
+) : (
+  <svg class:list={[className]} fill="none" stroke="currentColor" viewBox={icon.viewBox}>
+    <path
+      d={icon.path}
+      stroke-linecap={icon.strokeLinecap}
+      stroke-linejoin={icon.strokeLinejoin}
+      stroke-width={icon.strokeWidth}
+    />
+  </svg>
+)}

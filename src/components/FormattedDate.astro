@@ -10,14 +10,12 @@ const parsed = date instanceof Date ? date : new Date(date);
 const validDate = Number.isNaN(parsed.getTime()) ? null : parsed;
 ---
 
-{
-  validDate && (
-    <time datetime={validDate.toISOString()}>
-      {validDate.toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })}
-    </time>
-  )
-}
+{validDate && (
+  <time datetime={validDate.toISOString()}>
+    {validDate.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })}
+  </time>
+)}

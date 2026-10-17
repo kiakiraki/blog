@@ -21,22 +21,20 @@ const sizes = `(max-width: 768px) 100vw, (max-width: 1024px) 50vw, ${Math.round(
 ---
 
 <div class:list={[`image-grid columns-${columns}`, `${className || ''}`]}>
-  {
-    images.map(image => (
-      <figure class="image-item">
-        <Image
-          alt={image.alt}
-          class="grid-image"
-          format="webp"
-          sizes={sizes}
-          src={image.src as ImageMetadata}
-          width={600}
-          widths={[320, 480, 640, 960, 1280]}
-        />
-        {image.caption && <figcaption class="image-caption">{image.caption}</figcaption>}
-      </figure>
-    ))
-  }
+  {images.map(image => (
+    <figure class="image-item">
+      <Image
+        alt={image.alt}
+        class="grid-image"
+        format="webp"
+        sizes={sizes}
+        src={image.src as ImageMetadata}
+        width={600}
+        widths={[320, 480, 640, 960, 1280]}
+      />
+      {image.caption && <figcaption class="image-caption">{image.caption}</figcaption>}
+    </figure>
+  ))}
 </div>
 
 <style>

@@ -15,45 +15,16 @@ const { headings } = Astro.props;
 const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.depth <= 4);
 ---
 
-{
-  tocHeadings.length > 0 && (
-    <div class="lg:block">
-      <details class="lg:hidden mb-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-        <summary class="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors rounded-lg">
-          <span class="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <Icon class="w-4 h-4" name="list" />
-            目次
-          </span>
-        </summary>
-        <div class="px-4 pb-4">
-          <ul class="space-y-1 text-sm">
-            {tocHeadings.map(heading => (
-              <li class:list={`toc-item toc-level-${heading.depth}`}>
-                <a
-                  class="toc-link block py-1 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-                  data-heading-id={heading.slug}
-                  href={`#${heading.slug}`}
-                >
-                  {heading.text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </details>
-
-      <nav class="toc-container hidden lg:block sticky top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm">
-        <h2 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              d="M4 6h16M4 10h16M4 14h16M4 18h16"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </svg>
+{tocHeadings.length > 0 && (
+  <div class="lg:block">
+    <details class="lg:hidden mb-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+      <summary class="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors rounded-lg">
+        <span class="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+          <Icon class="w-4 h-4" name="list" />
           目次
-        </h2>
+        </span>
+      </summary>
+      <div class="px-4 pb-4">
         <ul class="space-y-1 text-sm">
           {tocHeadings.map(heading => (
             <li class:list={`toc-item toc-level-${heading.depth}`}>
@@ -67,10 +38,37 @@ const tocHeadings = headings.filter(heading => heading.depth >= 2 && heading.dep
             </li>
           ))}
         </ul>
-      </nav>
-    </div>
-  )
-}
+      </div>
+    </details>
+
+    <nav class="toc-container hidden lg:block sticky top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm">
+      <h2 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M4 6h16M4 10h16M4 14h16M4 18h16"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          />
+        </svg>
+        目次
+      </h2>
+      <ul class="space-y-1 text-sm">
+        {tocHeadings.map(heading => (
+          <li class:list={`toc-item toc-level-${heading.depth}`}>
+            <a
+              class="toc-link block py-1 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              data-heading-id={heading.slug}
+              href={`#${heading.slug}`}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+)}
 
 <style>
   @reference "tailwindcss";

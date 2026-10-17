@@ -22,7 +22,7 @@ const resolvedWidth = width ?? 1280;
     alt={alt}
     src={src as ImageMetadata}
     width={resolvedWidth}
-    {...height && { height }}
+    {...(height && { height })}
     class="image"
     format="webp"
     sizes="(max-width: 1024px) 100vw, 768px"

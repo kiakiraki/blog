@@ -37,17 +37,15 @@ import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
               role="menu"
             >
               <div class="py-2">
-                {
-                  CATEGORIES.map(category => (
-                    <a
-                      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                      href={`/category/${category}/`}
-                      role="menuitem"
-                    >
-                      {category}
-                    </a>
-                  ))
-                }
+                {CATEGORIES.map(category => (
+                  <a
+                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    href={`/category/${category}/`}
+                    role="menuitem"
+                  >
+                    {category}
+                  </a>
+                ))}
               </div>
             </div>
           </div>
@@ -102,16 +100,14 @@ import { SITE_TITLE, CATEGORIES, GITHUB_URL } from '../consts';
         <div class="px-3 py-2">
           <span class="text-sm font-medium text-gray-700 dark:text-gray-300">カテゴリ</span>
           <div class="mt-2 space-y-1">
-            {
-              CATEGORIES.map(category => (
-                <a
-                  class="block px-2 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                  href={`/category/${category}/`}
-                >
-                  {category}
-                </a>
-              ))
-            }
+            {CATEGORIES.map(category => (
+              <a
+                class="block px-2 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                href={`/category/${category}/`}
+              >
+                {category}
+              </a>
+            ))}
           </div>
         </div>
 
