@@ -40,6 +40,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@astrojs/cloudflare": "^14.1.4",
+    "@astrojs/markdown-remark": "^7.3.3",
     "@astrojs/react": "^6.0.0",
     "@codemirror/lang-markdown": "^6.5.2",
     "@codemirror/language-data": "^6.5.2",
